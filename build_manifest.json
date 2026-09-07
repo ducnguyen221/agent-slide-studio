@@ -1,0 +1,19 @@
+﻿{
+  "system": "agent-slide-craft",
+  "version": "0.1.0",
+  "ir_version": "1.0.0",
+  "default_profile": "academic_light",
+  "supported_archetypes": [
+    "cards_grid",
+    "process_flow",
+    "horizontal_timeline",
+    "kpi_grid",
+    "split_content_visual",
+    "comparison_2col"
+  ],
+  "pedagogy_standards": {
+    "wcag_contrast_target": 7.0,
+    "max_words_per_slide": 55,
+    "max_bullets_per_card": 5
+  }
+}

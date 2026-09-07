@@ -1,0 +1,16 @@
+﻿profile_name: tech_dark_modern
+version: "1.0.0"
+master_prompt_template: >
+  {subject}, futuristic 3D isometric tech illustration, glowing neon cyan #06B6D4 and violet #8B5CF6 accents,
+  dark glassmorphism, subtle rim lighting, isolated on solid deep navy background #0A0F1D,
+  generous 80px negative space padding around edges, no text, no watermark, sharp crisp render.
+
+negative_prompts: "text, letters, words, watermark, blurry, low resolution, white background, cluttered background"
+aspect_ratios:
+  hero: "16:9"
+  spot_icon: "1:1"
+  card_illustration: "4:3"
+color_targets:
+  primary_accent: "#06B6D4"
+  secondary_accent: "#8B5CF6"
+  background: "#0A0F1D"

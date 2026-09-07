@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+build/
+dist/
+.venv/
+
+# Node and browser output
+node_modules/
+playwright-report/
+test-results/
+
+# Local presentation workspaces and generated output
+.presentation/
+output/
+exports/
+builds/
+state/
+profiles/distilled_demo_profile/
+
+# Internal planning and scratch artifacts
+docs/plans/
+.tmp/
+.superpowers/
+
+# Environment and local settings
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db

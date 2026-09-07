@@ -1,0 +1,17 @@
+﻿profile_name: academic_light
+version: "1.0.0"
+master_prompt_template: >
+  {subject}, minimal modern 3D claymorphism illustration, matte pastel textures,
+  soft ambient studio lighting, clean cobalt blue #2563EB and mint green #0D9488 accents,
+  isolated on solid pure light background #F8FAFC, generous negative space padding around borders,
+  no text, no watermark, crisp vector aesthetics, high resolution 8k render.
+
+negative_prompts: "text, letters, words, typos, watermark, blurry, low quality, dark background, complex scene, busy background"
+aspect_ratios:
+  hero: "16:9"
+  spot_icon: "1:1"
+  card_illustration: "4:3"
+color_targets:
+  primary_accent: "#2563EB"
+  secondary_accent: "#0D9488"
+  background: "#F8FAFC"

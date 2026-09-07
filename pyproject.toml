@@ -1,0 +1,20 @@
+﻿[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "slidecraft"
+version = "0.1.0"
+description = "Multi-Agent Presentation & Infographic Engine for PowerPoint"
+authors = [{ name = "Slidecraft Core Team" }]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "python-pptx>=1.0.2",
+    "pydantic>=2.0.0",
+    "pyyaml>=6.0",
+    "pillow>=10.0.0",
+]
+
+[project.scripts]
+slidecraft = "slidecraft.cli.main:main"

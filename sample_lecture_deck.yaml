@@ -1,0 +1,119 @@
+﻿title: "Kiến Trúc Học Sâu & Mạng Nơ-ron Hiện Đại"
+subject: "Trí Tuệ Nhân Tạo & Machine Learning"
+target_audience: "Kỹ sư AI & Sinh viên Công nghệ"
+profile_name: "tech_dark_modern"
+metadata:
+  course_code: "CS402"
+  semester: "Fall 2026"
+
+slides:
+  - slide_id: "slide_01"
+    title: "Ba Trụ Cột Cốt Lõi Của Deep Learning"
+    subtitle: "Nền tảng giúp các mô hình hiện đại vượt trội so với thuật toán truyền thống"
+    category_badge: "KIẾN TRÚC CỐT LÕI"
+    archetype: "cards_grid"
+    bloom_verb: "Understand"
+    cards:
+      - title: "Dữ Liệu Lớn (Big Data)"
+        subtitle: "Nguồn nguyên liệu huấn luyện"
+        points:
+          - "Hàng tỷ tham số cần lượng dữ liệu khổng lồ"
+          - "Tự động trích xuất đặc trưng đa tầng"
+          - "Giảm phụ thuộc vào Feature Engineering thủ công"
+        badge_text: "DATA"
+      - title: "Phần Cứng Tăng Tốc (GPUs/TPUs)"
+        subtitle: "Năng lực tính toán song song"
+        points:
+          - "Xử lý hàng triệu phép tính ma trận đồng thời"
+          - "Tối ưu hóa bộ nhớ HBM băng thông cao"
+          - "Rút ngắn thời gian train từ tháng xuống ngày"
+        badge_text: "COMPUTE"
+      - title: "Hàm Kích Hoạt & Loss"
+        subtitle: "Tối ưu phi tuyến tính"
+        points:
+          - "Phá vỡ tính tuyến tính (ReLU, GELU, Swish)"
+          - "Hàm mất mát định hướng lan truyền ngược"
+          - "Chống hiện tượng triệt tiêu đạo hàm"
+        badge_text: "ALGO"
+
+  - slide_id: "slide_02"
+    title: "Quy Trình Huấn Luyện Mạng Nơ-ron (End-to-End)"
+    subtitle: "Chu trình 4 bước từ nạp dữ liệu đến cập nhật trọng số"
+    category_badge: "QUY TRÌNH KỸ THUẬT"
+    archetype: "process_flow"
+    bloom_verb: "Apply"
+    process_steps:
+      - step_number: 1
+        title: "Forward Pass"
+        description: "Lan truyền dữ liệu qua các lớp nơ-ron để tính toán đầu ra dự đoán."
+        is_active: true
+      - step_number: 2
+        title: "Loss Calculation"
+        description: "Đo lường độ sai lệch giữa dự đoán và nhãn thực tế bằng hàm Loss."
+        is_active: true
+      - step_number: 3
+        title: "Backpropagation"
+        description: "Tính đạo hàm riêng (Gradient) của Loss theo từng trọng số bằng Chain Rule."
+        is_active: true
+      - step_number: 4
+        title: "Weight Update"
+        description: "Tối ưu hóa trọng số dựa trên thuật toán AdamW / SGD với learning rate."
+        is_active: true
+
+  - slide_id: "slide_03"
+    title: "Dòng Thời Gian Tiến Hóa Của Mô Hình Ngôn Ngữ"
+    subtitle: "Từ n-gram truyền thống đến kỷ nguyên Large Language Models"
+    category_badge: "LỊCH SỬ TIẾN HÓA"
+    archetype: "horizontal_timeline"
+    bloom_verb: "Analyze"
+    timeline_nodes:
+      - time_label: "2013 - 2017"
+        title: "Word2Vec & RNN/LSTM"
+        description: "Biểu diễn vector nhúng từ ngữ và xử lý chuỗi tuần tự."
+      - time_label: "2017 - 2018"
+        title: "Transformer & Attention"
+        description: "Cơ chế Self-Attention phá vỡ nút thắt tuần tự của RNN."
+      - time_label: "2020 - 2023"
+        title: "Scaling Law & GPT-3/4"
+        description: "Tăng quy mô tham số tạo nên năng lực tư duy vượt bậc."
+      - time_label: "2024 - 2026+"
+        title: "Agentic & Multi-Modal"
+        description: "Tích hợp suy luận đa phương thức và khả năng tự chủ hành động."
+
+  - slide_id: "slide_04"
+    title: "Hiệu Năng & Chỉ Số Đột Phá"
+    subtitle: "So sánh kết quả benchmark trên tập dữ liệu chuẩn"
+    category_badge: "KẾT QUẢ THỰC NGHIỆM"
+    archetype: "kpi_grid"
+    bloom_verb: "Evaluate"
+    metrics:
+      - value: "94.8%"
+        label: "Độ Chính Xác (MMLU Benchmark)"
+        subtitle: "+18.2% so với baseline thế hệ trước"
+      - value: "3.8x"
+        label: "Tốc Độ Suy Luận (Tokens/s)"
+        subtitle: "Nhờ kỹ thuật KV-cache và FlashAttention-3"
+      - value: "45ms"
+        label: "Độ Trễ Phản Hồi (Time-To-First-Token)"
+        subtitle: "Đạt chuẩn tương tác thời gian thực"
+
+  - slide_id: "slide_05"
+    title: "Cơ Chế Tự Chú Ý (Self-Attention Mechanism)"
+    subtitle: "Cách mô hình nắm bắt ngữ cảnh toàn cục giữa các từ ngữ trong câu"
+    category_badge: "NGUYÊN LÝ CỐT LÕI"
+    archetype: "split_content_visual"
+    bloom_verb: "Synthesize"
+    cards:
+      - title: "Tính Toán Ma Trận Q, K, V"
+        subtitle: "Query, Key, Value vectors"
+        points:
+          - "Mỗi token được chiếu vào không gian vector Q, K, V"
+          - "Ma trận chú ý: Softmax(Q * K^T / sqrt(d_k))"
+          - "Tổng có trọng số các vector Value tạo ra ngữ cảnh"
+          - "Cho phép song song hóa 100% trong quá trình train"
+    visual_asset:
+      asset_id: "asset_self_attention_graph"
+      prompt_subject: "Self-Attention Query Key Value interaction matrix with glowing neural connections"
+      slot_type: "hero"
+      aspect_ratio: "16:9"
+      alt_text: "Sơ đồ tương tác ma trận Self-Attention"
