@@ -1,0 +1,38 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "build_id": {
+      "title": "Build Id",
+      "type": "string"
+    },
+    "checks": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "input_hash": {
+      "title": "Input Hash",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "summary": {
+      "additionalProperties": true,
+      "title": "Summary",
+      "type": "object"
+    }
+  },
+  "required": [
+    "build_id",
+    "input_hash"
+  ],
+  "title": "QAReport",
+  "type": "object"
+}

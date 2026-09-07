@@ -1,0 +1,7 @@
+schema_version: "1.0"
+project_id: sample-project
+title: Dự án mẫu
+language: vi
+backend: pptx-native
+profile_ref: null
+

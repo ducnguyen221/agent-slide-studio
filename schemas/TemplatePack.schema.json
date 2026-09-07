@@ -1,0 +1,216 @@
+{
+  "$defs": {
+    "Canvas": {
+      "additionalProperties": false,
+      "properties": {
+        "height": {
+          "default": 7.5,
+          "exclusiveMinimum": 0,
+          "title": "Height",
+          "type": "number"
+        },
+        "unit": {
+          "default": "inch",
+          "enum": [
+            "inch",
+            "px"
+          ],
+          "title": "Unit",
+          "type": "string"
+        },
+        "width": {
+          "default": 13.333,
+          "exclusiveMinimum": 0,
+          "title": "Width",
+          "type": "number"
+        }
+      },
+      "title": "Canvas",
+      "type": "object"
+    },
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "ref": {
+          "title": "Ref",
+          "type": "string"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha256"
+        }
+      },
+      "required": [
+        "ref"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    },
+    "TemplateSlot": {
+      "additionalProperties": false,
+      "properties": {
+        "capacity": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Capacity"
+        },
+        "id": {
+          "maxLength": 80,
+          "minLength": 1,
+          "pattern": "^[a-z][a-z0-9]*(?:[-_][a-z0-9]+)*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "maxLength": 80,
+          "minLength": 1,
+          "pattern": "^[a-z][a-z0-9]*(?:[-_][a-z0-9]+)*$",
+          "title": "Kind",
+          "type": "string"
+        },
+        "required": {
+          "default": false,
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "kind"
+      ],
+      "title": "TemplateSlot",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "backends": {
+      "items": {
+        "maxLength": 80,
+        "minLength": 1,
+        "pattern": "^[a-z][a-z0-9]*(?:[-_][a-z0-9]+)*$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Backends",
+      "type": "array"
+    },
+    "canvas": {
+      "$ref": "#/$defs/Canvas"
+    },
+    "certification": {
+      "additionalProperties": true,
+      "title": "Certification",
+      "type": "object"
+    },
+    "constraints": {
+      "additionalProperties": true,
+      "title": "Constraints",
+      "type": "object"
+    },
+    "files": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Files",
+      "type": "array"
+    },
+    "id": {
+      "maxLength": 80,
+      "minLength": 1,
+      "pattern": "^[a-z][a-z0-9]*(?:[-_][a-z0-9]+)*$",
+      "title": "Id",
+      "type": "string"
+    },
+    "locked_elements": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Locked Elements",
+      "type": "array"
+    },
+    "preview": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Preview"
+    },
+    "provenance": {
+      "items": {
+        "$ref": "#/$defs/EvidenceRef"
+      },
+      "title": "Provenance",
+      "type": "array"
+    },
+    "repeat_groups": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Repeat Groups",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "slots": {
+      "items": {
+        "$ref": "#/$defs/TemplateSlot"
+      },
+      "title": "Slots",
+      "type": "array"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "backends",
+    "canvas",
+    "files",
+    "slots"
+  ],
+  "title": "TemplatePack",
+  "type": "object"
+}

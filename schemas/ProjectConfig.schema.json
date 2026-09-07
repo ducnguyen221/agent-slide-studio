@@ -1,0 +1,119 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "approval_policy": {
+      "default": "ask",
+      "enum": [
+        "ask",
+        "auto-safe",
+        "full"
+      ],
+      "title": "Approval Policy",
+      "type": "string"
+    },
+    "authoring_mode": {
+      "default": "semantic",
+      "enum": [
+        "semantic",
+        "html"
+      ],
+      "title": "Authoring Mode",
+      "type": "string"
+    },
+    "backend": {
+      "default": "pptx-native",
+      "maxLength": 80,
+      "minLength": 1,
+      "pattern": "^[a-z][a-z0-9]*(?:[-_][a-z0-9]+)*$",
+      "title": "Backend",
+      "type": "string"
+    },
+    "budget": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "title": "Budget",
+      "type": "object"
+    },
+    "deck_path": {
+      "default": "storyboard/deck.yaml",
+      "title": "Deck Path",
+      "type": "string"
+    },
+    "language": {
+      "default": "vi",
+      "title": "Language",
+      "type": "string"
+    },
+    "limits": {
+      "additionalProperties": true,
+      "title": "Limits",
+      "type": "object"
+    },
+    "network_policy": {
+      "default": "offline",
+      "enum": [
+        "offline",
+        "allowlist",
+        "open"
+      ],
+      "title": "Network Policy",
+      "type": "string"
+    },
+    "profile_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Profile Ref"
+    },
+    "project_id": {
+      "maxLength": 80,
+      "minLength": 1,
+      "pattern": "^[a-z][a-z0-9]*(?:[-_][a-z0-9]+)*$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "purpose": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Purpose"
+    },
+    "requested_outputs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Requested Outputs",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "title": {
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    }
+  },
+  "required": [
+    "project_id",
+    "title"
+  ],
+  "title": "ProjectConfig",
+  "type": "object"
+}

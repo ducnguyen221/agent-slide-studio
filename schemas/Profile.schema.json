@@ -1,0 +1,177 @@
+{
+  "$defs": {
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "ref": {
+          "title": "Ref",
+          "type": "string"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha256"
+        }
+      },
+      "required": [
+        "ref"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    },
+    "ObservedValue": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "default": 1.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "origin": {
+          "enum": [
+            "measured",
+            "inferred",
+            "user-specified"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "boolean"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "value",
+        "origin"
+      ],
+      "title": "ObservedValue",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "composition": {
+      "additionalProperties": true,
+      "title": "Composition",
+      "type": "object"
+    },
+    "constraints": {
+      "additionalProperties": true,
+      "title": "Constraints",
+      "type": "object"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "display_name": {
+      "title": "Display Name",
+      "type": "string"
+    },
+    "id": {
+      "maxLength": 80,
+      "minLength": 1,
+      "pattern": "^[a-z][a-z0-9]*(?:[-_][a-z0-9]+)*$",
+      "title": "Id",
+      "type": "string"
+    },
+    "image_style": {
+      "additionalProperties": true,
+      "title": "Image Style",
+      "type": "object"
+    },
+    "motion": {
+      "additionalProperties": true,
+      "title": "Motion",
+      "type": "object"
+    },
+    "palette_by_role": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ObservedValue"
+      },
+      "title": "Palette By Role",
+      "type": "object"
+    },
+    "provenance": {
+      "items": {
+        "$ref": "#/$defs/EvidenceRef"
+      },
+      "title": "Provenance",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "spacing": {
+      "additionalProperties": true,
+      "title": "Spacing",
+      "type": "object"
+    },
+    "typography": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ObservedValue"
+      },
+      "title": "Typography",
+      "type": "object"
+    },
+    "version": {
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "display_name",
+    "description"
+  ],
+  "title": "Profile",
+  "type": "object"
+}

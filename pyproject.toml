@@ -1,20 +1,27 @@
-﻿[build-system]
-requires = ["setuptools>=61.0"]
+[build-system]
+requires = ["setuptools>=75,<82", "wheel>=0.45,<1"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "slidecraft"
+name = "agent-presentation-studio"
 version = "0.1.0"
-description = "Multi-Agent Presentation & Infographic Engine for PowerPoint"
-authors = [{ name = "Slidecraft Core Team" }]
+description = "Agent-first presentation authoring, build and verification core"
 readme = "README.md"
-requires-python = ">=3.10"
-dependencies = [
-    "python-pptx>=1.0.2",
-    "pydantic>=2.0.0",
-    "pyyaml>=6.0",
-    "pillow>=10.0.0",
-]
+requires-python = ">=3.12"
+dependencies = ["python-pptx>=1.0.2,<2", "pydantic>=2.12,<3", "PyYAML>=6.0.3,<7", "Pillow>=12.2,<13"]
+
+[project.optional-dependencies]
+test = ["pytest>=9,<10"]
 
 [project.scripts]
-slidecraft = "slidecraft.cli.main:main"
+presentation = "presentation_studio.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+presentation_studio = ["resources/**/*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
