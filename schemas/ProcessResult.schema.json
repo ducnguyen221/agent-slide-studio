@@ -1,0 +1,88 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "elapsed_seconds": {
+      "minimum": 0,
+      "title": "Elapsed Seconds",
+      "type": "number"
+    },
+    "exit_code": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Exit Code"
+    },
+    "failure_kind": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Failure Kind"
+    },
+    "pid": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pid"
+    },
+    "started": {
+      "title": "Started",
+      "type": "boolean"
+    },
+    "started_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Started At"
+    },
+    "stderr_tail": {
+      "default": "",
+      "title": "Stderr Tail",
+      "type": "string"
+    },
+    "stdout_tail": {
+      "default": "",
+      "title": "Stdout Tail",
+      "type": "string"
+    },
+    "timed_out": {
+      "default": false,
+      "title": "Timed Out",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "started",
+    "elapsed_seconds"
+  ],
+  "title": "ProcessResult",
+  "type": "object"
+}

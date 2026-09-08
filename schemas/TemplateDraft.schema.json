@@ -1,0 +1,131 @@
+{
+  "$defs": {
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "ref": {
+          "title": "Ref",
+          "type": "string"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha256"
+        }
+      },
+      "required": [
+        "ref"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    },
+    "StructureObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "kind": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "description"
+      ],
+      "title": "StructureObservation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "extracted_structure": {
+      "items": {
+        "$ref": "#/$defs/StructureObservation"
+      },
+      "title": "Extracted Structure",
+      "type": "array"
+    },
+    "observations": {
+      "items": {
+        "$ref": "#/$defs/StructureObservation"
+      },
+      "title": "Observations",
+      "type": "array"
+    },
+    "previews": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Previews",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_ref": {
+      "title": "Source Ref",
+      "type": "string"
+    },
+    "source_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Sha256",
+      "type": "string"
+    },
+    "uncertain": {
+      "items": {
+        "$ref": "#/$defs/StructureObservation"
+      },
+      "title": "Uncertain",
+      "type": "array"
+    },
+    "unsupported": {
+      "items": {
+        "$ref": "#/$defs/StructureObservation"
+      },
+      "title": "Unsupported",
+      "type": "array"
+    }
+  },
+  "required": [
+    "source_ref",
+    "source_sha256"
+  ],
+  "title": "TemplateDraft",
+  "type": "object"
+}

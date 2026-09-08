@@ -1,0 +1,199 @@
+{
+  "$defs": {
+    "FeatureVerification": {
+      "additionalProperties": false,
+      "properties": {
+        "environment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Environment"
+        },
+        "evidence_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence Ref"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "unverified",
+            "not_applicable"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "FeatureVerification",
+      "type": "object"
+    },
+    "RenderCapabilities": {
+      "additionalProperties": false,
+      "properties": {
+        "dimensions": {
+          "default": false,
+          "title": "Dimensions",
+          "type": "boolean"
+        },
+        "pdf": {
+          "default": false,
+          "title": "Pdf",
+          "type": "boolean"
+        },
+        "png": {
+          "default": false,
+          "title": "Png",
+          "type": "boolean"
+        }
+      },
+      "title": "RenderCapabilities",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "adapter_version": {
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "title": "Adapter Version",
+      "type": "string"
+    },
+    "animation_support": {
+      "default": false,
+      "title": "Animation Support",
+      "type": "boolean"
+    },
+    "available": {
+      "title": "Available",
+      "type": "boolean"
+    },
+    "backend_id": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+      "title": "Backend Id",
+      "type": "string"
+    },
+    "editable_elements": {
+      "items": {
+        "maxLength": 64,
+        "minLength": 1,
+        "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+        "type": "string"
+      },
+      "title": "Editable Elements",
+      "type": "array"
+    },
+    "engine_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Engine Version"
+    },
+    "notes_support_by_output": {
+      "patternProperties": {
+        "^[a-z0-9][a-z0-9-]{0,63}$": {
+          "type": "boolean"
+        }
+      },
+      "propertyNames": {
+        "maxLength": 64,
+        "minLength": 1
+      },
+      "title": "Notes Support By Output",
+      "type": "object"
+    },
+    "render_capabilities": {
+      "$ref": "#/$defs/RenderCapabilities"
+    },
+    "requires_network": {
+      "default": false,
+      "title": "Requires Network",
+      "type": "boolean"
+    },
+    "supported_elements": {
+      "items": {
+        "maxLength": 64,
+        "minLength": 1,
+        "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+        "type": "string"
+      },
+      "title": "Supported Elements",
+      "type": "array"
+    },
+    "supported_inputs": {
+      "items": {
+        "maxLength": 64,
+        "minLength": 1,
+        "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+        "type": "string"
+      },
+      "title": "Supported Inputs",
+      "type": "array"
+    },
+    "supported_outputs": {
+      "items": {
+        "maxLength": 64,
+        "minLength": 1,
+        "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+        "type": "string"
+      },
+      "title": "Supported Outputs",
+      "type": "array"
+    },
+    "unavailable_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Unavailable Reason"
+    },
+    "verification_by_feature": {
+      "patternProperties": {
+        "^[a-z0-9][a-z0-9-]{0,63}$": {
+          "$ref": "#/$defs/FeatureVerification"
+        }
+      },
+      "propertyNames": {
+        "maxLength": 64,
+        "minLength": 1
+      },
+      "title": "Verification By Feature",
+      "type": "object"
+    }
+  },
+  "required": [
+    "backend_id",
+    "adapter_version",
+    "available"
+  ],
+  "title": "BackendCapabilities",
+  "type": "object"
+}

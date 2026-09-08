@@ -5,5 +5,5 @@ purpose: Minh họa cấu trúc
 slides:
   - slide_id: s01
     title: Tiêu đề
-    layout: cover
-
+    layout_ref: builtin:cover@1.0.0
+    elements: []

@@ -1,9 +1,75 @@
 {
+  "$defs": {
+    "Budget": {
+      "additionalProperties": false,
+      "properties": {
+        "max_image_requests": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Max Image Requests",
+          "type": "integer"
+        },
+        "max_provider_cost": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Provider Cost"
+        },
+        "max_repair_rounds": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Max Repair Rounds",
+          "type": "integer"
+        }
+      },
+      "title": "Budget",
+      "type": "object"
+    },
+    "Limits": {
+      "additionalProperties": false,
+      "properties": {
+        "max_yaml_bytes": {
+          "default": 5242880,
+          "exclusiveMinimum": 0,
+          "title": "Max Yaml Bytes",
+          "type": "integer"
+        },
+        "max_yaml_depth": {
+          "default": 64,
+          "exclusiveMinimum": 0,
+          "title": "Max Yaml Depth",
+          "type": "integer"
+        },
+        "max_yaml_nodes": {
+          "default": 100000,
+          "exclusiveMinimum": 0,
+          "title": "Max Yaml Nodes",
+          "type": "integer"
+        },
+        "render_timeout_seconds": {
+          "default": 120,
+          "exclusiveMinimum": 0,
+          "title": "Render Timeout Seconds",
+          "type": "number"
+        }
+      },
+      "title": "Limits",
+      "type": "object"
+    }
+  },
   "additionalProperties": false,
   "properties": {
     "approval_policy": {
-      "default": "ask",
+      "default": "interactive",
       "enum": [
+        "interactive",
         "ask",
         "auto-safe",
         "full"
@@ -22,18 +88,14 @@
     },
     "backend": {
       "default": "pptx-native",
-      "maxLength": 80,
+      "maxLength": 64,
       "minLength": 1,
-      "pattern": "^[a-z][a-z0-9]*(?:[-_][a-z0-9]+)*$",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
       "title": "Backend",
       "type": "string"
     },
     "budget": {
-      "additionalProperties": {
-        "type": "number"
-      },
-      "title": "Budget",
-      "type": "object"
+      "$ref": "#/$defs/Budget"
     },
     "deck_path": {
       "default": "storyboard/deck.yaml",
@@ -46,14 +108,13 @@
       "type": "string"
     },
     "limits": {
-      "additionalProperties": true,
-      "title": "Limits",
-      "type": "object"
+      "$ref": "#/$defs/Limits"
     },
     "network_policy": {
-      "default": "offline",
+      "default": "local-only",
       "enum": [
         "offline",
+        "local-only",
         "allowlist",
         "open"
       ],
@@ -73,9 +134,9 @@
       "title": "Profile Ref"
     },
     "project_id": {
-      "maxLength": 80,
+      "maxLength": 64,
       "minLength": 1,
-      "pattern": "^[a-z][a-z0-9]*(?:[-_][a-z0-9]+)*$",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
       "title": "Project Id",
       "type": "string"
     },
@@ -93,8 +154,12 @@
     },
     "requested_outputs": {
       "items": {
+        "maxLength": 64,
+        "minLength": 1,
+        "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
         "type": "string"
       },
+      "minItems": 1,
       "title": "Requested Outputs",
       "type": "array"
     },

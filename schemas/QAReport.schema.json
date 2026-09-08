@@ -1,19 +1,179 @@
 {
+  "$defs": {
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "ref": {
+          "title": "Ref",
+          "type": "string"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha256"
+        }
+      },
+      "required": [
+        "ref"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    },
+    "QACheck": {
+      "additionalProperties": false,
+      "properties": {
+        "element_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Element Id"
+        },
+        "evidence_refs": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "explanation_vi": {
+          "title": "Explanation Vi",
+          "type": "string"
+        },
+        "rule_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warning",
+            "info"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "slide_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slide Id"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "unverified",
+            "not_applicable"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "suggested_action_vi": {
+          "title": "Suggested Action Vi",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id",
+        "severity",
+        "status",
+        "explanation_vi",
+        "suggested_action_vi"
+      ],
+      "title": "QACheck",
+      "type": "object"
+    },
+    "QASummary": {
+      "additionalProperties": false,
+      "properties": {
+        "failed": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Failed",
+          "type": "integer"
+        },
+        "not_applicable": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Not Applicable",
+          "type": "integer"
+        },
+        "passed": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Passed",
+          "type": "integer"
+        },
+        "unverified": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Unverified",
+          "type": "integer"
+        }
+      },
+      "title": "QASummary",
+      "type": "object"
+    }
+  },
   "additionalProperties": false,
   "properties": {
     "build_id": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
       "title": "Build Id",
       "type": "string"
     },
     "checks": {
       "items": {
-        "additionalProperties": true,
-        "type": "object"
+        "$ref": "#/$defs/QACheck"
       },
       "title": "Checks",
       "type": "array"
     },
     "input_hash": {
+      "pattern": "^[0-9a-f]{64}$",
       "title": "Input Hash",
       "type": "string"
     },
@@ -24,9 +184,7 @@
       "type": "string"
     },
     "summary": {
-      "additionalProperties": true,
-      "title": "Summary",
-      "type": "object"
+      "$ref": "#/$defs/QASummary"
     }
   },
   "required": [

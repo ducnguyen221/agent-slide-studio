@@ -1,0 +1,179 @@
+{
+  "$defs": {
+    "CLIError": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "pattern": "^[A-Z][A-Z0-9_]{0,63}$",
+          "title": "Code",
+          "type": "string"
+        },
+        "evidence_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence Ref"
+        },
+        "field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field"
+        },
+        "message_vi": {
+          "title": "Message Vi",
+          "type": "string"
+        },
+        "slide_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slide Id"
+        }
+      },
+      "required": [
+        "code",
+        "message_vi"
+      ],
+      "title": "CLIError",
+      "type": "object"
+    },
+    "RenderDimensions": {
+      "additionalProperties": false,
+      "properties": {
+        "height": {
+          "exclusiveMinimum": 0,
+          "title": "Height",
+          "type": "integer"
+        },
+        "width": {
+          "exclusiveMinimum": 0,
+          "title": "Width",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "width",
+        "height"
+      ],
+      "title": "RenderDimensions",
+      "type": "object"
+    },
+    "RenderedSlide": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "title": "RenderedSlide",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "build_id": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+      "title": "Build Id",
+      "type": "string"
+    },
+    "dimensions": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RenderDimensions"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "errors": {
+      "items": {
+        "$ref": "#/$defs/CLIError"
+      },
+      "title": "Errors",
+      "type": "array"
+    },
+    "font_manifest": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Font Manifest",
+      "type": "array"
+    },
+    "renderer_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Renderer Version"
+    },
+    "slides": {
+      "patternProperties": {
+        "^[a-z0-9][a-z0-9-]{0,63}$": {
+          "$ref": "#/$defs/RenderedSlide"
+        }
+      },
+      "propertyNames": {
+        "maxLength": 64,
+        "minLength": 1
+      },
+      "title": "Slides",
+      "type": "object"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed",
+        "unverified"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "build_id",
+    "status"
+  ],
+  "title": "RenderResult",
+  "type": "object"
+}

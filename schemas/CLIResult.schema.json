@@ -1,0 +1,149 @@
+{
+  "$defs": {
+    "CLIError": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "pattern": "^[A-Z][A-Z0-9_]{0,63}$",
+          "title": "Code",
+          "type": "string"
+        },
+        "evidence_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence Ref"
+        },
+        "field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field"
+        },
+        "message_vi": {
+          "title": "Message Vi",
+          "type": "string"
+        },
+        "slide_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slide Id"
+        }
+      },
+      "required": [
+        "code",
+        "message_vi"
+      ],
+      "title": "CLIError",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "command": {
+      "title": "Command",
+      "type": "string"
+    },
+    "data": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "items": {},
+            "type": "array"
+          },
+          {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": "Data",
+      "type": "object"
+    },
+    "errors": {
+      "items": {
+        "$ref": "#/$defs/CLIError"
+      },
+      "title": "Errors",
+      "type": "array"
+    },
+    "exit_code": {
+      "enum": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "title": "Exit Code",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed",
+        "unverified"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "command",
+    "status",
+    "exit_code"
+  ],
+  "title": "CLIResult",
+  "type": "object"
+}

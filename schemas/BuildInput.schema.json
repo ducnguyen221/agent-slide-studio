@@ -1,5 +1,215 @@
 {
   "$defs": {
+    "Asset": {
+      "additionalProperties": false,
+      "properties": {
+        "alt_text": {
+          "title": "Alt Text",
+          "type": "string"
+        },
+        "generation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Generation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "height": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height"
+        },
+        "id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "media_type": {
+          "title": "Media Type",
+          "type": "string"
+        },
+        "relative_path": {
+          "title": "Relative Path",
+          "type": "string"
+        },
+        "rights": {
+          "$ref": "#/$defs/RightsMetadata"
+        },
+        "role": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Role",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "source_kind": {
+          "enum": [
+            "user",
+            "generated",
+            "public",
+            "builtin"
+          ],
+          "title": "Source Kind",
+          "type": "string"
+        },
+        "source_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Ref"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Width"
+        }
+      },
+      "required": [
+        "id",
+        "relative_path",
+        "sha256",
+        "media_type",
+        "role",
+        "alt_text",
+        "source_kind"
+      ],
+      "title": "Asset",
+      "type": "object"
+    },
+    "AssetManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "assets": {
+          "items": {
+            "$ref": "#/$defs/Asset"
+          },
+          "title": "Assets",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "title": "AssetManifest",
+      "type": "object"
+    },
+    "BackendOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "patternProperties": {
+            "^[a-z0-9][a-z0-9-]{0,63}$": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "propertyNames": {
+            "maxLength": 64,
+            "minLength": 1
+          },
+          "title": "Extensions",
+          "type": "object"
+        },
+        "timeout_seconds": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timeout Seconds"
+        }
+      },
+      "title": "BackendOptions",
+      "type": "object"
+    },
+    "Budget": {
+      "additionalProperties": false,
+      "properties": {
+        "max_image_requests": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Max Image Requests",
+          "type": "integer"
+        },
+        "max_provider_cost": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Provider Cost"
+        },
+        "max_repair_rounds": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Max Repair Rounds",
+          "type": "integer"
+        }
+      },
+      "title": "Budget",
+      "type": "object"
+    },
     "Canvas": {
       "additionalProperties": false,
       "properties": {
@@ -261,6 +471,178 @@
       "title": "CodeElement",
       "type": "object"
     },
+    "DeckSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "audience": {
+          "minLength": 1,
+          "title": "Audience",
+          "type": "string"
+        },
+        "canvas": {
+          "$ref": "#/$defs/Canvas"
+        },
+        "purpose": {
+          "minLength": 1,
+          "title": "Purpose",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "slides": {
+          "items": {
+            "$ref": "#/$defs/SlideSpec"
+          },
+          "minItems": 1,
+          "title": "Slides",
+          "type": "array"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/SourceRef"
+          },
+          "title": "Sources",
+          "type": "array"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "audience",
+        "purpose",
+        "slides"
+      ],
+      "title": "DeckSpec",
+      "type": "object"
+    },
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "ref": {
+          "title": "Ref",
+          "type": "string"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha256"
+        }
+      },
+      "required": [
+        "ref"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    },
+    "Generation": {
+      "additionalProperties": false,
+      "properties": {
+        "actual_cost": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actual Cost"
+        },
+        "deterministic": {
+          "title": "Deterministic",
+          "type": "boolean"
+        },
+        "model_id": {
+          "title": "Model Id",
+          "type": "string"
+        },
+        "model_revision": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Revision"
+        },
+        "prompt_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Prompt Hash",
+          "type": "string"
+        },
+        "provider": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Provider",
+          "type": "string"
+        },
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        },
+        "style_profile_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Style Profile Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider",
+        "model_id",
+        "prompt_hash",
+        "deterministic",
+        "style_profile_hash",
+        "request_id"
+      ],
+      "title": "Generation",
+      "type": "object"
+    },
     "ImageContent": {
       "additionalProperties": false,
       "properties": {
@@ -370,6 +752,88 @@
         }
       },
       "title": "Learning",
+      "type": "object"
+    },
+    "Limits": {
+      "additionalProperties": false,
+      "properties": {
+        "max_yaml_bytes": {
+          "default": 5242880,
+          "exclusiveMinimum": 0,
+          "title": "Max Yaml Bytes",
+          "type": "integer"
+        },
+        "max_yaml_depth": {
+          "default": 64,
+          "exclusiveMinimum": 0,
+          "title": "Max Yaml Depth",
+          "type": "integer"
+        },
+        "max_yaml_nodes": {
+          "default": 100000,
+          "exclusiveMinimum": 0,
+          "title": "Max Yaml Nodes",
+          "type": "integer"
+        },
+        "render_timeout_seconds": {
+          "default": 120,
+          "exclusiveMinimum": 0,
+          "title": "Render Timeout Seconds",
+          "type": "number"
+        }
+      },
+      "title": "Limits",
+      "type": "object"
+    },
+    "ObservedValue": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "default": 1.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "origin": {
+          "enum": [
+            "measured",
+            "inferred",
+            "user-specified"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "boolean"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "value",
+        "origin"
+      ],
+      "title": "ObservedValue",
       "type": "object"
     },
     "ProcessContent": {
@@ -488,6 +952,181 @@
       "title": "ProcessStep",
       "type": "object"
     },
+    "ProfileLock": {
+      "additionalProperties": false,
+      "properties": {
+        "applied_overrides": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ObservedValue"
+          },
+          "title": "Applied Overrides",
+          "type": "object"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "font_resolution": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Font Resolution",
+          "type": "object"
+        },
+        "resolved_ref": {
+          "title": "Resolved Ref",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "source_scope": {
+          "enum": [
+            "builtin",
+            "user",
+            "project"
+          ],
+          "title": "Source Scope",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resolved_ref",
+        "source_scope",
+        "version",
+        "sha256",
+        "created_at"
+      ],
+      "title": "ProfileLock",
+      "type": "object"
+    },
+    "ProjectConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "approval_policy": {
+          "default": "interactive",
+          "enum": [
+            "interactive",
+            "ask",
+            "auto-safe",
+            "full"
+          ],
+          "title": "Approval Policy",
+          "type": "string"
+        },
+        "authoring_mode": {
+          "default": "semantic",
+          "enum": [
+            "semantic",
+            "html"
+          ],
+          "title": "Authoring Mode",
+          "type": "string"
+        },
+        "backend": {
+          "default": "pptx-native",
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Backend",
+          "type": "string"
+        },
+        "budget": {
+          "$ref": "#/$defs/Budget"
+        },
+        "deck_path": {
+          "default": "storyboard/deck.yaml",
+          "title": "Deck Path",
+          "type": "string"
+        },
+        "language": {
+          "default": "vi",
+          "title": "Language",
+          "type": "string"
+        },
+        "limits": {
+          "$ref": "#/$defs/Limits"
+        },
+        "network_policy": {
+          "default": "local-only",
+          "enum": [
+            "offline",
+            "local-only",
+            "allowlist",
+            "open"
+          ],
+          "title": "Network Policy",
+          "type": "string"
+        },
+        "profile_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile Ref"
+        },
+        "project_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "purpose": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purpose"
+        },
+        "requested_outputs": {
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Requested Outputs",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "title"
+      ],
+      "title": "ProjectConfig",
+      "type": "object"
+    },
     "QuoteContent": {
       "additionalProperties": false,
       "properties": {
@@ -566,6 +1205,54 @@
         "content"
       ],
       "title": "QuoteElement",
+      "type": "object"
+    },
+    "RightsMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "attribution": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attribution"
+        },
+        "license": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "License"
+        },
+        "redistributable": {
+          "default": false,
+          "title": "Redistributable",
+          "type": "boolean"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Url"
+        }
+      },
+      "title": "RightsMetadata",
       "type": "object"
     },
     "SlideSpec": {
@@ -853,6 +1540,35 @@
       "title": "TableElement",
       "type": "object"
     },
+    "TemplateLock": {
+      "additionalProperties": false,
+      "properties": {
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "template_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Template Id",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id",
+        "version",
+        "sha256"
+      ],
+      "title": "TemplateLock",
+      "type": "object"
+    },
     "TextContent": {
       "additionalProperties": false,
       "properties": {
@@ -1052,52 +1768,47 @@
   },
   "additionalProperties": false,
   "properties": {
-    "audience": {
-      "minLength": 1,
-      "title": "Audience",
+    "asset_manifest": {
+      "$ref": "#/$defs/AssetManifest"
+    },
+    "backend_options": {
+      "$ref": "#/$defs/BackendOptions"
+    },
+    "deck": {
+      "$ref": "#/$defs/DeckSpec"
+    },
+    "input_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Input Hash",
       "type": "string"
     },
-    "canvas": {
-      "$ref": "#/$defs/Canvas"
+    "profile_lock": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProfileLock"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
-    "purpose": {
-      "minLength": 1,
-      "title": "Purpose",
-      "type": "string"
+    "project": {
+      "$ref": "#/$defs/ProjectConfig"
     },
-    "schema_version": {
-      "const": "1.0",
-      "default": "1.0",
-      "title": "Schema Version",
-      "type": "string"
-    },
-    "slides": {
+    "template_locks": {
       "items": {
-        "$ref": "#/$defs/SlideSpec"
+        "$ref": "#/$defs/TemplateLock"
       },
-      "minItems": 1,
-      "title": "Slides",
+      "title": "Template Locks",
       "type": "array"
-    },
-    "sources": {
-      "items": {
-        "$ref": "#/$defs/SourceRef"
-      },
-      "title": "Sources",
-      "type": "array"
-    },
-    "title": {
-      "minLength": 1,
-      "title": "Title",
-      "type": "string"
     }
   },
   "required": [
-    "title",
-    "audience",
-    "purpose",
-    "slides"
+    "project",
+    "deck",
+    "input_hash"
   ],
-  "title": "DeckSpec",
+  "title": "BuildInput",
   "type": "object"
 }

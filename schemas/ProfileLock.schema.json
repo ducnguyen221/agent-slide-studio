@@ -93,84 +93,42 @@
   },
   "additionalProperties": false,
   "properties": {
-    "composition": {
+    "applied_overrides": {
       "additionalProperties": {
         "$ref": "#/$defs/ObservedValue"
       },
-      "title": "Composition",
+      "title": "Applied Overrides",
       "type": "object"
     },
-    "constraints": {
-      "additionalProperties": {
-        "$ref": "#/$defs/ObservedValue"
-      },
-      "title": "Constraints",
-      "type": "object"
-    },
-    "description": {
-      "minLength": 1,
-      "title": "Description",
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
       "type": "string"
     },
-    "display_name": {
-      "minLength": 1,
-      "title": "Display Name",
+    "font_resolution": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Font Resolution",
+      "type": "object"
+    },
+    "resolved_ref": {
+      "title": "Resolved Ref",
       "type": "string"
     },
-    "id": {
-      "maxLength": 64,
-      "minLength": 1,
-      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
-      "title": "Id",
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sha256",
       "type": "string"
     },
-    "image_style": {
-      "additionalProperties": {
-        "$ref": "#/$defs/ObservedValue"
-      },
-      "title": "Image Style",
-      "type": "object"
-    },
-    "motion": {
-      "additionalProperties": {
-        "$ref": "#/$defs/ObservedValue"
-      },
-      "title": "Motion",
-      "type": "object"
-    },
-    "palette_by_role": {
-      "additionalProperties": {
-        "$ref": "#/$defs/ObservedValue"
-      },
-      "title": "Palette By Role",
-      "type": "object"
-    },
-    "provenance": {
-      "items": {
-        "$ref": "#/$defs/EvidenceRef"
-      },
-      "title": "Provenance",
-      "type": "array"
-    },
-    "schema_version": {
-      "const": "1.0",
-      "default": "1.0",
-      "title": "Schema Version",
+    "source_scope": {
+      "enum": [
+        "builtin",
+        "user",
+        "project"
+      ],
+      "title": "Source Scope",
       "type": "string"
-    },
-    "spacing": {
-      "additionalProperties": {
-        "$ref": "#/$defs/ObservedValue"
-      },
-      "title": "Spacing",
-      "type": "object"
-    },
-    "typography": {
-      "additionalProperties": {
-        "$ref": "#/$defs/ObservedValue"
-      },
-      "title": "Typography",
-      "type": "object"
     },
     "version": {
       "pattern": "^\\d+\\.\\d+\\.\\d+$",
@@ -179,11 +137,12 @@
     }
   },
   "required": [
-    "id",
+    "resolved_ref",
+    "source_scope",
     "version",
-    "display_name",
-    "description"
+    "sha256",
+    "created_at"
   ],
-  "title": "Profile",
+  "title": "ProfileLock",
   "type": "object"
 }

@@ -32,9 +32,9 @@
           "title": "Height"
         },
         "id": {
-          "maxLength": 80,
+          "maxLength": 64,
           "minLength": 1,
-          "pattern": "^[a-z][a-z0-9]*(?:[-_][a-z0-9]+)*$",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
           "title": "Id",
           "type": "string"
         },
@@ -47,11 +47,12 @@
           "type": "string"
         },
         "rights": {
-          "additionalProperties": true,
-          "title": "Rights",
-          "type": "object"
+          "$ref": "#/$defs/RightsMetadata"
         },
         "role": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
           "title": "Role",
           "type": "string"
         },
@@ -124,6 +125,10 @@
           "default": null,
           "title": "Actual Cost"
         },
+        "deterministic": {
+          "title": "Deterministic",
+          "type": "boolean"
+        },
         "model_id": {
           "title": "Model Id",
           "type": "string"
@@ -146,6 +151,9 @@
           "type": "string"
         },
         "provider": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
           "title": "Provider",
           "type": "string"
         },
@@ -166,6 +174,7 @@
           "title": "Seed"
         },
         "style_profile_hash": {
+          "pattern": "^[0-9a-f]{64}$",
           "title": "Style Profile Hash",
           "type": "string"
         }
@@ -174,10 +183,59 @@
         "provider",
         "model_id",
         "prompt_hash",
+        "deterministic",
         "style_profile_hash",
         "request_id"
       ],
       "title": "Generation",
+      "type": "object"
+    },
+    "RightsMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "attribution": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attribution"
+        },
+        "license": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "License"
+        },
+        "redistributable": {
+          "default": false,
+          "title": "Redistributable",
+          "type": "boolean"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Url"
+        }
+      },
+      "title": "RightsMetadata",
       "type": "object"
     }
   },

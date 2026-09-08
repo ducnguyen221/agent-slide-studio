@@ -4,10 +4,27 @@
       "additionalProperties": false,
       "properties": {
         "height": {
-          "default": 7.5,
-          "exclusiveMinimum": 0,
-          "title": "Height",
-          "type": "number"
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height"
+        },
+        "ratio": {
+          "default": "16:9",
+          "enum": [
+            "16:9",
+            "4:3",
+            "custom"
+          ],
+          "title": "Ratio",
+          "type": "string"
         },
         "unit": {
           "default": "inch",
@@ -19,13 +36,66 @@
           "type": "string"
         },
         "width": {
-          "default": 13.333,
-          "exclusiveMinimum": 0,
-          "title": "Width",
-          "type": "number"
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Width"
         }
       },
       "title": "Canvas",
+      "type": "object"
+    },
+    "CapacityHint": {
+      "additionalProperties": false,
+      "properties": {
+        "max_characters": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Characters"
+        },
+        "max_lines": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Lines"
+        },
+        "min_characters": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Characters"
+        }
+      },
+      "title": "CapacityHint",
       "type": "object"
     },
     "EvidenceRef": {
@@ -67,10 +137,113 @@
       "title": "EvidenceRef",
       "type": "object"
     },
-    "TemplateSlot": {
+    "LockedElement": {
       "additionalProperties": false,
       "properties": {
-        "capacity": {
+        "id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "reason"
+      ],
+      "title": "LockedElement",
+      "type": "object"
+    },
+    "RepeatGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "max_items": {
+          "minimum": 1,
+          "title": "Max Items",
+          "type": "integer"
+        },
+        "members": {
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Members",
+          "type": "array"
+        },
+        "min_items": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Min Items",
+          "type": "integer"
+        },
+        "reflow_policy": {
+          "enum": [
+            "fixed",
+            "compact",
+            "wrap",
+            "switch-layout"
+          ],
+          "title": "Reflow Policy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "members",
+        "max_items",
+        "reflow_policy"
+      ],
+      "title": "RepeatGroup",
+      "type": "object"
+    },
+    "TemplateCertification": {
+      "additionalProperties": false,
+      "properties": {
+        "render_evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Render Evidence",
+          "type": "array"
+        },
+        "rights_verified": {
+          "default": false,
+          "title": "Rights Verified",
+          "type": "boolean"
+        },
+        "status": {
+          "default": "candidate",
+          "enum": [
+            "candidate",
+            "certified",
+            "rejected"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "title": "TemplateCertification",
+      "type": "object"
+    },
+    "TemplateConstraints": {
+      "additionalProperties": false,
+      "properties": {
+        "max_slides": {
           "anyOf": [
             {
               "minimum": 1,
@@ -81,21 +254,90 @@
             }
           ],
           "default": null,
-          "title": "Capacity"
+          "title": "Max Slides"
+        },
+        "min_font_size": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Font Size"
+        }
+      },
+      "title": "TemplateConstraints",
+      "type": "object"
+    },
+    "TemplateSlot": {
+      "additionalProperties": false,
+      "properties": {
+        "capacity_hint": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CapacityHint"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "id": {
-          "maxLength": 80,
+          "maxLength": 64,
           "minLength": 1,
-          "pattern": "^[a-z][a-z0-9]*(?:[-_][a-z0-9]+)*$",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
           "title": "Id",
           "type": "string"
         },
         "kind": {
-          "maxLength": 80,
+          "maxLength": 64,
           "minLength": 1,
-          "pattern": "^[a-z][a-z0-9]*(?:[-_][a-z0-9]+)*$",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
           "title": "Kind",
           "type": "string"
+        },
+        "max_items": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Items"
+        },
+        "min_items": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Items"
+        },
+        "placement_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Placement Ref"
         },
         "required": {
           "default": false,
@@ -115,9 +357,9 @@
   "properties": {
     "backends": {
       "items": {
-        "maxLength": 80,
+        "maxLength": 64,
         "minLength": 1,
-        "pattern": "^[a-z][a-z0-9]*(?:[-_][a-z0-9]+)*$",
+        "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
         "type": "string"
       },
       "minItems": 1,
@@ -128,32 +370,29 @@
       "$ref": "#/$defs/Canvas"
     },
     "certification": {
-      "additionalProperties": true,
-      "title": "Certification",
-      "type": "object"
+      "$ref": "#/$defs/TemplateCertification"
     },
     "constraints": {
-      "additionalProperties": true,
-      "title": "Constraints",
-      "type": "object"
+      "$ref": "#/$defs/TemplateConstraints"
     },
     "files": {
       "items": {
         "type": "string"
       },
+      "minItems": 1,
       "title": "Files",
       "type": "array"
     },
     "id": {
-      "maxLength": 80,
+      "maxLength": 64,
       "minLength": 1,
-      "pattern": "^[a-z][a-z0-9]*(?:[-_][a-z0-9]+)*$",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
       "title": "Id",
       "type": "string"
     },
     "locked_elements": {
       "items": {
-        "type": "string"
+        "$ref": "#/$defs/LockedElement"
       },
       "title": "Locked Elements",
       "type": "array"
@@ -179,8 +418,7 @@
     },
     "repeat_groups": {
       "items": {
-        "additionalProperties": true,
-        "type": "object"
+        "$ref": "#/$defs/RepeatGroup"
       },
       "title": "Repeat Groups",
       "type": "array"
@@ -199,6 +437,7 @@
       "type": "array"
     },
     "version": {
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
       "title": "Version",
       "type": "string"
     }

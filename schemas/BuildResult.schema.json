@@ -1,0 +1,337 @@
+{
+  "$defs": {
+    "CLIError": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "pattern": "^[A-Z][A-Z0-9_]{0,63}$",
+          "title": "Code",
+          "type": "string"
+        },
+        "evidence_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence Ref"
+        },
+        "field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field"
+        },
+        "message_vi": {
+          "title": "Message Vi",
+          "type": "string"
+        },
+        "slide_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slide Id"
+        }
+      },
+      "required": [
+        "code",
+        "message_vi"
+      ],
+      "title": "CLIError",
+      "type": "object"
+    },
+    "OutputArtifact": {
+      "additionalProperties": false,
+      "properties": {
+        "editability": {
+          "enum": [
+            "native",
+            "raster",
+            "mixed",
+            "not_applicable"
+          ],
+          "title": "Editability",
+          "type": "string"
+        },
+        "limitations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "media_type": {
+          "title": "Media Type",
+          "type": "string"
+        },
+        "notes_included": {
+          "title": "Notes Included",
+          "type": "boolean"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "slide_count": {
+          "exclusiveMinimum": 0,
+          "title": "Slide Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "path",
+        "media_type",
+        "sha256",
+        "slide_count",
+        "editability",
+        "notes_included"
+      ],
+      "title": "OutputArtifact",
+      "type": "object"
+    },
+    "ProcessResult": {
+      "additionalProperties": false,
+      "properties": {
+        "elapsed_seconds": {
+          "minimum": 0,
+          "title": "Elapsed Seconds",
+          "type": "number"
+        },
+        "exit_code": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exit Code"
+        },
+        "failure_kind": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Failure Kind"
+        },
+        "pid": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pid"
+        },
+        "started": {
+          "title": "Started",
+          "type": "boolean"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Started At"
+        },
+        "stderr_tail": {
+          "default": "",
+          "title": "Stderr Tail",
+          "type": "string"
+        },
+        "stdout_tail": {
+          "default": "",
+          "title": "Stdout Tail",
+          "type": "string"
+        },
+        "timed_out": {
+          "default": false,
+          "title": "Timed Out",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "started",
+        "elapsed_seconds"
+      ],
+      "title": "ProcessResult",
+      "type": "object"
+    },
+    "SlideBuildResult": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_paths": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Artifact Paths",
+          "type": "array"
+        },
+        "errors": {
+          "items": {
+            "$ref": "#/$defs/CLIError"
+          },
+          "title": "Errors",
+          "type": "array"
+        },
+        "slide_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Slide Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "unverified"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slide_id",
+        "status"
+      ],
+      "title": "SlideBuildResult",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "actual_slide_ids": {
+      "items": {
+        "maxLength": 64,
+        "minLength": 1,
+        "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+        "type": "string"
+      },
+      "title": "Actual Slide Ids",
+      "type": "array"
+    },
+    "backend": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+      "title": "Backend",
+      "type": "string"
+    },
+    "build_id": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+      "title": "Build Id",
+      "type": "string"
+    },
+    "expected_slide_ids": {
+      "items": {
+        "maxLength": 64,
+        "minLength": 1,
+        "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+        "type": "string"
+      },
+      "title": "Expected Slide Ids",
+      "type": "array"
+    },
+    "input_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Input Hash",
+      "type": "string"
+    },
+    "outputs": {
+      "items": {
+        "$ref": "#/$defs/OutputArtifact"
+      },
+      "title": "Outputs",
+      "type": "array"
+    },
+    "process_result": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProcessResult"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "slide_results": {
+      "items": {
+        "$ref": "#/$defs/SlideBuildResult"
+      },
+      "title": "Slide Results",
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed",
+        "unverified"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "build_id",
+    "backend",
+    "status",
+    "input_hash"
+  ],
+  "title": "BuildResult",
+  "type": "object"
+}
