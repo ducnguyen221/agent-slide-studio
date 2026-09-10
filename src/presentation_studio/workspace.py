@@ -91,7 +91,7 @@ def safe_path(root: Path, relative: str | Path) -> Path:
     return candidate
 
 
-def _load_yaml_bytes(
+def load_yaml_bytes_bounded(
     raw: bytes,
     *,
     max_bytes: int,
@@ -141,7 +141,7 @@ def load_yaml_bounded(
         raise
     if size > max_bytes:
         raise InputLimitError(f"YAML exceeds {max_bytes} bytes")
-    return _load_yaml_bytes(
+    return load_yaml_bytes_bounded(
         path.read_bytes(),
         max_bytes=max_bytes,
         max_depth=max_depth,
@@ -266,7 +266,7 @@ def resolve_profile(ref: str, paths: WorkspacePaths) -> ProfileLock:
         raw = path.read_bytes()
 
     profile = Profile.model_validate(
-        _load_yaml_bytes(
+        load_yaml_bytes_bounded(
             raw,
             max_bytes=DEFAULT_MAX_YAML_BYTES,
             max_depth=DEFAULT_MAX_YAML_DEPTH,

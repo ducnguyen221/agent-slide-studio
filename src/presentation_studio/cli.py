@@ -7,6 +7,7 @@ import sys
 import unicodedata
 from pathlib import Path
 from typing import Any
+from uuid import uuid4
 
 from pydantic import ValidationError
 
@@ -27,6 +28,9 @@ from .workspace import (
 Handler = Callable[..., object]
 _BACKENDS: dict[str, Handler] = {}
 _RENDERERS: dict[str, Handler] = {}
+_KNOWN_COMMANDS = frozenset(
+    {"init", "build", "doctor", "validate", "render", "audit", "export", "migrate"}
+)
 
 
 class CLIUsageError(ValueError):
@@ -56,13 +60,40 @@ def _emit(result: CLIResult, json_mode: bool) -> int:
     return result.exit_code
 
 
-def _failed(command: str, code: str, message: str, exit_code: int) -> CLIResult:
+def _failed(
+    command: str,
+    code: str,
+    message: str,
+    exit_code: int,
+    *,
+    evidence_ref: str | None = None,
+) -> CLIResult:
     return CLIResult(
         command=command,
         status="failed",
         exit_code=exit_code,
-        errors=[CLIError(code=code, message_vi=message)],
+        errors=[
+            CLIError(
+                code=code,
+                message_vi=message,
+                evidence_ref=evidence_ref,
+            )
+        ],
     )
+
+
+def _emit_technical_error(command: str, category: str, exc: Exception) -> str:
+    safe_command = command if command in _KNOWN_COMMANDS else "unknown"
+    exception_type = re.sub(r"[^A-Za-z0-9_]", "_", type(exc).__name__)[:64]
+    diagnostic_id = uuid4().hex
+    print(
+        "technical-error "
+        f"diagnostic_id={diagnostic_id} "
+        f"command={safe_command} category={category} "
+        f"exception_type={exception_type or 'Exception'}",
+        file=sys.stderr,
+    )
+    return diagnostic_id
 
 
 def _slug(value: str) -> str:
@@ -88,7 +119,7 @@ def _validation_message(exc: ValidationError) -> str:
 
 def _command_hint(argv: list[str]) -> str:
     for value in argv:
-        if not value.startswith("-"):
+        if value in _KNOWN_COMMANDS:
             return value
     return "unknown"
 
@@ -146,12 +177,14 @@ def _invoke_handler(
 ) -> CLIResult:
     try:
         result = handler(*args)
-    except Exception:
+    except Exception as exc:
+        diagnostic_id = _emit_technical_error(command, "backend", exc)
         return _failed(
             command,
             "BACKEND_FAILURE",
-            "Backend thất bại; xem log kỹ thuật đã được lọc.",
+            "Backend thất bại; mã chẩn đoán đã được ghi vào stderr.",
             5,
+            evidence_ref=f"diagnostic:{diagnostic_id}",
         )
     if not isinstance(result, CLIResult) or result.command != command:
         return _failed(
@@ -261,7 +294,14 @@ def run(argv: list[str] | None = None) -> int:
         json_mode = args.json
         command = args.command
         result = _run_command(args)
-    except (CLIUsageError, WorkspaceInputError, InvalidYAML) as exc:
+    except CLIUsageError:
+        result = _failed(
+            command,
+            "INVALID_INPUT",
+            "Tham số dòng lệnh không hợp lệ.",
+            2,
+        )
+    except (WorkspaceInputError, InvalidYAML) as exc:
         result = _failed(command, "INVALID_INPUT", str(exc), 2)
     except ValidationError as exc:
         result = _failed(command, "INVALID_INPUT", _validation_message(exc), 2)
@@ -275,8 +315,15 @@ def run(argv: list[str] | None = None) -> int:
         result = _failed(command, "INPUT_NOT_FOUND", "Không tìm thấy đầu vào được yêu cầu.", 2)
     except OSError:
         result = _failed(command, "FILESYSTEM_FAILURE", "Thao tác hệ thống tệp thất bại.", 5)
-    except Exception:
-        result = _failed(command, "INTERNAL_ERROR", "Lỗi nội bộ đã được lọc.", 5)
+    except Exception as exc:
+        diagnostic_id = _emit_technical_error(command, "internal", exc)
+        result = _failed(
+            command,
+            "INTERNAL_ERROR",
+            "Lỗi nội bộ đã được lọc; mã chẩn đoán đã được ghi vào stderr.",
+            5,
+            evidence_ref=f"diagnostic:{diagnostic_id}",
+        )
     return _emit(result, json_mode)
 
 

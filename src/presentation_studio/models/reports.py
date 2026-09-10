@@ -175,6 +175,18 @@ class BuildResult(StrictModel):
                 raise ValueError("passed build requires a successful terminal process")
             if not self.expected_slide_ids or self.expected_slide_ids != self.actual_slide_ids:
                 raise ValueError("passed build requires all expected slides in order")
+            if len(set(self.expected_slide_ids)) != len(self.expected_slide_ids):
+                raise ValueError("passed build requires unique expected slide ids")
+            result_ids = [result.slide_id for result in self.slide_results]
+            if result_ids != self.expected_slide_ids:
+                raise ValueError(
+                    "passed build requires one slide result per expected slide in order"
+                )
+            if any(
+                result.status != "passed" or result.errors
+                for result in self.slide_results
+            ):
+                raise ValueError("passed build requires every slide result to pass")
             if any(output.slide_count != len(self.actual_slide_ids) for output in self.outputs):
                 raise ValueError("output slide_count must match actual slides")
         return self

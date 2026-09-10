@@ -199,6 +199,7 @@ def test_build_result_invariants_reject_false_success() -> None:
         "process_result": _process(),
         "expected_slide_ids": ["s01"],
         "actual_slide_ids": ["s01"],
+        "slide_results": [{"slide_id": "s01", "status": "passed"}],
     }
     with pytest.raises(ValidationError):
         BuildResult(**common, outputs=[])
@@ -214,6 +215,65 @@ def test_build_result_invariants_reject_false_success() -> None:
         )
     with pytest.raises(ValidationError):
         BuildResult(**{**common, "process_result": None}, outputs=[_artifact()])
+    with pytest.raises(ValidationError):
+        BuildResult(
+            **{
+                **common,
+                "expected_slide_ids": ["s01", "s01"],
+                "actual_slide_ids": ["s01", "s01"],
+                "slide_results": [
+                    {"slide_id": "s01", "status": "passed"},
+                    {"slide_id": "s01", "status": "passed"},
+                ],
+            },
+            outputs=[{**_artifact().model_dump(), "slide_count": 2}],
+        )
+
+
+@pytest.mark.parametrize(
+    "slide_results",
+    [
+        [],
+        [{"slide_id": "s01", "status": "failed"}],
+        [{"slide_id": "s01", "status": "unverified"}],
+        [
+            {"slide_id": "s01", "status": "passed"},
+            {"slide_id": "s01", "status": "passed"},
+        ],
+    ],
+)
+def test_passed_build_requires_one_passed_result_per_expected_slide(
+    slide_results: list[dict[str, str]],
+) -> None:
+    common = {
+        "build_id": "b1",
+        "backend": "pptx-native",
+        "status": "passed",
+        "input_hash": SHA_B,
+        "process_result": _process(),
+        "expected_slide_ids": ["s01"],
+        "actual_slide_ids": ["s01"],
+        "outputs": [_artifact()],
+    }
+
+    with pytest.raises(ValidationError):
+        BuildResult(**common, slide_results=slide_results)
+
+
+def test_passed_build_accepts_complete_ordered_slide_results() -> None:
+    result = BuildResult(
+        build_id="b1",
+        backend="pptx-native",
+        status="passed",
+        input_hash=SHA_B,
+        process_result=_process(),
+        expected_slide_ids=["s01"],
+        actual_slide_ids=["s01"],
+        slide_results=[{"slide_id": "s01", "status": "passed"}],
+        outputs=[_artifact()],
+    )
+
+    assert result.status == "passed"
 
 
 def test_nested_contracts_are_strict_and_typed() -> None:

@@ -58,16 +58,82 @@ def test_backend_exception_is_sanitized_and_not_misclassified_as_invalid_input(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
     def broken(paths: object) -> None:
-        raise ValueError("token=synthetic-secret")
+        raise ValueError(r"token=synthetic-secret path=C:\private\deck.yaml")
 
     cli.register_backend("broken", broken)
-    exit_code, payload = _run_json(
-        capsys,
-        ["build", "--workspace", str(tmp_path), "--backend", "broken"],
+    exit_code = cli.run(
+        [
+            "build",
+            "--workspace",
+            str(tmp_path),
+            "--backend",
+            "broken",
+            "--json",
+        ]
     )
+    captured = capsys.readouterr()
+    payload = json.loads(captured.out)
+
     assert exit_code == 5
     assert payload["errors"][0]["code"] == "BACKEND_FAILURE"
-    assert "synthetic-secret" not in json.dumps(payload)
+    combined = captured.out + captured.err
+    diagnostic_ref = payload["errors"][0]["evidence_ref"]
+    assert diagnostic_ref.startswith("diagnostic:")
+    diagnostic_id = diagnostic_ref.removeprefix("diagnostic:")
+    assert (
+        f"technical-error diagnostic_id={diagnostic_id} "
+        "command=build category=backend exception_type=ValueError"
+    ) in captured.err
+    assert "synthetic-secret" not in combined
+    assert "private" not in combined
+    assert "deck.yaml" not in combined
+    assert "Traceback" not in combined
+
+
+def test_internal_exception_emits_sanitized_technical_diagnostic(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def broken(args: object) -> None:
+        raise RuntimeError(r"token=synthetic-secret path=C:\private\deck.yaml")
+
+    monkeypatch.setattr(cli, "_run_command", broken)
+    exit_code = cli.run(
+        ["doctor", "--workspace", str(tmp_path), "--json"]
+    )
+    captured = capsys.readouterr()
+    payload = json.loads(captured.out)
+
+    assert exit_code == 5
+    assert payload["errors"][0]["code"] == "INTERNAL_ERROR"
+    combined = captured.out + captured.err
+    diagnostic_ref = payload["errors"][0]["evidence_ref"]
+    assert diagnostic_ref.startswith("diagnostic:")
+    diagnostic_id = diagnostic_ref.removeprefix("diagnostic:")
+    assert (
+        f"technical-error diagnostic_id={diagnostic_id} "
+        "command=doctor category=internal exception_type=RuntimeError"
+    ) in captured.err
+    assert "synthetic-secret" not in combined
+    assert "private" not in combined
+    assert "deck.yaml" not in combined
+    assert "Traceback" not in combined
+
+
+def test_invalid_syntax_does_not_echo_unknown_positional_input(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    synthetic_secret = "synthetic-secret-positional"
+
+    exit_code = cli.run([synthetic_secret, "--json"])
+    captured = capsys.readouterr()
+    payload = json.loads(captured.out)
+
+    assert exit_code == 2
+    assert payload["command"] == "unknown"
+    assert payload["errors"][0]["code"] == "INVALID_INPUT"
+    assert synthetic_secret not in captured.out + captured.err
 
 
 def test_permission_error_is_structured_json(

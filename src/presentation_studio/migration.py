@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import argparse
+import ctypes
 from dataclasses import dataclass
+import errno
 import hashlib
 import json
 import os
@@ -12,16 +14,24 @@ import sys
 import tempfile
 import unicodedata
 from typing import Any
+from uuid import uuid4
 
 from pydantic import ValidationError
 import yaml
 
 from .models import CLIError, CLIResult, DeckSpec, ProjectConfig
-from .workspace import load_yaml_bounded
+from .workspace import (
+    DEFAULT_MAX_YAML_BYTES,
+    DEFAULT_MAX_YAML_DEPTH,
+    DEFAULT_MAX_YAML_NODES,
+    load_yaml_bytes_bounded,
+)
 
 
 class MigrationInputError(ValueError):
-    pass
+    def __init__(self, message: str, *, location: str | None = None):
+        super().__init__(message)
+        self.location = location
 
 
 class MigrationConflict(RuntimeError):
@@ -51,6 +61,55 @@ class Candidate:
         }
 
 
+def _fsync_directory(directory: Path) -> None:
+    try:
+        descriptor = os.open(directory, os.O_RDONLY)
+    except OSError:
+        return
+    try:
+        os.fsync(descriptor)
+    except OSError:
+        pass
+    finally:
+        os.close(descriptor)
+
+
+def _rename_noreplace(source: Path, destination: Path) -> None:
+    """Atomically rename a directory while refusing every existing destination."""
+    if os.name == "nt":
+        os.rename(source, destination)
+        return
+
+    library = ctypes.CDLL(None, use_errno=True)
+    encoded_source = os.fsencode(source)
+    encoded_destination = os.fsencode(destination)
+    if sys.platform.startswith("linux"):
+        rename = getattr(library, "renameat2", None)
+        if rename is None:
+            raise OSError(errno.ENOTSUP, "atomic no-replace rename is unavailable")
+        rename.argtypes = [
+            ctypes.c_int,
+            ctypes.c_char_p,
+            ctypes.c_int,
+            ctypes.c_char_p,
+            ctypes.c_uint,
+        ]
+        rename.restype = ctypes.c_int
+        result = rename(-100, encoded_source, -100, encoded_destination, 1)
+    elif sys.platform == "darwin":
+        rename = getattr(library, "renamex_np", None)
+        if rename is None:
+            raise OSError(errno.ENOTSUP, "atomic no-replace rename is unavailable")
+        rename.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_uint]
+        rename.restype = ctypes.c_int
+        result = rename(encoded_source, encoded_destination, 4)
+    else:
+        raise OSError(errno.ENOTSUP, "atomic no-replace rename is unavailable")
+    if result != 0:
+        error_number = ctypes.get_errno()
+        raise OSError(error_number, os.strerror(error_number), destination)
+
+
 def _slug(value: str, *, fallback: str) -> str:
     value = value.replace("Đ", "D").replace("đ", "d")
     ascii_value = (
@@ -61,6 +120,35 @@ def _slug(value: str, *, fallback: str) -> str:
     )
     slug = re.sub(r"[^a-z0-9]+", "-", ascii_value).strip("-")
     return (slug or fallback)[:64].rstrip("-")
+
+
+def _scalar_text(
+    value: Any,
+    *,
+    location: str,
+    default: str = "",
+) -> str:
+    if value is None:
+        return default
+    if isinstance(value, (str, int, float, bool)):
+        return str(value)
+    raise MigrationInputError(
+        f"{location} must be a scalar value", location=location
+    )
+
+
+def _field_text(
+    values: dict[str, Any],
+    key: str,
+    *,
+    location: str,
+    default: str = "",
+    fallback_key: str | None = None,
+) -> str:
+    value = values.get(key)
+    if value is None or value == "":
+        value = values.get(fallback_key) if fallback_key is not None else None
+    return _scalar_text(value, location=location, default=default)
 
 
 def _is_link_or_junction(path: Path) -> bool:
@@ -156,17 +244,37 @@ def _markdown_notes(candidate: Candidate) -> str:
         raise MigrationInputError("legacy Markdown must be UTF-8") from exc
 
 
-def _text_content(item: dict[str, Any]) -> dict[str, Any]:
+def _text_content(
+    item: dict[str, Any], *, location: str
+) -> tuple[dict[str, Any], list[str]]:
     known = {"title", "subtitle", "points", "value", "label"}
-    title = str(item.get("title") or item.get("value") or "")
-    subtitle = str(item.get("subtitle") or "")
-    points = item.get("points") or []
+    title = _field_text(
+        item,
+        "title",
+        fallback_key="value",
+        location=f"{location}.title",
+    )
+    subtitle = _field_text(item, "subtitle", location=f"{location}.subtitle")
+    points = item.get("points")
+    if points is None:
+        points = []
     if not isinstance(points, list):
-        points = [str(points)]
+        raise MigrationInputError(
+            f"{location}.points must be a list", location=f"{location}.points"
+        )
     return {
         "text": title,
-        "label": str(item.get("label") or subtitle) or None,
-        "items": [str(point) for point in points],
+        "label": _field_text(
+            item,
+            "label",
+            location=f"{location}.label",
+            default=subtitle,
+        )
+        or None,
+        "items": [
+            _scalar_text(point, location=f"{location}.points[{index}]")
+            for index, point in enumerate(points)
+        ],
     }, sorted(set(item) - known)
 
 
@@ -176,13 +284,23 @@ def _map_elements(slide: dict[str, Any], slide_index: int) -> tuple[list[dict[st
     element_index = 1
 
     for role, field in (("card", "cards"), ("metric", "metrics")):
-        values = slide.get(field) or []
-        if values and not isinstance(values, list):
-            raise MigrationInputError(f"slides[{slide_index}].{field} must be a list")
-        for item in values:
+        values = slide.get(field)
+        if values is None:
+            values = []
+        if not isinstance(values, list):
+            location = f"slides[{slide_index}].{field}"
+            raise MigrationInputError(
+                f"{location} must be a list", location=location
+            )
+        for item_index, item in enumerate(values):
             if not isinstance(item, dict):
-                raise MigrationInputError(f"slides[{slide_index}].{field} item must be a mapping")
-            content, extra = _text_content(item)
+                location = f"slides[{slide_index}].{field}[{item_index}]"
+                raise MigrationInputError(
+                    f"{location} must be a mapping", location=location
+                )
+            content, extra = _text_content(
+                item, location=f"slides[{slide_index}].{field}[{item_index}]"
+            )
             elements.append(
                 {
                     "element_id": f"e{element_index:02d}",
@@ -194,24 +312,50 @@ def _map_elements(slide: dict[str, Any], slide_index: int) -> tuple[list[dict[st
             unmapped.extend(f"{field}.{name}" for name in extra)
             element_index += 1
 
-    process_steps = slide.get("process_steps") or []
+    process_steps = slide.get("process_steps")
+    if process_steps is None:
+        process_steps = []
+    if not isinstance(process_steps, list):
+        location = f"slides[{slide_index}].process_steps"
+        raise MigrationInputError(
+            f"{location} must be a list", location=location
+        )
     if process_steps:
-        if not isinstance(process_steps, list):
-            raise MigrationInputError(f"slides[{slide_index}].process_steps must be a list")
         mapped_steps = []
         for index, step in enumerate(process_steps, start=1):
             if not isinstance(step, dict):
-                raise MigrationInputError("process step must be a mapping")
+                location = f"slides[{slide_index}].process_steps[{index - 1}]"
+                raise MigrationInputError(
+                    f"{location} must be a mapping", location=location
+                )
+            location = f"slides[{slide_index}].process_steps[{index - 1}]"
             mapped_steps.append(
                 {
-                    "id": _slug(str(step.get("id") or f"step-{index}"), fallback=f"step-{index}"),
-                    "title": str(step.get("title") or f"Step {index}"),
-                    "description": str(step.get("description")) if step.get("description") is not None else None,
+                    "id": _slug(
+                        _scalar_text(
+                            step.get("id"),
+                            location=f"{location}.id",
+                            default=f"step-{index}",
+                        ),
+                        fallback=f"step-{index}",
+                    ),
+                    "title": _scalar_text(
+                        step.get("title"),
+                        location=f"{location}.title",
+                        default=f"Step {index}",
+                    ),
+                    "description": _scalar_text(
+                        step.get("description"),
+                        location=f"{location}.description",
+                    )
+                    or None,
                 }
             )
             unmapped.extend(
                 f"process_steps.{name}"
-                for name in sorted(set(step) - {"id", "step_number", "title", "description"})
+                for name in sorted(
+                    set(step) - {"id", "step_number", "title", "description"}
+                )
             )
         elements.append(
             {
@@ -223,19 +367,35 @@ def _map_elements(slide: dict[str, Any], slide_index: int) -> tuple[list[dict[st
         )
         element_index += 1
 
-    timeline = slide.get("timeline_nodes") or []
+    timeline = slide.get("timeline_nodes")
+    if timeline is None:
+        timeline = []
+    if not isinstance(timeline, list):
+        location = f"slides[{slide_index}].timeline_nodes"
+        raise MigrationInputError(
+            f"{location} must be a list", location=location
+        )
     if timeline:
-        if not isinstance(timeline, list):
-            raise MigrationInputError(f"slides[{slide_index}].timeline_nodes must be a list")
         items = []
-        for item in timeline:
+        for item_index, item in enumerate(timeline):
             if not isinstance(item, dict):
-                raise MigrationInputError("timeline item must be a mapping")
+                location = f"slides[{slide_index}].timeline_nodes[{item_index}]"
+                raise MigrationInputError(
+                    f"{location} must be a mapping", location=location
+                )
+            location = f"slides[{slide_index}].timeline_nodes[{item_index}]"
             items.append(
                 {
-                    "time_label": str(item.get("time_label") or ""),
-                    "title": str(item.get("title") or ""),
-                    "description": str(item.get("description")) if item.get("description") is not None else None,
+                    "time_label": _field_text(
+                        item, "time_label", location=f"{location}.time_label"
+                    ),
+                    "title": _field_text(
+                        item, "title", location=f"{location}.title"
+                    ),
+                    "description": _field_text(
+                        item, "description", location=f"{location}.description"
+                    )
+                    or None,
                 }
             )
             unmapped.extend(
@@ -253,19 +413,41 @@ def _map_elements(slide: dict[str, Any], slide_index: int) -> tuple[list[dict[st
         element_index += 1
 
     visual = slide.get("visual_asset")
+    if visual is not None and not isinstance(visual, dict):
+        location = f"slides[{slide_index}].visual_asset"
+        raise MigrationInputError(
+            f"{location} must be a mapping", location=location
+        )
     if visual:
-        if not isinstance(visual, dict):
-            raise MigrationInputError(f"slides[{slide_index}].visual_asset must be a mapping")
+        location = f"slides[{slide_index}].visual_asset"
         asset_ref = _slug(
-            str(visual.get("asset_id") or f"legacy-image-{slide_index + 1}"),
+            _field_text(
+                visual,
+                "asset_id",
+                location=f"{location}.asset_id",
+                default=f"legacy-image-{slide_index + 1}",
+            ),
             fallback=f"legacy-image-{slide_index + 1}",
         )
         elements.append(
             {
                 "element_id": f"e{element_index:02d}",
                 "kind": "image",
-                "role": _slug(str(visual.get("slot_type") or "image"), fallback="image"),
-                "alt_text": str(visual.get("alt_text") or "Legacy image"),
+                "role": _slug(
+                    _field_text(
+                        visual,
+                        "slot_type",
+                        location=f"{location}.slot_type",
+                        default="image",
+                    ),
+                    fallback="image",
+                ),
+                "alt_text": _field_text(
+                    visual,
+                    "alt_text",
+                    location=f"{location}.alt_text",
+                    default="Legacy image",
+                ),
                 "content": {"asset_ref": asset_ref},
             }
         )
@@ -283,7 +465,9 @@ def _map_yaml_deck(
 ) -> tuple[DeckSpec, list[str]]:
     slides = data.get("slides")
     if not isinstance(slides, list) or not slides:
-        raise MigrationInputError("legacy deck requires a non-empty slides list")
+        raise MigrationInputError(
+            "legacy deck requires a non-empty slides list", location="slides"
+        )
     markdown_by_stem = {
         _slug(candidate.path.stem, fallback="markdown"): candidate
         for candidate in candidates
@@ -312,15 +496,27 @@ def _map_yaml_deck(
     }
     for index, legacy_slide in enumerate(slides):
         if not isinstance(legacy_slide, dict):
-            raise MigrationInputError(f"slides[{index}] must be a mapping")
+            location = f"slides[{index}]"
+            raise MigrationInputError(
+                f"{location} must be a mapping", location=location
+            )
+        slide_location = f"slides[{index}]"
         slide_id = _slug(
-            str(legacy_slide.get("slide_id") or f"slide-{index + 1}"),
+            _field_text(
+                legacy_slide,
+                "slide_id",
+                location=f"{slide_location}.slide_id",
+                default=f"slide-{index + 1}",
+            ),
             fallback=f"slide-{index + 1}",
         )
         elements, element_unmapped = _map_elements(legacy_slide, index)
         source_refs = [deck_source.source_id]
-        notes = str(
-            legacy_slide.get("speaker_notes") or legacy_slide.get("notes") or ""
+        notes = _field_text(
+            legacy_slide,
+            "speaker_notes",
+            fallback_key="notes",
+            location=f"{slide_location}.speaker_notes",
         ).strip()
         markdown = markdown_by_stem.get(slide_id)
         if markdown is not None:
@@ -329,20 +525,49 @@ def _map_yaml_deck(
             source_refs.append(markdown.source_id)
         objective = legacy_slide.get("objective_id")
         bloom = legacy_slide.get("bloom_verb")
+        objective_text = _scalar_text(
+            objective,
+            location=f"{slide_location}.objective_id",
+        )
+        bloom_text = _scalar_text(
+            bloom,
+            location=f"{slide_location}.bloom_verb",
+        )
+        archetype = _field_text(
+            legacy_slide,
+            "archetype",
+            fallback_key="layout",
+            location=f"{slide_location}.archetype",
+            default="content",
+        )
         mapped_slides.append(
             {
                 "slide_id": slide_id,
-                "title": str(legacy_slide.get("title") or f"Slide {index + 1}"),
-                "message": str(legacy_slide.get("subtitle")) if legacy_slide.get("subtitle") is not None else None,
-                "layout_ref": f"legacy:{_slug(str(legacy_slide.get('archetype') or legacy_slide.get('layout') or 'content'), fallback='content')}@1.0.0",
+                "title": _field_text(
+                    legacy_slide,
+                    "title",
+                    location=f"{slide_location}.title",
+                    default=f"Slide {index + 1}",
+                ),
+                "message": _field_text(
+                    legacy_slide,
+                    "subtitle",
+                    location=f"{slide_location}.subtitle",
+                )
+                or None,
+                "layout_ref": f"legacy:{_slug(archetype, fallback='content')}@1.0.0",
                 "elements": elements,
                 "notes": notes or None,
                 "source_refs": source_refs,
                 "learning": {
-                    "objective_ids": [_slug(str(objective), fallback=f"objective-{index + 1}")] if objective else [],
-                    "bloom_verb": str(bloom) if bloom else None,
+                    "objective_ids": [
+                        _slug(objective_text, fallback=f"objective-{index + 1}")
+                    ]
+                    if objective_text
+                    else [],
+                    "bloom_verb": bloom_text or None,
                 }
-                if objective or bloom
+                if objective_text or bloom_text
                 else None,
             }
         )
@@ -354,9 +579,15 @@ def _map_yaml_deck(
             f"slides[{index}].{name}" for name in element_unmapped
         )
     deck = DeckSpec(
-        title=str(data.get("title") or "Imported legacy deck"),
-        audience=str(data.get("target_audience") or "General"),
-        purpose=str(data.get("subject") or "Imported legacy deck"),
+        title=_field_text(
+            data, "title", location="title", default="Imported legacy deck"
+        ),
+        audience=_field_text(
+            data, "target_audience", location="target_audience", default="General"
+        ),
+        purpose=_field_text(
+            data, "subject", location="subject", default="Imported legacy deck"
+        ),
         sources=[_source_ref(candidate) for candidate in candidates],
         slides=mapped_slides,
     )
@@ -409,14 +640,21 @@ def _parse_deck(candidates: list[Candidate]) -> tuple[DeckSpec, list[str]]:
         if candidate.path.suffix.lower() not in {".yaml", ".yml"}:
             continue
         try:
-            data = load_yaml_bounded(candidate.path)
+            data = load_yaml_bytes_bounded(
+                candidate.raw,
+                max_bytes=DEFAULT_MAX_YAML_BYTES,
+                max_depth=DEFAULT_MAX_YAML_DEPTH,
+                max_nodes=DEFAULT_MAX_YAML_NODES,
+            )
         except (ValueError, yaml.YAMLError) as exc:
             raise MigrationInputError(
-                f"invalid legacy YAML: {candidate.relative_path}"
+                f"invalid legacy YAML: {candidate.relative_path}",
+                location=candidate.relative_path,
             ) from exc
         if data is not None and not isinstance(data, dict):
             raise MigrationInputError(
-                f"legacy YAML must contain a mapping: {candidate.relative_path}"
+                f"legacy YAML must contain a mapping: {candidate.relative_path}",
+                location=candidate.relative_path,
             )
         if isinstance(data, dict) and "slides" in data:
             yaml_decks.append((candidate, data))
@@ -469,6 +707,31 @@ def _remove_staging(stage: Path, parent: Path, target_name: str) -> None:
     shutil.rmtree(resolved_stage)
 
 
+def _promote_staging(stage: Path, target: Path) -> None:
+    """Move a complete staged directory atomically without replacing a target."""
+    try:
+        _rename_noreplace(stage, target)
+        _fsync_directory(target.parent)
+    except FileExistsError as exc:
+        raise MigrationConflict("migration target appeared during promotion") from exc
+    except OSError as exc:
+        if exc.errno in {errno.EEXIST, errno.ENOTEMPTY} or target.exists():
+            raise MigrationConflict("migration target appeared during promotion") from exc
+        raise
+
+
+def _emit_internal_diagnostic(exc: Exception) -> str:
+    diagnostic_id = uuid4().hex
+    exception_type = re.sub(r"[^A-Za-z0-9_]", "_", type(exc).__name__)[:64]
+    print(
+        "technical-error "
+        f"diagnostic_id={diagnostic_id} command=migrate category=internal "
+        f"exception_type={exception_type or 'Exception'}",
+        file=sys.stderr,
+    )
+    return diagnostic_id
+
+
 def migrate(
     source: Path,
     target: Path,
@@ -488,7 +751,13 @@ def migrate(
     try:
         deck, unmapped = _parse_deck(candidates)
     except ValidationError as exc:
-        raise MigrationInputError("legacy content cannot satisfy the v1 schema") from exc
+        errors = exc.errors(include_url=False)
+        location = (
+            ".".join(str(part) for part in errors[0]["loc"]) if errors else None
+        )
+        raise MigrationInputError(
+            "legacy content cannot satisfy the v1 schema", location=location
+        ) from exc
     data = {
         "dry_run": not apply,
         "planned_files": len(candidates),
@@ -522,7 +791,7 @@ def migrate(
                 "unmapped_fields": unmapped,
             },
         )
-        os.replace(stage, target)
+        _promote_staging(stage, target)
         stage = Path()
     finally:
         if stage != Path() and stage.exists():
@@ -545,7 +814,7 @@ def migrate_result(source: Path, target: Path, *, apply: bool) -> CLIResult:
                 )
             ],
         )
-    except (MigrationInputError, ValidationError):
+    except MigrationInputError as exc:
         return CLIResult(
             command="migrate",
             status="failed",
@@ -554,6 +823,24 @@ def migrate_result(source: Path, target: Path, *, apply: bool) -> CLIResult:
                 CLIError(
                     code="MIGRATION_INPUT_INVALID",
                     message_vi="Nguồn migration không hợp lệ hoặc vượt giới hạn.",
+                    field=exc.location,
+                )
+            ],
+        )
+    except ValidationError as exc:
+        errors = exc.errors(include_url=False)
+        location = (
+            ".".join(str(part) for part in errors[0]["loc"]) if errors else None
+        )
+        return CLIResult(
+            command="migrate",
+            status="failed",
+            exit_code=2,
+            errors=[
+                CLIError(
+                    code="MIGRATION_INPUT_INVALID",
+                    message_vi="Nguồn migration không hợp lệ hoặc vượt giới hạn.",
+                    field=location,
                 )
             ],
         )
@@ -581,7 +868,8 @@ def migrate_result(source: Path, target: Path, *, apply: bool) -> CLIResult:
                 )
             ],
         )
-    except Exception:
+    except Exception as exc:
+        diagnostic_id = _emit_internal_diagnostic(exc)
         return CLIResult(
             command="migrate",
             status="failed",
@@ -589,7 +877,11 @@ def migrate_result(source: Path, target: Path, *, apply: bool) -> CLIResult:
             errors=[
                 CLIError(
                     code="MIGRATION_INTERNAL_ERROR",
-                    message_vi="Migration gặp lỗi nội bộ đã được lọc.",
+                    message_vi=(
+                        "Migration gặp lỗi nội bộ đã được lọc; mã chẩn đoán "
+                        "đã được ghi vào stderr."
+                    ),
+                    evidence_ref=f"diagnostic:{diagnostic_id}",
                 )
             ],
         )
