@@ -7,6 +7,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import stat
 import tempfile
 from threading import Lock
 from typing import Any, Iterator, Literal
@@ -31,6 +32,84 @@ class MissingState(StateConflict):
 
 class StatePathError(StateConflict):
     pass
+
+
+MAX_STATE_BYTES = 1024 * 1024
+MAX_JOURNAL_BYTES = 16 * 1024 * 1024
+MAX_LOCK_BYTES = 64 * 1024
+
+
+def _is_reparse(info: os.stat_result) -> bool:
+    marker = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
+    return bool(marker and getattr(info, "st_file_attributes", 0) & marker)
+
+
+def _validate_file_identity(info: os.stat_result) -> None:
+    if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or _is_reparse(info):
+        raise StatePathError("state file is linked or has an unsafe identity")
+
+
+def _open_verified_file(path: Path, flags: int, mode: int = 0o600) -> int:
+    expected_parent = path.parent.absolute()
+    resolved_parent = path.parent.resolve()
+    if resolved_parent != expected_parent:
+        raise StatePathError("state file parent is linked or reparsed")
+    parent_before = path.parent.stat()
+    before: os.stat_result | None
+    try:
+        before = path.lstat()
+        _validate_file_identity(before)
+    except FileNotFoundError:
+        before = None
+    safe_flags = flags | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_BINARY", 0)
+    descriptor = os.open(path, safe_flags, mode)
+    try:
+        opened = os.fstat(descriptor)
+        _validate_file_identity(opened)
+        after = path.lstat()
+        _validate_file_identity(after)
+        parent_after = path.parent.stat()
+        if (parent_before.st_dev, parent_before.st_ino) != (
+            parent_after.st_dev,
+            parent_after.st_ino,
+        ):
+            raise StatePathError("state file parent identity changed while opening")
+        if (opened.st_dev, opened.st_ino) != (after.st_dev, after.st_ino):
+            raise StatePathError("state file identity changed while opening")
+        if before is not None and (before.st_dev, before.st_ino) != (
+            opened.st_dev,
+            opened.st_ino,
+        ):
+            raise StatePathError("state file identity changed while opening")
+        return descriptor
+    except BaseException:
+        os.close(descriptor)
+        raise
+
+
+def _read_verified_bytes(path: Path, *, max_bytes: int) -> bytes:
+    descriptor = _open_verified_file(path, os.O_RDONLY)
+    try:
+        if os.fstat(descriptor).st_size > max_bytes:
+            raise StateConflict("state file exceeds its size limit")
+        chunks: list[bytes] = []
+        remaining = max_bytes + 1
+        while remaining:
+            chunk = os.read(descriptor, min(64 * 1024, remaining))
+            if not chunk:
+                break
+            chunks.append(chunk)
+            remaining -= len(chunk)
+        raw = b"".join(chunks)
+        if len(raw) > max_bytes:
+            raise StateConflict("state file exceeds its size limit")
+        return raw
+    finally:
+        os.close(descriptor)
+
+
+def _fsync_verified_descriptor(descriptor: int) -> None:
+    os.fsync(descriptor)
 
 
 def _verified_state_dir(state_dir: Path, workspace_root: Path) -> Path:
@@ -80,7 +159,7 @@ def _protocol_lock(path: Path) -> Iterator[None]:
     """Serialize a short file protocol across instances and processes."""
     path.parent.mkdir(parents=True, exist_ok=True)
     with _atomic_lock(path):
-        descriptor = os.open(path, os.O_RDWR | os.O_CREAT, 0o600)
+        descriptor = _open_verified_file(path, os.O_RDWR | os.O_CREAT, 0o600)
         locked = False
         try:
             if os.name == "nt":
@@ -127,6 +206,12 @@ def _atomic_json_unlocked(path: Path, value: Any) -> None:
     payload = (
         json.dumps(value, ensure_ascii=False, sort_keys=True, indent=2) + "\n"
     ).encode("utf-8")
+    if len(payload) > MAX_STATE_BYTES:
+        raise StateConflict("state transaction exceeds its size limit")
+    try:
+        _validate_file_identity(path.lstat())
+    except FileNotFoundError:
+        pass
     temporary: Path | None = None
     try:
         with tempfile.NamedTemporaryFile(
@@ -156,20 +241,25 @@ def _append_event(path: Path, event: dict[str, Any]) -> None:
     line = (json.dumps(event, ensure_ascii=False, sort_keys=True) + "\n").encode(
         "utf-8"
     )
-    descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
+    descriptor = _open_verified_file(
+        path, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600
+    )
     try:
+        if os.fstat(descriptor).st_size + len(line) > MAX_JOURNAL_BYTES:
+            raise StateConflict("state journal exceeds its size limit")
         offset = 0
         while offset < len(line):
             offset += os.write(descriptor, line[offset:])
         os.fsync(descriptor)
     finally:
         os.close(descriptor)
+    _fsync_directory(path.parent)
 
 
 def _read_json(path: Path) -> dict[str, Any]:
     try:
-        value = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
+        value = json.loads(_read_verified_bytes(path, max_bytes=MAX_STATE_BYTES))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise StateConflict("state transaction cannot be read") from exc
     if not isinstance(value, dict):
         raise StateConflict("state transaction is invalid")
@@ -180,35 +270,53 @@ def _event_exists(
     path: Path, transaction_id: str, expected_event: dict[str, Any]
 ) -> bool:
     try:
-        raw = path.read_bytes()
+        descriptor = _open_verified_file(path, os.O_RDWR)
     except FileNotFoundError:
         return False
     except OSError as exc:
         raise StateConflict("state journal cannot be read") from exc
-
-    complete_bytes = raw
-    if raw and not raw.endswith(b"\n"):
-        last_newline = raw.rfind(b"\n")
-        complete_bytes = raw[: last_newline + 1] if last_newline >= 0 else b""
-        try:
-            with path.open("r+b") as stream:
-                stream.truncate(len(complete_bytes))
-                stream.flush()
-                os.fsync(stream.fileno())
-        except OSError as exc:
-            raise StateConflict("state journal tail cannot be repaired") from exc
-        _fsync_directory(path.parent)
-
-    for raw_line in complete_bytes.splitlines():
-        try:
-            event = json.loads(raw_line.decode("utf-8"))
-        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
-            raise StateConflict("state journal is invalid") from exc
-        if isinstance(event, dict) and event.get("transaction_id") == transaction_id:
-            if event != expected_event:
-                raise StateConflict("state journal transaction does not match pending state")
-            return True
-    return False
+    try:
+        if os.fstat(descriptor).st_size > MAX_JOURNAL_BYTES:
+            raise StateConflict("state journal exceeds its size limit")
+        chunks: list[bytes] = []
+        remaining = MAX_JOURNAL_BYTES + 1
+        while remaining:
+            chunk = os.read(descriptor, min(64 * 1024, remaining))
+            if not chunk:
+                break
+            chunks.append(chunk)
+            remaining -= len(chunk)
+        raw = b"".join(chunks)
+        if len(raw) > MAX_JOURNAL_BYTES:
+            raise StateConflict("state journal exceeds its size limit")
+        complete_bytes = raw
+        if raw and not raw.endswith(b"\n"):
+            last_newline = raw.rfind(b"\n")
+            complete_bytes = raw[: last_newline + 1] if last_newline >= 0 else b""
+            try:
+                os.ftruncate(descriptor, len(complete_bytes))
+                _fsync_verified_descriptor(descriptor)
+            except OSError as exc:
+                raise StateConflict("state journal tail cannot be repaired") from exc
+            _fsync_directory(path.parent)
+        for raw_line in complete_bytes.splitlines():
+            try:
+                event = json.loads(raw_line.decode("utf-8"))
+            except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+                raise StateConflict("state journal is invalid") from exc
+            if isinstance(event, dict) and event.get("transaction_id") == transaction_id:
+                if event != expected_event:
+                    raise StateConflict(
+                        "state journal transaction does not match pending state"
+                    )
+                try:
+                    _fsync_verified_descriptor(descriptor)
+                except OSError as exc:
+                    raise StateConflict("state journal cannot be made durable") from exc
+                return True
+        return False
+    finally:
+        os.close(descriptor)
 
 
 class StateStore:
@@ -230,11 +338,13 @@ class StateStore:
     def read(self, *, required: bool = False) -> dict[str, Any] | None:
         path, _, _, _ = self._paths()
         try:
-            value = json.loads(path.read_text(encoding="utf-8"))
+            value = json.loads(_read_verified_bytes(path, max_bytes=MAX_STATE_BYTES))
         except FileNotFoundError:
             if required:
                 raise MissingState("required state is missing") from None
             return None
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise StateConflict("state cannot be read") from exc
         if not isinstance(value, dict):
             raise StateConflict("state is invalid")
         return value
@@ -444,10 +554,10 @@ class RunLock:
 
     def _read_identity_unlocked(self) -> dict[str, Any]:
         try:
-            value = json.loads(self.path.read_text(encoding="utf-8"))
+            value = json.loads(_read_verified_bytes(self.path, max_bytes=MAX_LOCK_BYTES))
         except FileNotFoundError as exc:
             raise RunConflict("writer lock is missing") from exc
-        except (OSError, json.JSONDecodeError) as exc:
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
             raise RunConflict("writer lock cannot be verified") from exc
         if not isinstance(value, dict):
             raise RunConflict("writer lock identity is invalid")
@@ -482,10 +592,12 @@ class RunLock:
         with _protocol_lock(state_dir / ".state.protocol"):
             with _protocol_lock(state_dir / ".writer-lock.protocol"):
                 try:
-                    actual = json.loads(path.read_text(encoding="utf-8"))
+                    actual = json.loads(
+                        _read_verified_bytes(path, max_bytes=MAX_LOCK_BYTES)
+                    )
                 except FileNotFoundError as exc:
                     raise RunConflict("writer lock is missing") from exc
-                except (OSError, json.JSONDecodeError) as exc:
+                except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
                     raise RunConflict("writer lock cannot be verified") from exc
                 if actual != expected_identity:
                     raise RunConflict("lock ownership changed")

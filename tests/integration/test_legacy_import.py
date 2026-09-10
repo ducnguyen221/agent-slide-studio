@@ -92,6 +92,13 @@ def test_legacy_apply_maps_yaml_markdown_notes_learning_and_source_order(
     original = source / "deck.yaml"
     markdown = source / "slide-01.md"
     _legacy_deck(original)
+    original.write_text(
+        original.read_text(encoding="utf-8").replace(
+            "    speaker_notes: YAML note\n",
+            "    speaker_notes: YAML note\n    notes_file: slide-01.md\n",
+        ),
+        encoding="utf-8",
+    )
     markdown.write_text("# Presenter detail\n\nMarkdown note.\n", encoding="utf-8")
 
     result = _run_script(source, target, "--apply")
@@ -477,3 +484,102 @@ def test_package_cli_exposes_migration(tmp_path: Path) -> None:
     )
     assert result.returncode == 0
     assert json.loads(result.stdout)["command"] == "migrate"
+
+
+def test_migration_skips_unreferenced_private_hidden_and_config_files(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "legacy"
+    source.mkdir()
+    _legacy_deck(source / "deck.yaml")
+    (source / "private.md").write_text("private note", encoding="utf-8")
+    (source / "private.yaml").write_text(
+        "api_key: ignored-private-material\n", encoding="utf-8"
+    )
+    (source / ".cache").mkdir()
+    (source / ".cache" / "cached.yaml").write_text("token: cached-secret", encoding="utf-8")
+    (source / "config").mkdir()
+    (source / "config" / "settings.yaml").write_text("password: hidden", encoding="utf-8")
+
+    result = migrate(source, tmp_path / "target", apply=True)
+
+    assert result["planned_files"] == 1
+    originals = tmp_path / "target" / "sources" / "originals"
+    assert sorted(path.name for path in originals.rglob("*")) == ["deck.yaml"]
+
+
+def test_migration_stops_after_detecting_second_deck(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from presentation_studio import migration
+
+    source = tmp_path / "legacy"
+    source.mkdir()
+    _legacy_deck(source / "one.yaml")
+    _legacy_deck(source / "two.yaml")
+    (source / "zz-unrelated.yaml").write_text("value: later\n", encoding="utf-8")
+    original_read = migration._read_candidate
+    inspected: list[str] = []
+
+    def record_read(path: Path, root: Path, limits: MigrationLimits) -> bytes:
+        inspected.append(path.name)
+        return original_read(path, root, limits)
+
+    monkeypatch.setattr(migration, "_read_candidate", record_read)
+    with pytest.raises(ValueError, match="multiple legacy deck"):
+        migrate(source, tmp_path / "target", apply=False)
+
+    assert inspected == ["one.yaml", "two.yaml"]
+
+
+def test_migration_fails_closed_on_credential_material_without_echo(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "legacy"
+    source.mkdir()
+    deck = source / "deck.yaml"
+    _legacy_deck(deck)
+    secret = "synthetic-secret-value-12345"
+    deck.write_text(
+        deck.read_text(encoding="utf-8") + f"api_key: {secret}\n",
+        encoding="utf-8",
+    )
+
+    result = _run_script(source, tmp_path / "target", "--dry-run")
+
+    assert result.returncode == 2
+    assert json.loads(result.stdout)["errors"][0]["code"] == "MIGRATION_INPUT_INVALID"
+    assert secret not in result.stdout + result.stderr
+
+
+def test_migration_has_aggregate_yaml_node_budget(tmp_path: Path) -> None:
+    source = tmp_path / "legacy"
+    source.mkdir()
+    _legacy_deck(source / "deck.yaml")
+
+    with pytest.raises(ValueError, match="aggregate YAML node budget"):
+        migrate(
+            source,
+            tmp_path / "target",
+            apply=False,
+            limits=MigrationLimits(max_yaml_nodes=5),
+        )
+
+
+def test_staging_cleanup_refuses_replaced_directory_identity(tmp_path: Path) -> None:
+    from presentation_studio import migration
+
+    parent = tmp_path / "parent"
+    parent.mkdir()
+    stage_path = parent / ".target.migration-owned"
+    stage_path.mkdir()
+    staging = migration._capture_staging(stage_path)
+    stage_path.rmdir()
+    stage_path.mkdir()
+    marker = stage_path / "foreign.txt"
+    marker.write_text("foreign", encoding="utf-8")
+
+    with pytest.raises(migration.MigrationConflict):
+        migration._remove_staging(staging, parent, "target")
+
+    assert marker.read_text(encoding="utf-8") == "foreign"

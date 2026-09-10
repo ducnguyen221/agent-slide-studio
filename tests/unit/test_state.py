@@ -176,6 +176,93 @@ def test_pending_transaction_repairs_partial_journal_tail(
     lock.release()
 
 
+def test_recovery_requires_matching_journal_record_to_be_fsynced(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from presentation_studio import state as state_module
+
+    store = StateStore(tmp_path, workspace_root=tmp_path)
+    lock = RunLock.acquire(tmp_path, workspace_root=tmp_path, run_id="r1")
+
+    def write_complete_then_fail(path: Path, event: dict[str, object]) -> None:
+        line = (json.dumps(event, sort_keys=True) + "\n").encode("utf-8")
+        path.write_bytes(line)
+        raise OSError("synthetic post-write fsync failure")
+
+    monkeypatch.setattr(state_module, "_append_event", write_complete_then_fail)
+    with pytest.raises(OSError):
+        store.transition(
+            lock, expected_revision=None, input_hash="a" * 64, status="started"
+        )
+    monkeypatch.undo()
+
+    def fail_sync(descriptor: int) -> None:
+        raise OSError("journal fsync unavailable")
+
+    monkeypatch.setattr(state_module, "_fsync_verified_descriptor", fail_sync)
+    with pytest.raises(StateConflict):
+        store.recover_pending(lock)
+    assert store.read() is None
+    assert (tmp_path / "state.pending.json").exists()
+    lock.release()
+
+
+def test_journal_hardlink_is_rejected_before_external_file_is_modified(
+    tmp_path: Path,
+) -> None:
+    outside = tmp_path / "outside.jsonl"
+    outside.write_text("outside\n", encoding="utf-8")
+    events = tmp_path / "events.jsonl"
+    os.link(outside, events)
+    before = outside.read_bytes()
+    store = StateStore(tmp_path, workspace_root=tmp_path)
+    lock = RunLock.acquire(tmp_path, workspace_root=tmp_path, run_id="r1")
+
+    with pytest.raises(StatePathError):
+        store.transition(
+            lock, expected_revision=None, input_hash="a" * 64, status="started"
+        )
+
+    assert outside.read_bytes() == before
+    lock.release()
+
+
+def test_state_symlink_is_rejected_before_reading_external_file(tmp_path: Path) -> None:
+    outside = tmp_path / "outside.json"
+    outside.write_text('{"revision": 99}\n', encoding="utf-8")
+    state_path = tmp_path / "state.json"
+    try:
+        state_path.symlink_to(outside)
+    except OSError:
+        pytest.skip("symlink privilege unavailable")
+
+    with pytest.raises(StatePathError):
+        StateStore(tmp_path, workspace_root=tmp_path).read()
+
+
+def test_state_and_journal_size_caps_apply_before_read(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from presentation_studio import state as state_module
+
+    state_path = tmp_path / "state.json"
+    with state_path.open("wb") as stream:
+        stream.truncate(state_module.MAX_STATE_BYTES + 1)
+
+    def reject_read(*args: object, **kwargs: object) -> bytes:
+        raise AssertionError("oversized file was read")
+
+    monkeypatch.setattr(state_module.os, "read", reject_read)
+    with pytest.raises(StateConflict, match="size limit"):
+        StateStore(tmp_path, workspace_root=tmp_path).read()
+
+    journal_path = tmp_path / "events.jsonl"
+    with journal_path.open("wb") as stream:
+        stream.truncate(state_module.MAX_JOURNAL_BYTES + 1)
+    with pytest.raises(StateConflict, match="size limit"):
+        state_module._event_exists(journal_path, "tx", {})
+
+
 def test_release_waits_until_state_transition_finishes(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

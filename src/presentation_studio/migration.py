@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import re
 import shutil
+import stat
 import sys
 import tempfile
 import unicodedata
@@ -43,6 +44,7 @@ class MigrationLimits:
     max_files: int = 512
     max_file_bytes: int = 10 * 1024 * 1024
     max_total_bytes: int = 50 * 1024 * 1024
+    max_yaml_nodes: int = 200_000
 
 
 @dataclass(frozen=True)
@@ -52,6 +54,7 @@ class Candidate:
     raw: bytes
     sha256: str
     source_id: str
+    parsed_yaml: Any | None = None
 
     def report(self) -> dict[str, str | int]:
         return {
@@ -59,6 +62,15 @@ class Candidate:
             "sha256": self.sha256,
             "bytes": len(self.raw),
         }
+
+
+@dataclass(frozen=True)
+class StagingArea:
+    path: Path
+    device: int
+    inode: int
+    parent_device: int
+    parent_inode: int
 
 
 def _fsync_directory(directory: Path) -> None:
@@ -156,6 +168,26 @@ def _is_link_or_junction(path: Path) -> bool:
     return path.is_symlink() or bool(is_junction and is_junction())
 
 
+_EXCLUDED_DIRECTORIES = {
+    ".git",
+    ".hg",
+    ".svn",
+    ".cache",
+    "__pycache__",
+    "cache",
+    "config",
+    "node_modules",
+}
+_SENSITIVE_PATTERNS = (
+    re.compile(rb"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
+    re.compile(
+        rb"(?i)\b(?:password|passwd|secret|client_secret|api[_-]?key|access[_-]?token|refresh[_-]?token)\b\s*[:=]\s*['\"]?[^\s'\"#]{4,}"
+    ),
+    re.compile(rb"\bAKIA[0-9A-Z]{16}\b"),
+    re.compile(rb"\bgh[pousr]_[A-Za-z0-9]{20,}\b"),
+)
+
+
 def _candidate_paths(source: Path) -> list[Path]:
     candidates: list[Path] = []
     for root, directories, filenames in os.walk(source, followlinks=False):
@@ -164,11 +196,90 @@ def _candidate_paths(source: Path) -> list[Path]:
             child = root_path / directory
             if _is_link_or_junction(child):
                 raise MigrationInputError("source contains a linked directory")
+        directories[:] = [
+            name
+            for name in directories
+            if name not in _EXCLUDED_DIRECTORIES and not name.startswith(".")
+        ]
         for filename in filenames:
             path = root_path / filename
-            if path.suffix.lower() in {".yaml", ".yml", ".md"}:
+            if (
+                not filename.startswith(".")
+                and path.suffix.lower() in {".yaml", ".yml", ".md"}
+            ):
                 candidates.append(path)
     return sorted(candidates, key=lambda item: item.relative_to(source).as_posix())
+
+
+def _read_candidate(path: Path, source: Path, limits: MigrationLimits) -> bytes:
+    if _is_link_or_junction(path) or not path.resolve().is_relative_to(source):
+        raise MigrationInputError("source candidate escapes the source directory")
+    flags = (
+        os.O_RDONLY
+        | getattr(os, "O_NOFOLLOW", 0)
+        | getattr(os, "O_BINARY", 0)
+    )
+    descriptor = os.open(path, flags)
+    try:
+        opened = os.fstat(descriptor)
+        current = path.lstat()
+        if (
+            not stat.S_ISREG(opened.st_mode)
+            or opened.st_nlink != 1
+            or _is_link_or_junction(path)
+            or (opened.st_dev, opened.st_ino) != (current.st_dev, current.st_ino)
+        ):
+            raise MigrationInputError("source candidate has an unsafe identity")
+        if opened.st_size > limits.max_file_bytes:
+            raise MigrationInputError("source candidate exceeds file size limit")
+        remaining = limits.max_file_bytes + 1
+        chunks: list[bytes] = []
+        while remaining:
+            chunk = os.read(descriptor, min(64 * 1024, remaining))
+            if not chunk:
+                break
+            chunks.append(chunk)
+            remaining -= len(chunk)
+        raw = b"".join(chunks)
+        if len(raw) > limits.max_file_bytes:
+            raise MigrationInputError("source candidate exceeds file size limit")
+        after = path.lstat()
+        if (opened.st_dev, opened.st_ino) != (after.st_dev, after.st_ino):
+            raise MigrationInputError("source candidate changed during scan")
+        return raw
+    finally:
+        os.close(descriptor)
+
+
+def _reject_sensitive(raw: bytes, relative: str) -> None:
+    if any(pattern.search(raw) for pattern in _SENSITIVE_PATTERNS):
+        raise MigrationInputError(
+            "source candidate contains sensitive credential material",
+            location=relative,
+        )
+
+
+def _explicit_references(data: dict[str, Any]) -> list[str]:
+    refs: list[str] = []
+    top_level = data.get("source_files", [])
+    if top_level is not None:
+        if not isinstance(top_level, list):
+            raise MigrationInputError("source_files must be a list", location="source_files")
+        refs.extend(
+            _scalar_text(value, location=f"source_files[{index}]")
+            for index, value in enumerate(top_level)
+        )
+    slides = data.get("slides", [])
+    if isinstance(slides, list):
+        for index, slide in enumerate(slides):
+            if not isinstance(slide, dict):
+                continue
+            for key in ("notes_file", "speaker_notes_file"):
+                if key in slide:
+                    refs.append(
+                        _scalar_text(slide[key], location=f"slides[{index}].{key}")
+                    )
+    return refs
 
 
 def _scan_candidates(source: Path, limits: MigrationLimits) -> list[Candidate]:
@@ -180,27 +291,21 @@ def _scan_candidates(source: Path, limits: MigrationLimits) -> list[Candidate]:
     paths = _candidate_paths(source)
     if not paths:
         raise MigrationInputError("source contains no supported YAML or Markdown")
-    if len(paths) > limits.max_files:
+    yaml_paths = [path for path in paths if path.suffix.lower() in {".yaml", ".yml"}]
+    if len(yaml_paths) > limits.max_files:
         raise MigrationInputError("source exceeds candidate count limit")
-
-    candidates: list[Candidate] = []
+    candidates_by_path: dict[Path, Candidate] = {}
+    decks: list[Candidate] = []
     total_bytes = 0
     used_ids: set[str] = set()
-    for index, path in enumerate(paths, start=1):
-        if _is_link_or_junction(path) or not path.resolve().is_relative_to(source):
-            raise MigrationInputError("source candidate escapes the source directory")
-        try:
-            size = path.stat().st_size
-        except OSError:
-            raise
-        if size > limits.max_file_bytes:
-            raise MigrationInputError("source candidate exceeds file size limit")
-        total_bytes += size
+    node_budget = [limits.max_yaml_nodes]
+
+    def scan(path: Path, index: int, *, parse_yaml: bool) -> Candidate:
+        nonlocal total_bytes
+        raw = _read_candidate(path, source, limits)
+        total_bytes += len(raw)
         if total_bytes > limits.max_total_bytes:
             raise MigrationInputError("source exceeds total size limit")
-        raw = path.read_bytes()
-        if len(raw) != size or _is_link_or_junction(path):
-            raise MigrationInputError("source candidate changed during scan")
         relative = path.relative_to(source).as_posix()
         base_id = _slug(path.stem, fallback=f"source-{index}")
         source_id = base_id
@@ -210,16 +315,81 @@ def _scan_candidates(source: Path, limits: MigrationLimits) -> list[Candidate]:
             source_id = f"{base_id[: 64 - len(suffix_text)]}{suffix_text}"
             suffix += 1
         used_ids.add(source_id)
-        candidates.append(
-            Candidate(
-                path=path,
-                relative_path=relative,
-                raw=raw,
-                sha256=hashlib.sha256(raw).hexdigest(),
-                source_id=source_id,
-            )
+        parsed: Any | None = None
+        if parse_yaml:
+            try:
+                parsed = load_yaml_bytes_bounded(
+                    raw,
+                    max_bytes=min(DEFAULT_MAX_YAML_BYTES, limits.max_file_bytes),
+                    max_depth=DEFAULT_MAX_YAML_DEPTH,
+                    max_nodes=DEFAULT_MAX_YAML_NODES,
+                    node_budget=node_budget,
+                )
+            except ValueError as exc:
+                raise MigrationInputError(
+                    str(exc) if "aggregate YAML node budget" in str(exc) else f"invalid legacy YAML: {relative}",
+                    location=relative,
+                ) from exc
+            if parsed is not None and not isinstance(parsed, dict):
+                raise MigrationInputError(
+                    f"legacy YAML must contain a mapping: {relative}", location=relative
+                )
+        candidate = Candidate(
+            path=path,
+            relative_path=relative,
+            raw=raw,
+            sha256=hashlib.sha256(raw).hexdigest(),
+            source_id=source_id,
+            parsed_yaml=parsed,
         )
-    return candidates
+        candidates_by_path[path] = candidate
+        return candidate
+
+    for index, path in enumerate(yaml_paths, start=1):
+        candidate = scan(path, index, parse_yaml=True)
+        if isinstance(candidate.parsed_yaml, dict) and "slides" in candidate.parsed_yaml:
+            _reject_sensitive(candidate.raw, candidate.relative_path)
+            decks.append(candidate)
+            if len(decks) > 1:
+                raise MigrationInputError("multiple legacy deck YAML files found")
+
+    if decks:
+        selected = [decks[0]]
+        assert isinstance(decks[0].parsed_yaml, dict)
+        for ref in _explicit_references(decks[0].parsed_yaml):
+            ref_path = Path(ref)
+            if (
+                ref_path.is_absolute()
+                or ".." in ref_path.parts
+                or ref_path.suffix.lower() not in {".yaml", ".yml", ".md"}
+            ):
+                raise MigrationInputError("legacy source reference is invalid")
+            path = source / ref_path
+            if not path.is_file():
+                raise MigrationInputError("referenced legacy source does not exist")
+            candidate = candidates_by_path.get(path)
+            if candidate is None:
+                if len(candidates_by_path) >= limits.max_files:
+                    raise MigrationInputError("source exceeds candidate count limit")
+                candidate = scan(path, len(candidates_by_path) + 1, parse_yaml=False)
+            _reject_sensitive(candidate.raw, candidate.relative_path)
+            if candidate not in selected:
+                selected.append(candidate)
+        return selected
+
+    conventional = next(
+        (
+            path
+            for path in paths
+            if path.parent == source and path.name.lower() in {"deck.md", "presentation.md", "slides.md"}
+        ),
+        None,
+    )
+    if conventional is not None:
+        candidate = scan(conventional, len(candidates_by_path) + 1, parse_yaml=False)
+        _reject_sensitive(candidate.raw, candidate.relative_path)
+        return [candidate]
+    raise MigrationInputError("no legacy deck was found")
 
 
 def _source_ref(candidate: Candidate) -> dict[str, str]:
@@ -468,15 +638,14 @@ def _map_yaml_deck(
         raise MigrationInputError(
             "legacy deck requires a non-empty slides list", location="slides"
         )
-    markdown_by_stem = {
-        _slug(candidate.path.stem, fallback="markdown"): candidate
+    candidates_by_relative = {
+        candidate.relative_path: candidate
         for candidate in candidates
-        if candidate.path.suffix.lower() == ".md"
     }
     mapped_slides: list[dict[str, Any]] = []
     unmapped = sorted(
         set(data)
-        - {"title", "subject", "target_audience", "slides"}
+        - {"title", "subject", "target_audience", "slides", "source_files"}
     )
     known_slide_fields = {
         "slide_id",
@@ -485,6 +654,8 @@ def _map_yaml_deck(
         "archetype",
         "layout",
         "speaker_notes",
+        "speaker_notes_file",
+        "notes_file",
         "notes",
         "objective_id",
         "bloom_verb",
@@ -518,7 +689,20 @@ def _map_yaml_deck(
             fallback_key="notes",
             location=f"{slide_location}.speaker_notes",
         ).strip()
-        markdown = markdown_by_stem.get(slide_id)
+        notes_ref = legacy_slide.get("notes_file")
+        if notes_ref is None:
+            notes_ref = legacy_slide.get("speaker_notes_file")
+        markdown = None
+        if notes_ref is not None:
+            notes_relative = _scalar_text(
+                notes_ref, location=f"{slide_location}.notes_file"
+            ).replace("\\", "/")
+            markdown = candidates_by_relative.get(notes_relative)
+            if markdown is None:
+                raise MigrationInputError(
+                    "referenced legacy notes were not selected",
+                    location=f"{slide_location}.notes_file",
+                )
         if markdown is not None:
             markdown_text = _markdown_notes(markdown)
             notes = "\n\n".join(value for value in (notes, markdown_text) if value)
@@ -639,18 +823,20 @@ def _parse_deck(candidates: list[Candidate]) -> tuple[DeckSpec, list[str]]:
     for candidate in candidates:
         if candidate.path.suffix.lower() not in {".yaml", ".yml"}:
             continue
-        try:
-            data = load_yaml_bytes_bounded(
-                candidate.raw,
-                max_bytes=DEFAULT_MAX_YAML_BYTES,
-                max_depth=DEFAULT_MAX_YAML_DEPTH,
-                max_nodes=DEFAULT_MAX_YAML_NODES,
-            )
-        except (ValueError, yaml.YAMLError) as exc:
-            raise MigrationInputError(
-                f"invalid legacy YAML: {candidate.relative_path}",
-                location=candidate.relative_path,
-            ) from exc
+        data = candidate.parsed_yaml
+        if data is None:
+            try:
+                data = load_yaml_bytes_bounded(
+                    candidate.raw,
+                    max_bytes=DEFAULT_MAX_YAML_BYTES,
+                    max_depth=DEFAULT_MAX_YAML_DEPTH,
+                    max_nodes=DEFAULT_MAX_YAML_NODES,
+                )
+            except (ValueError, yaml.YAMLError) as exc:
+                raise MigrationInputError(
+                    f"invalid legacy YAML: {candidate.relative_path}",
+                    location=candidate.relative_path,
+                ) from exc
         if data is not None and not isinstance(data, dict):
             raise MigrationInputError(
                 f"legacy YAML must contain a mapping: {candidate.relative_path}",
@@ -696,15 +882,48 @@ def _write_yaml(path: Path, value: Any) -> None:
     )
 
 
-def _remove_staging(stage: Path, parent: Path, target_name: str) -> None:
-    resolved_stage = stage.resolve()
-    resolved_parent = parent.resolve()
+def _capture_staging(stage: Path) -> StagingArea:
+    info = stage.lstat()
+    parent_info = stage.parent.stat()
+    if _is_link_or_junction(stage) or not stat.S_ISDIR(info.st_mode):
+        raise MigrationConflict("migration staging directory has an unsafe identity")
+    return StagingArea(
+        path=stage,
+        device=info.st_dev,
+        inode=info.st_ino,
+        parent_device=parent_info.st_dev,
+        parent_inode=parent_info.st_ino,
+    )
+
+
+def _remove_staging(stage: StagingArea, parent: Path, target_name: str) -> None:
     if (
-        resolved_stage.parent != resolved_parent
-        or not resolved_stage.name.startswith(f".{target_name}.migration-")
+        stage.path.parent.absolute() != parent.absolute()
+        or not stage.path.name.startswith(f".{target_name}.migration-")
     ):
         raise RuntimeError("refusing to remove unexpected staging path")
-    shutil.rmtree(resolved_stage)
+    parent_info = parent.stat()
+    if (parent_info.st_dev, parent_info.st_ino) != (
+        stage.parent_device,
+        stage.parent_inode,
+    ):
+        raise MigrationConflict("migration staging parent identity changed")
+    try:
+        current = stage.path.lstat()
+    except FileNotFoundError:
+        return
+    if _is_link_or_junction(stage.path):
+        if stage.path.is_symlink():
+            stage.path.unlink()
+        else:
+            os.rmdir(stage.path)
+        raise MigrationConflict("migration staging path was replaced by a link")
+    if (
+        not stat.S_ISDIR(current.st_mode)
+        or (current.st_dev, current.st_ino) != (stage.device, stage.inode)
+    ):
+        raise MigrationConflict("migration staging identity changed")
+    shutil.rmtree(stage.path)
 
 
 def _promote_staging(stage: Path, target: Path) -> None:
@@ -768,33 +987,35 @@ def migrate(
         return data
 
     target.parent.mkdir(parents=True, exist_ok=True)
-    stage = Path(
-        tempfile.mkdtemp(prefix=f".{target.name}.migration-", dir=target.parent)
+    stage = _capture_staging(
+        Path(tempfile.mkdtemp(prefix=f".{target.name}.migration-", dir=target.parent))
     )
     try:
         project = ProjectConfig(
             project_id=_slug(target.name, fallback="imported-project"),
             title=deck.title,
         )
-        _write_yaml(stage / "project.yaml", project.model_dump(mode="json"))
-        _write_yaml(stage / "storyboard" / "deck.yaml", deck.model_dump(mode="json"))
+        _write_yaml(stage.path / "project.yaml", project.model_dump(mode="json"))
+        _write_yaml(
+            stage.path / "storyboard" / "deck.yaml", deck.model_dump(mode="json")
+        )
         for candidate in candidates:
             _write_bytes(
-                stage / "sources" / "originals" / candidate.relative_path,
+                stage.path / "sources" / "originals" / candidate.relative_path,
                 candidate.raw,
             )
         _write_json(
-            stage / "migration-report.json",
+            stage.path / "migration-report.json",
             {
                 "schema_version": "1.0",
                 "source_files": [candidate.report() for candidate in candidates],
                 "unmapped_fields": unmapped,
             },
         )
-        _promote_staging(stage, target)
-        stage = Path()
+        _promote_staging(stage.path, target)
+        stage = None
     finally:
-        if stage != Path() and stage.exists():
+        if stage is not None:
             _remove_staging(stage, target.parent, target.name)
     return data
 

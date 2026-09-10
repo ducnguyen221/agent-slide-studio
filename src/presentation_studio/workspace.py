@@ -97,6 +97,7 @@ def load_yaml_bytes_bounded(
     max_bytes: int,
     max_depth: int,
     max_nodes: int,
+    node_budget: list[int] | None = None,
 ) -> Any:
     if len(raw) > max_bytes:
         raise InputLimitError(f"YAML exceeds {max_bytes} bytes")
@@ -121,11 +122,37 @@ def load_yaml_bytes_bounded(
                 nodes += 1
             if nodes > max_nodes:
                 raise InputLimitError(f"YAML exceeds {max_nodes} nodes")
+            if node_budget is not None and nodes > node_budget[0]:
+                raise InputLimitError("migration exceeds aggregate YAML node budget")
+        if node_budget is not None:
+            node_budget[0] -= nodes
         return yaml.safe_load(text)
     except InputLimitError:
         raise
     except yaml.YAMLError as exc:
         raise InvalidYAML("YAML không hợp lệ") from exc
+
+
+def read_bytes_bounded(path: Path, *, max_bytes: int) -> bytes:
+    descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_BINARY", 0))
+    try:
+        size = os.fstat(descriptor).st_size
+        if size > max_bytes:
+            raise InputLimitError(f"input exceeds {max_bytes} bytes")
+        chunks: list[bytes] = []
+        remaining = max_bytes + 1
+        while remaining:
+            chunk = os.read(descriptor, min(64 * 1024, remaining))
+            if not chunk:
+                break
+            chunks.append(chunk)
+            remaining -= len(chunk)
+        raw = b"".join(chunks)
+        if len(raw) > max_bytes:
+            raise InputLimitError(f"input exceeds {max_bytes} bytes")
+        return raw
+    finally:
+        os.close(descriptor)
 
 
 def load_yaml_bounded(
@@ -135,14 +162,8 @@ def load_yaml_bounded(
     max_depth: int = DEFAULT_MAX_YAML_DEPTH,
     max_nodes: int = DEFAULT_MAX_YAML_NODES,
 ) -> Any:
-    try:
-        size = path.stat().st_size
-    except OSError:
-        raise
-    if size > max_bytes:
-        raise InputLimitError(f"YAML exceeds {max_bytes} bytes")
     return load_yaml_bytes_bounded(
-        path.read_bytes(),
+        read_bytes_bounded(path, max_bytes=max_bytes),
         max_bytes=max_bytes,
         max_depth=max_depth,
         max_nodes=max_nodes,
@@ -252,7 +273,10 @@ def resolve_profile(ref: str, paths: WorkspacePaths) -> ProfileLock:
         )
         if not resource.is_file():
             raise FileNotFoundError(ref)
-        raw = resource.read_bytes()
+        with resource.open("rb") as stream:
+            raw = stream.read(DEFAULT_MAX_YAML_BYTES + 1)
+        if len(raw) > DEFAULT_MAX_YAML_BYTES:
+            raise InputLimitError(f"YAML exceeds {DEFAULT_MAX_YAML_BYTES} bytes")
     else:
         if scope == "project":
             base = paths.project_root / "profiles"
@@ -263,7 +287,7 @@ def resolve_profile(ref: str, paths: WorkspacePaths) -> ProfileLock:
         path = safe_path(base, f"{name}/{version}/profile.yaml")
         if not path.is_file():
             raise FileNotFoundError(ref)
-        raw = path.read_bytes()
+        raw = read_bytes_bounded(path, max_bytes=DEFAULT_MAX_YAML_BYTES)
 
     profile = Profile.model_validate(
         load_yaml_bytes_bounded(

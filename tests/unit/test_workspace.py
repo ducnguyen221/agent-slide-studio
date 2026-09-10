@@ -166,3 +166,28 @@ description: Trung tính
     assert lock.resolved_ref == "project:editorial-light@1.0.0"
     assert lock.source_scope == "project"
     assert len(lock.sha256) == 64
+
+
+def test_yaml_and_profile_reads_do_not_use_unbounded_path_helpers(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    yaml_path = tmp_path / "input.yaml"
+    yaml_path.write_text("value: safe\n", encoding="utf-8")
+
+    def reject_unbounded_read(path: Path) -> bytes:
+        raise AssertionError(f"unbounded read attempted: {path.name}")
+
+    monkeypatch.setattr(Path, "read_bytes", reject_unbounded_read)
+    assert load_yaml_bounded(yaml_path) == {"value": "safe"}
+
+    profile = tmp_path / "profiles" / "editorial-light" / "1.0.0" / "profile.yaml"
+    profile.parent.mkdir(parents=True)
+    profile.write_text(
+        "schema_version: '1.0'\nid: editorial-light\nversion: 1.0.0\n"
+        "display_name: Safe\ndescription: Safe\n",
+        encoding="utf-8",
+    )
+    lock = resolve_profile(
+        "project:editorial-light@1.0.0", resolve_paths(workspace=tmp_path)
+    )
+    assert len(lock.sha256) == 64
