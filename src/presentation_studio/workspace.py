@@ -8,14 +8,15 @@ from importlib.resources.abc import Traversable
 import os
 from pathlib import Path, PureWindowsPath
 import re
-import tempfile
 from typing import Any
+from uuid import uuid4
 
 from pydantic import ValidationError
 import yaml
 from yaml.events import AliasEvent, MappingEndEvent, MappingStartEvent, ScalarEvent, SequenceEndEvent, SequenceStartEvent
 
 from .models import DeckSpec, Profile, ProfileLock, ProjectConfig
+from .fs import BoundDirectory
 
 
 DEFAULT_MAX_YAML_BYTES = 5 * 1024 * 1024
@@ -172,28 +173,28 @@ def load_yaml_bounded(
 
 def _atomic_create_text(path: Path, text: str) -> None:
     payload = text.encode("utf-8")
-    temporary: Path | None = None
-    try:
-        with tempfile.NamedTemporaryFile(
-            mode="wb",
-            prefix=f".{path.name}.",
-            suffix=".tmp",
-            dir=path.parent,
-            delete=False,
-        ) as stream:
-            temporary = Path(stream.name)
-            stream.write(payload)
-            stream.flush()
-            os.fsync(stream.fileno())
-        os.link(temporary, path)
-        temporary.unlink()
-        temporary = None
-    finally:
-        if temporary is not None:
+    temporary_name = f".{path.name}.{uuid4().hex}.tmp"
+    with BoundDirectory.open(path.parent) as binding:
+        descriptor = binding.open_file(
+            temporary_name, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600
+        )
+        try:
+            offset = 0
+            while offset < len(payload):
+                offset += os.write(descriptor, payload[offset:])
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+        try:
+            binding.link(temporary_name, path.name)
+            binding.unlink(temporary_name)
+            binding.fsync()
+        except BaseException:
             try:
-                temporary.unlink()
+                binding.unlink(temporary_name)
             except FileNotFoundError:
                 pass
+            raise
 
 
 def _load_existing_project(target: Path) -> ProjectConfig:

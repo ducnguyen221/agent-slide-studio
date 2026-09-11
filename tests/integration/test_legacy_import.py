@@ -202,8 +202,8 @@ def test_invalid_candidate_fails_whole_migration_without_target(tmp_path: Path) 
     source = tmp_path / "legacy"
     target = tmp_path / "target"
     source.mkdir()
-    _legacy_deck(source / "deck.yaml")
-    (source / "broken.yaml").write_text("slides: [", encoding="utf-8")
+    _legacy_deck(source / "ignored.yaml")
+    (source / "deck.yaml").write_text("slides: [", encoding="utf-8")
 
     result = _run_script(source, target, "--apply")
 
@@ -508,7 +508,98 @@ def test_migration_skips_unreferenced_private_hidden_and_config_files(
     assert sorted(path.name for path in originals.rglob("*")) == ["deck.yaml"]
 
 
-def test_migration_stops_after_detecting_second_deck(
+def test_unselected_invalid_yaml_is_not_read(tmp_path: Path) -> None:
+    source = tmp_path / "legacy"
+    source.mkdir()
+    _legacy_deck(source / "deck.yaml")
+    (source / "private.yaml").write_text("slides: [", encoding="utf-8")
+
+    result = migrate(source, tmp_path / "target", apply=False)
+
+    assert result["planned_files"] == 1
+    assert result["files"][0]["relative_path"] == "deck.yaml"
+
+
+def test_migration_rejects_hidden_or_config_reference(tmp_path: Path) -> None:
+    source = tmp_path / "legacy"
+    source.mkdir()
+    deck = source / "deck.yaml"
+    _legacy_deck(deck)
+    deck.write_text(
+        deck.read_text(encoding="utf-8") + "source_files: [.cache/private.md]\n",
+        encoding="utf-8",
+    )
+    (source / ".cache").mkdir()
+    (source / ".cache" / "private.md").write_text("private", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="reference is invalid"):
+        migrate(source, tmp_path / "target", apply=False)
+
+
+@pytest.mark.parametrize(
+    "credential",
+    [
+        "auth:\n  authorization: Bearer synthetic-token-123456\n",
+        "provider_token: sk-syntheticprovider000000000\n",
+        "database:\n  connection_string: postgresql://user:pass@host/db\n",
+        "aws_secret_access_key: syntheticAwsSecretValue123\n",
+    ],
+)
+def test_recursive_credential_scanner_quarantines_selected_source(
+    tmp_path: Path, credential: str
+) -> None:
+    source = tmp_path / "legacy"
+    source.mkdir()
+    deck = source / "deck.yaml"
+    _legacy_deck(deck)
+    deck.write_text(deck.read_text(encoding="utf-8") + credential, encoding="utf-8")
+    target = tmp_path / "target"
+
+    with pytest.raises(ValueError, match="credential"):
+        migrate(source, target, apply=True)
+    assert not target.exists()
+
+
+def test_discovery_counts_all_candidates_before_reading(tmp_path: Path) -> None:
+    source = tmp_path / "legacy"
+    source.mkdir()
+    _legacy_deck(source / "deck.yaml")
+    (source / "private-one.md").write_text("one", encoding="utf-8")
+    (source / "private-two.md").write_text("two", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="candidate count limit"):
+        migrate(
+            source,
+            tmp_path / "target",
+            apply=False,
+            limits=MigrationLimits(max_files=2),
+        )
+
+
+def test_explicit_yaml_reference_shares_aggregate_node_budget(tmp_path: Path) -> None:
+    source = tmp_path / "legacy"
+    source.mkdir()
+    deck = source / "deck.yaml"
+    _legacy_deck(deck)
+    deck.write_text(
+        deck.read_text(encoding="utf-8") + "source_files: [facts.yaml]\n",
+        encoding="utf-8",
+    )
+    (source / "facts.yaml").write_text(
+        "facts:\n" + "".join(f"  - fact-{index}\n" for index in range(100)),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match="aggregate YAML node budget"):
+        migrate(
+            source,
+            tmp_path / "target",
+            apply=False,
+            limits=MigrationLimits(max_yaml_nodes=80),
+        )
+
+
+def test_ambiguous_selection_does_not_read_candidate_content(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     from presentation_studio import migration
@@ -526,10 +617,10 @@ def test_migration_stops_after_detecting_second_deck(
         return original_read(path, root, limits)
 
     monkeypatch.setattr(migration, "_read_candidate", record_read)
-    with pytest.raises(ValueError, match="multiple legacy deck"):
+    with pytest.raises(ValueError, match="selection is ambiguous"):
         migrate(source, tmp_path / "target", apply=False)
 
-    assert inspected == ["one.yaml", "two.yaml"]
+    assert inspected == []
 
 
 def test_migration_fails_closed_on_credential_material_without_echo(
@@ -583,3 +674,39 @@ def test_staging_cleanup_refuses_replaced_directory_identity(tmp_path: Path) -> 
         migration._remove_staging(staging, parent, "target")
 
     assert marker.read_text(encoding="utf-8") == "foreign"
+
+
+def test_staging_capture_closes_both_bindings_when_identity_read_fails(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from presentation_studio import migration
+
+    class FakeBinding:
+        def __init__(self, descriptor: int) -> None:
+            self.descriptor = descriptor
+            self.closed = False
+
+        def close(self) -> None:
+            self.closed = True
+
+    parent_binding = FakeBinding(10)
+    directory_binding = FakeBinding(20)
+    bindings = iter((parent_binding, directory_binding))
+    monkeypatch.setattr(
+        migration.BoundDirectory,
+        "open",
+        lambda path, **kwargs: next(bindings),
+    )
+
+    def fail_parent_identity(descriptor: int) -> os.stat_result:
+        if descriptor == parent_binding.descriptor:
+            raise OSError("synthetic parent identity failure")
+        return os.stat_result((0o040000, 1, 1, 0, 0, 0, 0, 0, 0, 0))
+
+    monkeypatch.setattr(migration.os, "fstat", fail_parent_identity)
+
+    with pytest.raises(OSError, match="synthetic parent identity failure"):
+        migration._capture_staging(tmp_path / "stage")
+
+    assert directory_binding.closed
+    assert parent_binding.closed

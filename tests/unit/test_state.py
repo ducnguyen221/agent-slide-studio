@@ -1,4 +1,5 @@
 import json
+import errno
 from concurrent.futures import ThreadPoolExecutor
 import os
 from pathlib import Path
@@ -261,6 +262,29 @@ def test_state_and_journal_size_caps_apply_before_read(
         stream.truncate(state_module.MAX_JOURNAL_BYTES + 1)
     with pytest.raises(StateConflict, match="size limit"):
         state_module._event_exists(journal_path, "tx", {})
+
+
+def test_directory_fsync_propagates_unexpected_io_failure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from presentation_studio import state as state_module
+
+    class BrokenBinding:
+        def __enter__(self) -> "BrokenBinding":
+            return self
+
+        def __exit__(self, *args: object) -> None:
+            pass
+
+        def fsync(self) -> None:
+            raise OSError(errno.EIO, "synthetic directory I/O failure")
+
+    monkeypatch.setattr(
+        state_module.BoundDirectory, "open", lambda path: BrokenBinding()
+    )
+    with pytest.raises(OSError) as error:
+        state_module._fsync_directory(tmp_path)
+    assert error.value.errno == errno.EIO
 
 
 def test_release_waits_until_state_transition_finishes(

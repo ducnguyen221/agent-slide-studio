@@ -20,6 +20,7 @@ from uuid import uuid4
 from pydantic import ValidationError
 import yaml
 
+from .fs import BoundDirectory
 from .models import CLIError, CLIResult, DeckSpec, ProjectConfig
 from .workspace import (
     DEFAULT_MAX_YAML_BYTES,
@@ -42,6 +43,7 @@ class MigrationConflict(RuntimeError):
 @dataclass(frozen=True)
 class MigrationLimits:
     max_files: int = 512
+    max_entries: int = 4096
     max_file_bytes: int = 10 * 1024 * 1024
     max_total_bytes: int = 50 * 1024 * 1024
     max_yaml_nodes: int = 200_000
@@ -71,19 +73,24 @@ class StagingArea:
     inode: int
     parent_device: int
     parent_inode: int
+    parent_binding: BoundDirectory
+    directory_binding: BoundDirectory
+
+    def close(self) -> None:
+        first_error: OSError | None = None
+        for binding in (self.directory_binding, self.parent_binding):
+            try:
+                binding.close()
+            except OSError as exc:
+                if first_error is None:
+                    first_error = exc
+        if first_error is not None:
+            raise first_error
 
 
 def _fsync_directory(directory: Path) -> None:
-    try:
-        descriptor = os.open(directory, os.O_RDONLY)
-    except OSError:
-        return
-    try:
-        os.fsync(descriptor)
-    except OSError:
-        pass
-    finally:
-        os.close(descriptor)
+    with BoundDirectory.open(directory) as binding:
+        binding.fsync()
 
 
 def _rename_noreplace(source: Path, destination: Path) -> None:
@@ -185,30 +192,112 @@ _SENSITIVE_PATTERNS = (
     ),
     re.compile(rb"\bAKIA[0-9A-Z]{16}\b"),
     re.compile(rb"\bgh[pousr]_[A-Za-z0-9]{20,}\b"),
+    re.compile(rb"(?i)\bbearer\s+[A-Za-z0-9._~+/=-]{8,}"),
+    re.compile(rb"\b(?:sk-[A-Za-z0-9_-]{16,}|AIza[0-9A-Za-z_-]{20,}|xox[baprs]-[A-Za-z0-9-]{10,})\b"),
+    re.compile(rb"(?i)\b(?:postgres(?:ql)?|mysql|mongodb(?:\+srv)?|mssql|redis)://[^\s]+"),
 )
 
+_SENSITIVE_KEYS = {
+    "authorization",
+    "bearer",
+    "password",
+    "passwd",
+    "secret",
+    "client_secret",
+    "api_key",
+    "access_token",
+    "refresh_token",
+    "provider_token",
+    "aws_secret_access_key",
+    "connection_string",
+    "database_url",
+}
 
-def _candidate_paths(source: Path) -> list[Path]:
-    candidates: list[Path] = []
-    for root, directories, filenames in os.walk(source, followlinks=False):
-        root_path = Path(root)
-        for directory in list(directories):
-            child = root_path / directory
-            if _is_link_or_junction(child):
-                raise MigrationInputError("source contains a linked directory")
-        directories[:] = [
-            name
-            for name in directories
-            if name not in _EXCLUDED_DIRECTORIES and not name.startswith(".")
-        ]
-        for filename in filenames:
-            path = root_path / filename
-            if (
-                not filename.startswith(".")
-                and path.suffix.lower() in {".yaml", ".yml", ".md"}
-            ):
-                candidates.append(path)
-    return sorted(candidates, key=lambda item: item.relative_to(source).as_posix())
+
+def _reference_is_forbidden(relative: Path) -> bool:
+    return any(
+        part.startswith(".") or part.casefold() in _EXCLUDED_DIRECTORIES
+        for part in relative.parts
+    )
+
+
+def _discover_deck(
+    source: Path, limits: MigrationLimits, explicit: str | None
+) -> Path:
+    root_candidates: list[Path] = []
+    entry_count = 0
+    candidate_count = 0
+    stack = [source]
+    while stack:
+        directory = stack.pop()
+        with os.scandir(directory) as entries:
+            for entry in entries:
+                entry_count += 1
+                if entry_count > limits.max_entries:
+                    raise MigrationInputError("source exceeds discovery entry limit")
+                path = Path(entry.path)
+                if entry.is_symlink() or _is_link_or_junction(path):
+                    raise MigrationInputError("source contains a linked entry")
+                if entry.is_dir(follow_symlinks=False):
+                    if not _reference_is_forbidden(path.relative_to(source)):
+                        stack.append(path)
+                    continue
+                if path.suffix.lower() not in {".yaml", ".yml", ".md"}:
+                    continue
+                candidate_count += 1
+                if candidate_count > limits.max_files:
+                    raise MigrationInputError("source exceeds candidate count limit")
+                if path.parent == source and not _reference_is_forbidden(
+                    path.relative_to(source)
+                ):
+                    root_candidates.append(path)
+
+    if explicit is not None:
+        relative = Path(explicit)
+        if (
+            relative.is_absolute()
+            or ".." in relative.parts
+            or _reference_is_forbidden(relative)
+            or relative.suffix.lower() not in {".yaml", ".yml", ".md"}
+        ):
+            raise MigrationInputError("explicit legacy deck path is invalid")
+        selected = source / relative
+        if not selected.is_file():
+            raise MigrationInputError("explicit legacy deck does not exist")
+        return selected
+
+    by_name = {
+        path.name.casefold(): path
+        for path in root_candidates
+        if path.name.casefold()
+        in {
+            "deck.yaml",
+            "deck.yml",
+            "presentation.yaml",
+            "presentation.yml",
+            "slides.yaml",
+            "slides.yml",
+        }
+    }
+    if len(by_name) == 1:
+        return next(iter(by_name.values()))
+    if len(by_name) > 1:
+        raise MigrationInputError("multiple allowlisted legacy decks found")
+    root_yaml = [
+        path for path in root_candidates if path.suffix.lower() in {".yaml", ".yml"}
+    ]
+    if len(root_yaml) == 1:
+        return root_yaml[0]
+    if len(root_yaml) > 1:
+        raise MigrationInputError("legacy deck selection is ambiguous; use --deck")
+    markdown = [
+        path
+        for path in root_candidates
+        if path.name.casefold() in {"deck.md", "presentation.md", "slides.md"}
+    ]
+    if len(markdown) == 1:
+        return markdown[0]
+    raise MigrationInputError("no deterministic legacy deck was found")
 
 
 def _read_candidate(path: Path, source: Path, limits: MigrationLimits) -> bytes:
@@ -259,6 +348,27 @@ def _reject_sensitive(raw: bytes, relative: str) -> None:
         )
 
 
+def _reject_sensitive_tree(value: Any, relative: str, key: str | None = None) -> None:
+    if key is not None:
+        normalized = re.sub(r"[^a-z0-9]+", "_", key.casefold()).strip("_")
+        if normalized in _SENSITIVE_KEYS and value not in (None, "", False):
+            raise MigrationInputError(
+                "selected source contains credential material", location=relative
+            )
+    if isinstance(value, dict):
+        for child_key, child in value.items():
+            _reject_sensitive_tree(child, relative, str(child_key))
+    elif isinstance(value, list):
+        for child in value:
+            _reject_sensitive_tree(child, relative)
+    elif isinstance(value, str):
+        encoded = value.encode("utf-8", errors="ignore")
+        if any(pattern.search(encoded) for pattern in _SENSITIVE_PATTERNS[4:]):
+            raise MigrationInputError(
+                "selected source contains credential material", location=relative
+            )
+
+
 def _explicit_references(data: dict[str, Any]) -> list[str]:
     refs: list[str] = []
     top_level = data.get("source_files", [])
@@ -282,20 +392,16 @@ def _explicit_references(data: dict[str, Any]) -> list[str]:
     return refs
 
 
-def _scan_candidates(source: Path, limits: MigrationLimits) -> list[Candidate]:
+def _scan_candidates(
+    source: Path, limits: MigrationLimits, *, deck_path: str | None = None
+) -> list[Candidate]:
     if _is_link_or_junction(source):
         raise MigrationInputError("source cannot be a link or junction")
     if not source.is_dir():
         raise MigrationInputError("source directory does not exist")
     source = source.resolve()
-    paths = _candidate_paths(source)
-    if not paths:
-        raise MigrationInputError("source contains no supported YAML or Markdown")
-    yaml_paths = [path for path in paths if path.suffix.lower() in {".yaml", ".yml"}]
-    if len(yaml_paths) > limits.max_files:
-        raise MigrationInputError("source exceeds candidate count limit")
+    selected_deck = _discover_deck(source, limits, deck_path)
     candidates_by_path: dict[Path, Candidate] = {}
-    decks: list[Candidate] = []
     total_bytes = 0
     used_ids: set[str] = set()
     node_budget = [limits.max_yaml_nodes]
@@ -345,22 +451,22 @@ def _scan_candidates(source: Path, limits: MigrationLimits) -> list[Candidate]:
         candidates_by_path[path] = candidate
         return candidate
 
-    for index, path in enumerate(yaml_paths, start=1):
-        candidate = scan(path, index, parse_yaml=True)
-        if isinstance(candidate.parsed_yaml, dict) and "slides" in candidate.parsed_yaml:
-            _reject_sensitive(candidate.raw, candidate.relative_path)
-            decks.append(candidate)
-            if len(decks) > 1:
-                raise MigrationInputError("multiple legacy deck YAML files found")
-
-    if decks:
-        selected = [decks[0]]
-        assert isinstance(decks[0].parsed_yaml, dict)
-        for ref in _explicit_references(decks[0].parsed_yaml):
+    deck = scan(
+        selected_deck,
+        1,
+        parse_yaml=selected_deck.suffix.lower() in {".yaml", ".yml"},
+    )
+    _reject_sensitive(deck.raw, deck.relative_path)
+    if deck.parsed_yaml is not None:
+        _reject_sensitive_tree(deck.parsed_yaml, deck.relative_path)
+    selected = [deck]
+    if isinstance(deck.parsed_yaml, dict):
+        for ref in _explicit_references(deck.parsed_yaml):
             ref_path = Path(ref)
             if (
                 ref_path.is_absolute()
                 or ".." in ref_path.parts
+                or _reference_is_forbidden(ref_path)
                 or ref_path.suffix.lower() not in {".yaml", ".yml", ".md"}
             ):
                 raise MigrationInputError("legacy source reference is invalid")
@@ -371,25 +477,17 @@ def _scan_candidates(source: Path, limits: MigrationLimits) -> list[Candidate]:
             if candidate is None:
                 if len(candidates_by_path) >= limits.max_files:
                     raise MigrationInputError("source exceeds candidate count limit")
-                candidate = scan(path, len(candidates_by_path) + 1, parse_yaml=False)
+                candidate = scan(
+                    path,
+                    len(candidates_by_path) + 1,
+                    parse_yaml=path.suffix.lower() in {".yaml", ".yml"},
+                )
             _reject_sensitive(candidate.raw, candidate.relative_path)
+            if candidate.parsed_yaml is not None:
+                _reject_sensitive_tree(candidate.parsed_yaml, candidate.relative_path)
             if candidate not in selected:
                 selected.append(candidate)
-        return selected
-
-    conventional = next(
-        (
-            path
-            for path in paths
-            if path.parent == source and path.name.lower() in {"deck.md", "presentation.md", "slides.md"}
-        ),
-        None,
-    )
-    if conventional is not None:
-        candidate = scan(conventional, len(candidates_by_path) + 1, parse_yaml=False)
-        _reject_sensitive(candidate.raw, candidate.relative_path)
-        return [candidate]
-    raise MigrationInputError("no legacy deck was found")
+    return selected
 
 
 def _source_ref(candidate: Candidate) -> dict[str, str]:
@@ -883,47 +981,65 @@ def _write_yaml(path: Path, value: Any) -> None:
 
 
 def _capture_staging(stage: Path) -> StagingArea:
-    info = stage.lstat()
-    parent_info = stage.parent.stat()
-    if _is_link_or_junction(stage) or not stat.S_ISDIR(info.st_mode):
-        raise MigrationConflict("migration staging directory has an unsafe identity")
-    return StagingArea(
-        path=stage,
-        device=info.st_dev,
-        inode=info.st_ino,
-        parent_device=parent_info.st_dev,
-        parent_inode=parent_info.st_ino,
-    )
+    parent_binding = BoundDirectory.open(stage.parent)
+    directory_binding: BoundDirectory | None = None
+    try:
+        directory_binding = BoundDirectory.open(stage, allow_delete=True)
+        info = os.fstat(directory_binding.descriptor)
+        parent_info = os.fstat(parent_binding.descriptor)
+        if _is_link_or_junction(stage) or not stat.S_ISDIR(info.st_mode):
+            raise MigrationConflict("migration staging directory has an unsafe identity")
+        return StagingArea(
+            path=stage,
+            device=info.st_dev,
+            inode=info.st_ino,
+            parent_device=parent_info.st_dev,
+            parent_inode=parent_info.st_ino,
+            parent_binding=parent_binding,
+            directory_binding=directory_binding,
+        )
+    except BaseException:
+        try:
+            if directory_binding is not None:
+                directory_binding.close()
+        finally:
+            parent_binding.close()
+        raise
 
 
 def _remove_staging(stage: StagingArea, parent: Path, target_name: str) -> None:
-    if (
-        stage.path.parent.absolute() != parent.absolute()
-        or not stage.path.name.startswith(f".{target_name}.migration-")
-    ):
-        raise RuntimeError("refusing to remove unexpected staging path")
-    parent_info = parent.stat()
-    if (parent_info.st_dev, parent_info.st_ino) != (
-        stage.parent_device,
-        stage.parent_inode,
-    ):
-        raise MigrationConflict("migration staging parent identity changed")
     try:
-        current = stage.path.lstat()
+        if (
+            stage.path.parent.absolute() != parent.absolute()
+            or not stage.path.name.startswith(f".{target_name}.migration-")
+        ):
+            raise RuntimeError("refusing to remove unexpected staging path")
+        try:
+            stage.parent_binding.verify()
+            stage.directory_binding.verify()
+        except OSError as exc:
+            raise MigrationConflict("migration staging identity changed") from exc
+        current = stage.parent_binding.lstat(stage.path.name)
+        if (
+            not stat.S_ISDIR(current.st_mode)
+            or (current.st_dev, current.st_ino) != (stage.device, stage.inode)
+        ):
+            raise MigrationConflict("migration staging identity changed")
+        quarantine = f".{target_name}.cleanup-{uuid4().hex}"
+        stage.parent_binding.replace(stage.path.name, quarantine)
+        moved = stage.parent_binding.lstat(quarantine)
+        if (moved.st_dev, moved.st_ino) != (stage.device, stage.inode):
+            stage.parent_binding.replace(quarantine, stage.path.name)
+            raise MigrationConflict("migration staging identity changed during cleanup")
+        if os.name == "nt":
+            shutil.rmtree(parent / quarantine)
+        else:
+            shutil.rmtree(quarantine, dir_fd=stage.parent_binding.descriptor)
+        stage.parent_binding.fsync()
     except FileNotFoundError:
         return
-    if _is_link_or_junction(stage.path):
-        if stage.path.is_symlink():
-            stage.path.unlink()
-        else:
-            os.rmdir(stage.path)
-        raise MigrationConflict("migration staging path was replaced by a link")
-    if (
-        not stat.S_ISDIR(current.st_mode)
-        or (current.st_dev, current.st_ino) != (stage.device, stage.inode)
-    ):
-        raise MigrationConflict("migration staging identity changed")
-    shutil.rmtree(stage.path)
+    finally:
+        stage.close()
 
 
 def _promote_staging(stage: Path, target: Path) -> None:
@@ -957,6 +1073,7 @@ def migrate(
     *,
     apply: bool,
     limits: MigrationLimits | None = None,
+    deck_path: str | None = None,
 ) -> dict[str, Any]:
     limits = limits or MigrationLimits()
     source = source.expanduser().absolute()
@@ -966,7 +1083,11 @@ def migrate(
     if target.resolve().is_relative_to(source.resolve()):
         raise MigrationInputError("migration target cannot be inside source")
 
-    candidates = _scan_candidates(source, limits)
+    candidates = (
+        _scan_candidates(source, limits, deck_path=deck_path)
+        if deck_path is not None
+        else _scan_candidates(source, limits)
+    )
     try:
         deck, unmapped = _parse_deck(candidates)
     except ValidationError as exc:
@@ -1013,6 +1134,7 @@ def migrate(
             },
         )
         _promote_staging(stage.path, target)
+        stage.close()
         stage = None
     finally:
         if stage is not None:
@@ -1020,9 +1142,11 @@ def migrate(
     return data
 
 
-def migrate_result(source: Path, target: Path, *, apply: bool) -> CLIResult:
+def migrate_result(
+    source: Path, target: Path, *, apply: bool, deck_path: str | None = None
+) -> CLIResult:
     try:
-        data = migrate(source, target, apply=apply)
+        data = migrate(source, target, apply=apply, deck_path=deck_path)
     except MigrationConflict:
         return CLIResult(
             command="migrate",
@@ -1124,13 +1248,17 @@ def main(argv: list[str] | None = None) -> None:
     parser = _Parser(prog="migrate-legacy")
     parser.add_argument("--source", required=True)
     parser.add_argument("--workspace", required=True)
+    parser.add_argument("--deck")
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--dry-run", action="store_true")
     mode.add_argument("--apply", action="store_true")
     try:
         args = parser.parse_args(argv)
         result = migrate_result(
-            Path(args.source), Path(args.workspace), apply=args.apply
+            Path(args.source),
+            Path(args.workspace),
+            apply=args.apply,
+            deck_path=args.deck,
         )
     except MigrationInputError:
         result = CLIResult(

@@ -8,10 +8,11 @@ import json
 import os
 from pathlib import Path
 import stat
-import tempfile
 from threading import Lock
 from typing import Any, Iterator, Literal
 from uuid import uuid4
+
+from .fs import BoundDirectory
 
 
 _atomic_locks_guard = Lock()
@@ -136,16 +137,14 @@ def hash_inputs(value: Any) -> str:
 
 
 def _fsync_directory(directory: Path) -> None:
-    try:
-        descriptor = os.open(directory, os.O_RDONLY)
-    except OSError:
-        return
-    try:
-        os.fsync(descriptor)
-    except OSError:
-        pass
-    finally:
-        os.close(descriptor)
+    with BoundDirectory.open(directory) as binding:
+        binding.fsync()
+
+
+def _bound_unlink(path: Path) -> None:
+    with BoundDirectory.open(path.parent) as binding:
+        binding.unlink(path.name)
+        binding.fsync()
 
 
 def _atomic_lock(path: Path) -> Lock:
@@ -159,41 +158,46 @@ def _protocol_lock(path: Path) -> Iterator[None]:
     """Serialize a short file protocol across instances and processes."""
     path.parent.mkdir(parents=True, exist_ok=True)
     with _atomic_lock(path):
-        descriptor = _open_verified_file(path, os.O_RDWR | os.O_CREAT, 0o600)
-        locked = False
-        try:
-            if os.name == "nt":
-                import msvcrt
-
-                if os.fstat(descriptor).st_size == 0:
-                    os.write(descriptor, b"\0")
-                    os.fsync(descriptor)
-                os.lseek(descriptor, 0, os.SEEK_SET)
-                try:
-                    msvcrt.locking(descriptor, msvcrt.LK_NBLCK, 1)
-                except OSError as exc:
-                    raise RunConflict("state operation is already in progress") from exc
-            else:
-                import fcntl
-
-                try:
-                    fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
-                except OSError as exc:
-                    raise RunConflict("state operation is already in progress") from exc
-            locked = True
-            yield
-        finally:
-            if locked:
+        with BoundDirectory.open(path.parent) as binding:
+            descriptor = binding.open_file(path.name, os.O_RDWR | os.O_CREAT, 0o600)
+            locked = False
+            try:
                 if os.name == "nt":
                     import msvcrt
 
+                    if os.fstat(descriptor).st_size == 0:
+                        os.write(descriptor, b"\0")
+                        os.fsync(descriptor)
                     os.lseek(descriptor, 0, os.SEEK_SET)
-                    msvcrt.locking(descriptor, msvcrt.LK_UNLCK, 1)
+                    try:
+                        msvcrt.locking(descriptor, msvcrt.LK_NBLCK, 1)
+                    except OSError as exc:
+                        raise RunConflict(
+                            "state operation is already in progress"
+                        ) from exc
                 else:
                     import fcntl
 
-                    fcntl.flock(descriptor, fcntl.LOCK_UN)
-            os.close(descriptor)
+                    try:
+                        fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    except OSError as exc:
+                        raise RunConflict(
+                            "state operation is already in progress"
+                        ) from exc
+                locked = True
+                yield
+            finally:
+                if locked:
+                    if os.name == "nt":
+                        import msvcrt
+
+                        os.lseek(descriptor, 0, os.SEEK_SET)
+                        msvcrt.locking(descriptor, msvcrt.LK_UNLCK, 1)
+                    else:
+                        import fcntl
+
+                        fcntl.flock(descriptor, fcntl.LOCK_UN)
+                os.close(descriptor)
 
 
 def atomic_json(path: Path, value: Any) -> None:
@@ -212,28 +216,27 @@ def _atomic_json_unlocked(path: Path, value: Any) -> None:
         _validate_file_identity(path.lstat())
     except FileNotFoundError:
         pass
-    temporary: Path | None = None
-    try:
-        with tempfile.NamedTemporaryFile(
-            mode="wb",
-            prefix=f".{path.name}.",
-            suffix=".tmp",
-            dir=path.parent,
-            delete=False,
-        ) as stream:
-            temporary = Path(stream.name)
-            stream.write(payload)
-            stream.flush()
-            os.fsync(stream.fileno())
-        os.replace(temporary, path)
-        temporary = None
-        _fsync_directory(path.parent)
-    finally:
-        if temporary is not None:
+    temporary_name = f".{path.name}.{uuid4().hex}.tmp"
+    with BoundDirectory.open(path.parent) as binding:
+        descriptor = binding.open_file(
+            temporary_name, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600
+        )
+        try:
+            offset = 0
+            while offset < len(payload):
+                offset += os.write(descriptor, payload[offset:])
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+        try:
+            binding.replace(temporary_name, path.name)
+            binding.fsync()
+        except BaseException:
             try:
-                temporary.unlink()
+                binding.unlink(temporary_name)
             except FileNotFoundError:
                 pass
+            raise
 
 
 def _append_event(path: Path, event: dict[str, Any]) -> None:
@@ -241,19 +244,22 @@ def _append_event(path: Path, event: dict[str, Any]) -> None:
     line = (json.dumps(event, ensure_ascii=False, sort_keys=True) + "\n").encode(
         "utf-8"
     )
-    descriptor = _open_verified_file(
-        path, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600
-    )
-    try:
-        if os.fstat(descriptor).st_size + len(line) > MAX_JOURNAL_BYTES:
-            raise StateConflict("state journal exceeds its size limit")
-        offset = 0
-        while offset < len(line):
-            offset += os.write(descriptor, line[offset:])
-        os.fsync(descriptor)
-    finally:
-        os.close(descriptor)
-    _fsync_directory(path.parent)
+    with BoundDirectory.open(path.parent) as binding:
+        descriptor = binding.open_file(
+            path.name, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600
+        )
+        try:
+            opened = os.fstat(descriptor)
+            _validate_file_identity(opened)
+            if opened.st_size + len(line) > MAX_JOURNAL_BYTES:
+                raise StateConflict("state journal exceeds its size limit")
+            offset = 0
+            while offset < len(line):
+                offset += os.write(descriptor, line[offset:])
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+        binding.fsync()
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -391,8 +397,7 @@ class StateStore:
             _atomic_json_unlocked(state_path, state)
         else:
             raise StateConflict("state changed while recovering a transaction")
-        pending_path.unlink()
-        _fsync_directory(pending_path.parent)
+        _bound_unlink(pending_path)
         return state
 
     def _commit_transaction_unlocked(
@@ -418,8 +423,7 @@ class StateStore:
         )
         _append_event(events_path, event)
         _atomic_json_unlocked(state_path, state)
-        pending_path.unlink()
-        _fsync_directory(pending_path.parent)
+        _bound_unlink(pending_path)
         return state
 
     def recover_pending(self, lock: RunLock) -> dict[str, Any] | None:
@@ -537,16 +541,19 @@ class RunLock:
         )
         payload = (json.dumps(lock.identity, sort_keys=True) + "\n").encode("utf-8")
         with _protocol_lock(protocol_path):
-            try:
-                descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-            except FileExistsError as exc:
-                raise RunConflict("project already has a writer lock") from exc
-            try:
-                os.write(descriptor, payload)
-                os.fsync(descriptor)
-            finally:
-                os.close(descriptor)
-        _fsync_directory(state_dir)
+            with BoundDirectory.open(path.parent) as binding:
+                try:
+                    descriptor = binding.open_file(
+                        path.name, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600
+                    )
+                except FileExistsError as exc:
+                    raise RunConflict("project already has a writer lock") from exc
+                try:
+                    os.write(descriptor, payload)
+                    os.fsync(descriptor)
+                finally:
+                    os.close(descriptor)
+                binding.fsync()
         return lock
 
     def _state_dir(self) -> Path:
@@ -575,8 +582,7 @@ class RunLock:
             with _protocol_lock(state_dir / ".writer-lock.protocol"):
                 if self._read_identity_unlocked() != self.identity:
                     raise RunConflict("lock ownership changed")
-                self.path.unlink()
-                _fsync_directory(state_dir)
+                _bound_unlink(self.path)
 
     @classmethod
     def recover(
@@ -667,5 +673,4 @@ class RunLock:
                     )
                 else:
                     raise StateConflict("state status is invalid during lock recovery")
-                path.unlink()
-                _fsync_directory(state_dir)
+                _bound_unlink(path)

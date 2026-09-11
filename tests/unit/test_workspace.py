@@ -16,6 +16,7 @@ from presentation_studio.workspace import (
     resolve_profile,
     safe_path,
 )
+from presentation_studio.fs import BoundDirectory
 
 
 def test_direct_workspace_does_not_create_station(tmp_path: Path) -> None:
@@ -191,3 +192,31 @@ def test_yaml_and_profile_reads_do_not_use_unbounded_path_helpers(
         "project:editorial-light@1.0.0", resolve_paths(workspace=tmp_path)
     )
     assert len(lock.sha256) == 64
+
+
+def test_bound_directory_keeps_mutation_on_captured_parent(tmp_path: Path) -> None:
+    parent = tmp_path / "parent"
+    parent.mkdir()
+    with BoundDirectory.open(parent) as binding:
+        if os.name == "nt":
+            moved = tmp_path / "moved"
+            parent.rename(moved)
+            parent.mkdir()
+            with pytest.raises(OSError):
+                binding.open_file(
+                    "owned.tmp", os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600
+                )
+            assert not (parent / "owned.tmp").exists()
+            assert not (moved / "owned.tmp").exists()
+            return
+        moved = tmp_path / "moved"
+        parent.rename(moved)
+        parent.mkdir()
+        descriptor = binding.open_file(
+            "owned.tmp", os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600
+        )
+        os.close(descriptor)
+        binding.link("owned.tmp", "project.yaml")
+        binding.unlink("owned.tmp")
+        assert (moved / "project.yaml").is_file()
+        assert not (parent / "project.yaml").exists()

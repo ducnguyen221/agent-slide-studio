@@ -137,6 +137,7 @@ def _parser() -> ResultArgumentParser:
 
     command = sub.add_parser("build")
     command.add_argument("--workspace", required=True)
+    command.add_argument("--deck")
     command.add_argument("--backend")
     command.add_argument("--json", action="store_true")
 
@@ -154,6 +155,7 @@ def _parser() -> ResultArgumentParser:
     command = sub.add_parser("migrate")
     command.add_argument("--source", required=True)
     command.add_argument("--workspace", required=True)
+    command.add_argument("--deck")
     mode = command.add_mutually_exclusive_group(required=True)
     mode.add_argument("--dry-run", action="store_true")
     mode.add_argument("--apply", action="store_true")
@@ -274,7 +276,10 @@ def _run_command(args: argparse.Namespace) -> CLIResult:
         from .migration import migrate_result
 
         return migrate_result(
-            Path(args.source), Path(args.workspace), apply=args.apply
+            Path(args.source),
+            Path(args.workspace),
+            apply=args.apply,
+            deck_path=args.deck,
         )
 
     return _failed(
