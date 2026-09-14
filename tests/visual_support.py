@@ -8,6 +8,9 @@ if TYPE_CHECKING:
     from presentation_studio.models.visual import VisualAssetBrief
 
 
+__all__ = ["fixture_json", "load_brief"]
+
+
 def fixture_json(name: str) -> dict:
     root = Path(__file__).parent / "fixtures" / "visual" / "core"
     return json.loads((root / f"{name}.json").read_text(encoding="utf-8"))
