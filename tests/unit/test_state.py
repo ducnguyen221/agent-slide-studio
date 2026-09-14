@@ -8,6 +8,19 @@ from threading import Event
 
 import pytest
 
+
+@pytest.mark.parametrize("name", [".state.protocol", ".writer-lock.protocol"])
+def test_protocol_rejects_hardlink_before_initializing(tmp_path: Path, name: str) -> None:
+    from presentation_studio.state import _protocol_lock
+
+    outside = tmp_path / "outside"
+    outside.write_bytes(b"")
+    os.link(outside, tmp_path / name)
+    with pytest.raises((OSError, StatePathError)):
+        with _protocol_lock(tmp_path / name):
+            pytest.fail("unsafe protocol entered")
+    assert outside.read_bytes() == b""
+
 from presentation_studio.state import (
     MissingState,
     RunConflict,

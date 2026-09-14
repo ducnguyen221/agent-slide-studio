@@ -135,8 +135,10 @@ def load_yaml_bytes_bounded(
 
 
 def read_bytes_bounded(path: Path, *, max_bytes: int) -> bytes:
-    descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_BINARY", 0))
+    binding = BoundDirectory.open(path.parent)
+    descriptor = -1
     try:
+        descriptor = binding.open_file(path.name, os.O_RDONLY)
         size = os.fstat(descriptor).st_size
         if size > max_bytes:
             raise InputLimitError(f"input exceeds {max_bytes} bytes")
@@ -151,9 +153,12 @@ def read_bytes_bounded(path: Path, *, max_bytes: int) -> bytes:
         raw = b"".join(chunks)
         if len(raw) > max_bytes:
             raise InputLimitError(f"input exceeds {max_bytes} bytes")
+        binding.verify_file(path.name, descriptor)
         return raw
     finally:
-        os.close(descriptor)
+        if descriptor >= 0:
+            os.close(descriptor)
+        binding.close()
 
 
 def load_yaml_bounded(

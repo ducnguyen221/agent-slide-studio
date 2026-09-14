@@ -20,7 +20,7 @@ from uuid import uuid4
 from pydantic import ValidationError
 import yaml
 
-from .fs import BoundDirectory
+from .fs import BoundDirectory, UnsafeFileError
 from .models import CLIError, CLIResult, DeckSpec, ProjectConfig
 from .workspace import (
     DEFAULT_MAX_YAML_BYTES,
@@ -76,6 +76,62 @@ class StagingArea:
     parent_binding: BoundDirectory
     directory_binding: BoundDirectory
 
+    def verify(self) -> None:
+        try:
+            self.parent_binding.verify()
+            self.directory_binding.verify()
+            current = self.parent_binding.lstat(self.path.name)
+        except OSError as exc:
+            raise MigrationConflict("migration staging identity changed") from exc
+        if (
+            not stat.S_ISDIR(current.st_mode)
+            or (current.st_dev, current.st_ino) != (self.device, self.inode)
+        ):
+            raise MigrationConflict("migration staging identity changed")
+
+    def write_bytes(self, relative: Path, payload: bytes) -> None:
+        if relative.is_absolute() or not relative.parts or ".." in relative.parts:
+            raise MigrationConflict("migration staging output path is unsafe")
+        self.verify()
+        binding = self.directory_binding
+        opened: list[BoundDirectory] = []
+        descriptor = -1
+        try:
+            for part in relative.parts[:-1]:
+                child = binding.child(part, create=True)
+                opened.append(child)
+                binding = child
+            descriptor = binding.open_file(
+                relative.parts[-1], os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600
+            )
+            view = memoryview(payload)
+            while view:
+                written = os.write(descriptor, view)
+                if written <= 0:
+                    raise OSError("short staging write")
+                view = view[written:]
+            os.fsync(descriptor)
+            binding.verify_file(relative.parts[-1], descriptor)
+        except UnsafeFileError as exc:
+            raise MigrationConflict("migration staging output identity is unsafe") from exc
+        finally:
+            primary_error = sys.exc_info()[1]
+            close_error: OSError | None = None
+            if descriptor >= 0:
+                try:
+                    os.close(descriptor)
+                except OSError as exc:
+                    close_error = exc
+            for child in reversed(opened):
+                try:
+                    child.close()
+                except OSError as exc:
+                    if close_error is None:
+                        close_error = exc
+            if primary_error is None and close_error is not None:
+                raise close_error
+        self.verify()
+
     def close(self) -> None:
         first_error: OSError | None = None
         for binding in (self.directory_binding, self.parent_binding):
@@ -93,15 +149,25 @@ def _fsync_directory(directory: Path) -> None:
         binding.fsync()
 
 
-def _rename_noreplace(source: Path, destination: Path) -> None:
+def _rename_noreplace(source: StagingArea | Path, destination: Path) -> None:
     """Atomically rename a directory while refusing every existing destination."""
+    stage = source if isinstance(source, StagingArea) else None
+    source_path = stage.path if stage is not None else source
+    if stage is not None:
+        stage.verify()
     if os.name == "nt":
-        os.rename(source, destination)
+        if stage is None:
+            os.rename(source_path, destination)
+        else:
+            stage.directory_binding.rename_noreplace(destination)
+            object.__setattr__(stage, "path", destination.absolute())
         return
 
     library = ctypes.CDLL(None, use_errno=True)
-    encoded_source = os.fsencode(source)
-    encoded_destination = os.fsencode(destination)
+    encoded_source = os.fsencode(source_path.name if stage is not None else source_path)
+    encoded_destination = os.fsencode(
+        destination.name if stage is not None else destination
+    )
     if sys.platform.startswith("linux"):
         rename = getattr(library, "renameat2", None)
         if rename is None:
@@ -114,19 +180,30 @@ def _rename_noreplace(source: Path, destination: Path) -> None:
             ctypes.c_uint,
         ]
         rename.restype = ctypes.c_int
-        result = rename(-100, encoded_source, -100, encoded_destination, 1)
+        directory_fd = stage.parent_binding.descriptor if stage is not None else -100
+        result = rename(
+            directory_fd, encoded_source, directory_fd, encoded_destination, 1
+        )
     elif sys.platform == "darwin":
         rename = getattr(library, "renamex_np", None)
         if rename is None:
             raise OSError(errno.ENOTSUP, "atomic no-replace rename is unavailable")
         rename.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_uint]
         rename.restype = ctypes.c_int
-        result = rename(encoded_source, encoded_destination, 4)
+        result = rename(
+            os.fsencode(source_path) if stage is not None else encoded_source,
+            os.fsencode(destination) if stage is not None else encoded_destination,
+            4,
+        )
     else:
         raise OSError(errno.ENOTSUP, "atomic no-replace rename is unavailable")
     if result != 0:
         error_number = ctypes.get_errno()
         raise OSError(error_number, os.strerror(error_number), destination)
+    if stage is not None:
+        object.__setattr__(stage, "path", destination.absolute())
+        stage.directory_binding.path = stage.path
+        stage.verify()
 
 
 def _slug(value: str, *, fallback: str) -> str:
@@ -188,7 +265,7 @@ _EXCLUDED_DIRECTORIES = {
 _SENSITIVE_PATTERNS = (
     re.compile(rb"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
     re.compile(
-        rb"(?i)\b(?:password|passwd|secret|client_secret|api[_-]?key|access[_-]?token|refresh[_-]?token)\b\s*[:=]\s*['\"]?[^\s'\"#]{4,}"
+        rb"(?i)\b(?:password|passwd|secret|token|credentials?|private[_-]?key|client[_-]?secret|api[_-]?(?:key|token)|access[_-]?token|refresh[_-]?token|session[_-]?token)\b\s*[:=]\s*['\"]?[^\s'\"#]{4,}"
     ),
     re.compile(rb"\bAKIA[0-9A-Z]{16}\b"),
     re.compile(rb"\bgh[pousr]_[A-Za-z0-9]{20,}\b"),
@@ -208,6 +285,16 @@ _SENSITIVE_KEYS = {
     "access_token",
     "refresh_token",
     "provider_token",
+    "token",
+    "api_token",
+    "auth_token",
+    "session_token",
+    "aws_session_token",
+    "credentials",
+    "credential",
+    "private_key",
+    "client_key",
+    "secret_key",
     "aws_secret_access_key",
     "connection_string",
     "database_url",
@@ -224,6 +311,20 @@ def _reference_is_forbidden(relative: Path) -> bool:
 def _discover_deck(
     source: Path, limits: MigrationLimits, explicit: str | None
 ) -> Path:
+    if explicit is not None:
+        relative = Path(explicit)
+        if (
+            relative.is_absolute()
+            or ".." in relative.parts
+            or _reference_is_forbidden(relative)
+            or relative.suffix.lower() not in {".yaml", ".yml", ".md"}
+        ):
+            raise MigrationInputError("explicit legacy deck path is invalid")
+        selected = source / relative
+        if not selected.is_file():
+            raise MigrationInputError("explicit legacy deck does not exist")
+        return selected
+
     root_candidates: list[Path] = []
     entry_count = 0
     candidate_count = 0
@@ -251,20 +352,6 @@ def _discover_deck(
                     path.relative_to(source)
                 ):
                     root_candidates.append(path)
-
-    if explicit is not None:
-        relative = Path(explicit)
-        if (
-            relative.is_absolute()
-            or ".." in relative.parts
-            or _reference_is_forbidden(relative)
-            or relative.suffix.lower() not in {".yaml", ".yml", ".md"}
-        ):
-            raise MigrationInputError("explicit legacy deck path is invalid")
-        selected = source / relative
-        if not selected.is_file():
-            raise MigrationInputError("explicit legacy deck does not exist")
-        return selected
 
     by_name = {
         path.name.casefold(): path
@@ -300,25 +387,28 @@ def _discover_deck(
     raise MigrationInputError("no deterministic legacy deck was found")
 
 
-def _read_candidate(path: Path, source: Path, limits: MigrationLimits) -> bytes:
-    if _is_link_or_junction(path) or not path.resolve().is_relative_to(source):
-        raise MigrationInputError("source candidate escapes the source directory")
-    flags = (
-        os.O_RDONLY
-        | getattr(os, "O_NOFOLLOW", 0)
-        | getattr(os, "O_BINARY", 0)
-    )
-    descriptor = os.open(path, flags)
+def _read_candidate(
+    path: Path, source: Path | BoundDirectory, limits: MigrationLimits
+) -> bytes:
+    source_path = source.path if isinstance(source, BoundDirectory) else source
     try:
+        relative = path.absolute().relative_to(source_path.absolute())
+    except ValueError as exc:
+        raise MigrationInputError("source candidate escapes the source directory") from exc
+    if _reference_is_forbidden(relative):
+        raise MigrationInputError("source candidate escapes the source directory")
+    root = source if isinstance(source, BoundDirectory) else BoundDirectory.open(source_path)
+    owns_root = not isinstance(source, BoundDirectory)
+    binding = root
+    children: list[BoundDirectory] = []
+    descriptor = -1
+    try:
+        root.verify()
+        for part in relative.parts[:-1]:
+            binding = binding.child(part)
+            children.append(binding)
+        descriptor = binding.open_file(relative.parts[-1], os.O_RDONLY)
         opened = os.fstat(descriptor)
-        current = path.lstat()
-        if (
-            not stat.S_ISREG(opened.st_mode)
-            or opened.st_nlink != 1
-            or _is_link_or_junction(path)
-            or (opened.st_dev, opened.st_ino) != (current.st_dev, current.st_ino)
-        ):
-            raise MigrationInputError("source candidate has an unsafe identity")
         if opened.st_size > limits.max_file_bytes:
             raise MigrationInputError("source candidate exceeds file size limit")
         remaining = limits.max_file_bytes + 1
@@ -332,12 +422,33 @@ def _read_candidate(path: Path, source: Path, limits: MigrationLimits) -> bytes:
         raw = b"".join(chunks)
         if len(raw) > limits.max_file_bytes:
             raise MigrationInputError("source candidate exceeds file size limit")
-        after = path.lstat()
-        if (opened.st_dev, opened.st_ino) != (after.st_dev, after.st_ino):
-            raise MigrationInputError("source candidate changed during scan")
+        binding.verify_file(relative.parts[-1], descriptor)
+        root.verify()
         return raw
+    except UnsafeFileError as exc:
+        raise MigrationInputError("source candidate has an unsafe identity") from exc
     finally:
-        os.close(descriptor)
+        primary_error = sys.exc_info()[1]
+        close_error: OSError | None = None
+        if descriptor >= 0:
+            try:
+                os.close(descriptor)
+            except OSError as exc:
+                close_error = exc
+        for child in reversed(children):
+            try:
+                child.close()
+            except OSError as exc:
+                if close_error is None:
+                    close_error = exc
+        if owns_root:
+            try:
+                root.close()
+            except OSError as exc:
+                if close_error is None:
+                    close_error = exc
+        if primary_error is None and close_error is not None:
+            raise close_error
 
 
 def _reject_sensitive(raw: bytes, relative: str) -> None:
@@ -350,7 +461,8 @@ def _reject_sensitive(raw: bytes, relative: str) -> None:
 
 def _reject_sensitive_tree(value: Any, relative: str, key: str | None = None) -> None:
     if key is not None:
-        normalized = re.sub(r"[^a-z0-9]+", "_", key.casefold()).strip("_")
+        separated = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", key)
+        normalized = re.sub(r"[^a-z0-9]+", "_", separated.casefold()).strip("_")
         if normalized in _SENSITIVE_KEYS and value not in (None, "", False):
             raise MigrationInputError(
                 "selected source contains credential material", location=relative
@@ -400,6 +512,25 @@ def _scan_candidates(
     if not source.is_dir():
         raise MigrationInputError("source directory does not exist")
     source = source.resolve()
+    try:
+        with BoundDirectory.open(source) as source_binding:
+            return _scan_candidates_bound(
+                source,
+                source_binding,
+                limits,
+                deck_path=deck_path,
+            )
+    except UnsafeFileError as exc:
+        raise MigrationInputError("source directory has an unsafe identity") from exc
+
+
+def _scan_candidates_bound(
+    source: Path,
+    source_binding: BoundDirectory,
+    limits: MigrationLimits,
+    *,
+    deck_path: str | None = None,
+) -> list[Candidate]:
     selected_deck = _discover_deck(source, limits, deck_path)
     candidates_by_path: dict[Path, Candidate] = {}
     total_bytes = 0
@@ -408,7 +539,7 @@ def _scan_candidates(
 
     def scan(path: Path, index: int, *, parse_yaml: bool) -> Candidate:
         nonlocal total_bytes
-        raw = _read_candidate(path, source, limits)
+        raw = _read_candidate(path, source_binding, limits)
         total_bytes += len(raw)
         if total_bytes > limits.max_total_bytes:
             raise MigrationInputError("source exceeds total size limit")
@@ -956,26 +1087,24 @@ def _parse_deck(candidates: list[Candidate]) -> tuple[DeckSpec, list[str]]:
     return _map_markdown_deck(markdown), []
 
 
-def _write_bytes(path: Path, payload: bytes) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("xb") as stream:
-        stream.write(payload)
-        stream.flush()
-        os.fsync(stream.fileno())
+def _write_bytes(stage: StagingArea, relative: Path, payload: bytes) -> None:
+    stage.write_bytes(relative, payload)
 
 
-def _write_json(path: Path, value: Any) -> None:
+def _write_json(stage: StagingArea, relative: Path, value: Any) -> None:
     _write_bytes(
-        path,
+        stage,
+        relative,
         (json.dumps(value, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode(
             "utf-8"
         ),
     )
 
 
-def _write_yaml(path: Path, value: Any) -> None:
+def _write_yaml(stage: StagingArea, relative: Path, value: Any) -> None:
     _write_bytes(
-        path,
+        stage,
+        relative,
         yaml.safe_dump(value, allow_unicode=True, sort_keys=False).encode("utf-8"),
     )
 
@@ -998,51 +1127,61 @@ def _capture_staging(stage: Path) -> StagingArea:
             parent_binding=parent_binding,
             directory_binding=directory_binding,
         )
-    except BaseException:
+    except BaseException as primary_error:
+        close_failures: list[str] = []
         try:
             if directory_binding is not None:
                 directory_binding.close()
-        finally:
+        except BaseException as close_error:
+            close_failures.append(type(close_error).__name__)
+        try:
             parent_binding.close()
+        except BaseException as close_error:
+            close_failures.append(type(close_error).__name__)
+        if close_failures:
+            primary_error.add_note(
+                "staging capture cleanup failed: " + ", ".join(close_failures)
+            )
         raise
 
 
 def _remove_staging(stage: StagingArea, parent: Path, target_name: str) -> None:
+    initial_error = sys.exc_info()[1]
+    operation_error: BaseException | None = None
     try:
         if (
             stage.path.parent.absolute() != parent.absolute()
             or not stage.path.name.startswith(f".{target_name}.migration-")
         ):
             raise RuntimeError("refusing to remove unexpected staging path")
-        try:
-            stage.parent_binding.verify()
-            stage.directory_binding.verify()
-        except OSError as exc:
-            raise MigrationConflict("migration staging identity changed") from exc
-        current = stage.parent_binding.lstat(stage.path.name)
-        if (
-            not stat.S_ISDIR(current.st_mode)
-            or (current.st_dev, current.st_ino) != (stage.device, stage.inode)
-        ):
-            raise MigrationConflict("migration staging identity changed")
+        stage.verify()
+        if os.name == "nt":
+            stage.directory_binding.remove_tree()
+            return
         quarantine = f".{target_name}.cleanup-{uuid4().hex}"
         stage.parent_binding.replace(stage.path.name, quarantine)
         moved = stage.parent_binding.lstat(quarantine)
         if (moved.st_dev, moved.st_ino) != (stage.device, stage.inode):
             stage.parent_binding.replace(quarantine, stage.path.name)
             raise MigrationConflict("migration staging identity changed during cleanup")
-        if os.name == "nt":
-            shutil.rmtree(parent / quarantine)
-        else:
-            shutil.rmtree(quarantine, dir_fd=stage.parent_binding.descriptor)
+        shutil.rmtree(quarantine, dir_fd=stage.parent_binding.descriptor)
         stage.parent_binding.fsync()
     except FileNotFoundError:
         return
+    except BaseException as error:
+        operation_error = error
+        raise
     finally:
-        stage.close()
+        try:
+            stage.close()
+        except OSError as close_error:
+            primary_error = operation_error or initial_error
+            if primary_error is None:
+                raise
+            primary_error.add_note(f"staging close failed: {type(close_error).__name__}")
 
 
-def _promote_staging(stage: Path, target: Path) -> None:
+def _promote_staging(stage: StagingArea, target: Path) -> None:
     """Move a complete staged directory atomically without replacing a target."""
     try:
         _rename_noreplace(stage, target)
@@ -1116,29 +1255,38 @@ def migrate(
             project_id=_slug(target.name, fallback="imported-project"),
             title=deck.title,
         )
-        _write_yaml(stage.path / "project.yaml", project.model_dump(mode="json"))
+        _write_yaml(stage, Path("project.yaml"), project.model_dump(mode="json"))
         _write_yaml(
-            stage.path / "storyboard" / "deck.yaml", deck.model_dump(mode="json")
+            stage,
+            Path("storyboard/deck.yaml"),
+            deck.model_dump(mode="json"),
         )
         for candidate in candidates:
             _write_bytes(
-                stage.path / "sources" / "originals" / candidate.relative_path,
+                stage,
+                Path("sources/originals") / candidate.relative_path,
                 candidate.raw,
             )
         _write_json(
-            stage.path / "migration-report.json",
+            stage,
+            Path("migration-report.json"),
             {
                 "schema_version": "1.0",
                 "source_files": [candidate.report() for candidate in candidates],
                 "unmapped_fields": unmapped,
             },
         )
-        _promote_staging(stage.path, target)
-        stage.close()
-        stage = None
-    finally:
-        if stage is not None:
+        _promote_staging(stage, target)
+    except BaseException as primary_error:
+        try:
             _remove_staging(stage, target.parent, target.name)
+        except BaseException as cleanup_error:
+            primary_error.add_note(
+                f"staging cleanup failed: {type(cleanup_error).__name__}"
+            )
+        raise
+    else:
+        stage.close()
     return data
 
 

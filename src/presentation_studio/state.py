@@ -12,7 +12,7 @@ from threading import Lock
 from typing import Any, Iterator, Literal
 from uuid import uuid4
 
-from .fs import BoundDirectory
+from .fs import BoundDirectory, UnsafeFileError
 
 
 _atomic_locks_guard = Lock()
@@ -48,6 +48,13 @@ def _is_reparse(info: os.stat_result) -> bool:
 def _validate_file_identity(info: os.stat_result) -> None:
     if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or _is_reparse(info):
         raise StatePathError("state file is linked or has an unsafe identity")
+
+
+def _state_open(binding: BoundDirectory, name: str, flags: int, mode: int = 0o600) -> int:
+    try:
+        return binding.open_file(name, flags, mode)
+    except UnsafeFileError as exc:
+        raise StatePathError("state file has an unsafe identity") from exc
 
 
 def _open_verified_file(path: Path, flags: int, mode: int = 0o600) -> int:
@@ -159,7 +166,7 @@ def _protocol_lock(path: Path) -> Iterator[None]:
     path.parent.mkdir(parents=True, exist_ok=True)
     with _atomic_lock(path):
         with BoundDirectory.open(path.parent) as binding:
-            descriptor = binding.open_file(path.name, os.O_RDWR | os.O_CREAT, 0o600)
+            descriptor = _state_open(binding, path.name, os.O_RDWR | os.O_CREAT, 0o600)
             locked = False
             try:
                 if os.name == "nt":
@@ -185,7 +192,9 @@ def _protocol_lock(path: Path) -> Iterator[None]:
                             "state operation is already in progress"
                         ) from exc
                 locked = True
+                binding.verify_file(path.name, descriptor)
                 yield
+                binding.verify_file(path.name, descriptor)
             finally:
                 if locked:
                     if os.name == "nt":
@@ -218,7 +227,7 @@ def _atomic_json_unlocked(path: Path, value: Any) -> None:
         pass
     temporary_name = f".{path.name}.{uuid4().hex}.tmp"
     with BoundDirectory.open(path.parent) as binding:
-        descriptor = binding.open_file(
+        descriptor = _state_open(binding,
             temporary_name, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600
         )
         try:
@@ -245,7 +254,7 @@ def _append_event(path: Path, event: dict[str, Any]) -> None:
         "utf-8"
     )
     with BoundDirectory.open(path.parent) as binding:
-        descriptor = binding.open_file(
+        descriptor = _state_open(binding,
             path.name, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600
         )
         try:
@@ -543,7 +552,7 @@ class RunLock:
         with _protocol_lock(protocol_path):
             with BoundDirectory.open(path.parent) as binding:
                 try:
-                    descriptor = binding.open_file(
+                    descriptor = _state_open(binding,
                         path.name, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600
                     )
                 except FileExistsError as exc:

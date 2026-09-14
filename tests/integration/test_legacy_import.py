@@ -10,6 +10,98 @@ from threading import Barrier
 import pytest
 import yaml
 
+
+def test_explicit_deck_does_not_enumerate_unrelated_tree(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from presentation_studio import migration
+
+    source = tmp_path / "legacy"
+    source.mkdir()
+    _legacy_deck(source / "selected.yaml")
+    (source / "unrelated.yaml").write_text("slides: [", encoding="utf-8")
+
+    def forbidden_scan(*args, **kwargs):
+        pytest.fail("explicit deck must not enumerate unrelated entries")
+
+    monkeypatch.setattr(migration.os, "scandir", forbidden_scan)
+    result = migrate(source, tmp_path / "target", apply=False, deck_path="selected.yaml", limits=MigrationLimits(max_entries=1, max_files=1))
+    assert result["planned_files"] == 1
+
+
+@pytest.mark.parametrize("key", ["token", "clientSecret", "apiToken", "credentials", "private_key", "AWS_SESSION_TOKEN"])
+def test_common_credential_keys_fail_closed_without_echo(tmp_path: Path, key: str, capsys: pytest.CaptureFixture[str]) -> None:
+    from presentation_studio.migration import migrate_result
+
+    source = tmp_path / "legacy"
+    source.mkdir()
+    deck = source / "deck.yaml"
+    _legacy_deck(deck)
+    deck.write_text(deck.read_text(encoding="utf-8") + f"{key}: leaked-secret-value\n", encoding="utf-8")
+    target = tmp_path / "target"
+    result = migrate_result(source, target, apply=True)
+    assert result.exit_code == 2
+    assert "leaked-secret-value" not in result.model_dump_json() + str(capsys.readouterr())
+    assert not target.exists()
+
+
+def test_cleanup_exception_does_not_mask_primary_failure(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from presentation_studio import migration
+
+    source = tmp_path / "legacy"
+    source.mkdir()
+    _legacy_deck(source / "deck.yaml")
+
+    def fail_write(*args, **kwargs):
+        raise ValueError("primary synthetic failure")
+
+    original_cleanup = migration._remove_staging
+
+    def fail_cleanup(*args, **kwargs):
+        original_cleanup(*args, **kwargs)
+        raise OSError("secondary cleanup failure")
+
+    monkeypatch.setattr(migration, "_write_bytes", fail_write)
+    monkeypatch.setattr(migration, "_remove_staging", fail_cleanup)
+    with pytest.raises(ValueError, match="primary synthetic failure"):
+        migrate(source, tmp_path / "target", apply=True)
+
+
+def test_promotion_cannot_publish_staging_replacement(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from presentation_studio import migration
+
+    source = tmp_path / "legacy"
+    source.mkdir()
+    _legacy_deck(source / "deck.yaml")
+    target = tmp_path / "target"
+    promote = migration._promote_staging
+    attack_outcome: list[str] = []
+    replacement: list[Path] = []
+
+    def attack(stage, destination):
+        path = stage.path if isinstance(stage, migration.StagingArea) else stage
+        try:
+            path.rename(path.with_name(path.name + "-moved"))
+        except PermissionError:
+            attack_outcome.append("blocked")
+            return promote(stage, destination)
+        attack_outcome.append("replaced")
+        path.mkdir()
+        marker = path / "foreign"
+        marker.write_text("foreign", encoding="utf-8")
+        replacement.append(marker)
+        return promote(stage, destination)
+
+    monkeypatch.setattr(migration, "_promote_staging", attack)
+    result = migration.migrate_result(source, target, apply=True)
+
+    if attack_outcome == ["blocked"]:
+        assert result.exit_code == 0
+        assert (target / "storyboard" / "deck.yaml").is_file()
+    else:
+        assert attack_outcome == ["replaced"]
+        assert result.exit_code == 6
+        assert not target.exists()
+        assert replacement[0].read_text(encoding="utf-8") == "foreign"
+
 from presentation_studio.migration import MigrationLimits, migrate
 
 
@@ -226,12 +318,14 @@ def test_staging_write_failure_does_not_promote_partial_target(
     original_write = migration._write_bytes
     calls = 0
 
-    def fail_second_write(path: Path, payload: bytes) -> None:
+    def fail_second_write(
+        stage: migration.StagingArea, path: Path, payload: bytes
+    ) -> None:
         nonlocal calls
         calls += 1
         if calls == 2:
             raise OSError("synthetic write failure")
-        original_write(path, payload)
+        original_write(stage, path, payload)
 
     monkeypatch.setattr(migration, "_write_bytes", fail_second_write)
     result = migration.migrate_result(source, target, apply=True)
@@ -657,7 +751,7 @@ def test_migration_has_aggregate_yaml_node_budget(tmp_path: Path) -> None:
         )
 
 
-def test_staging_cleanup_refuses_replaced_directory_identity(tmp_path: Path) -> None:
+def test_staging_cleanup_is_identity_bound_when_replacement_is_attempted(tmp_path: Path) -> None:
     from presentation_studio import migration
 
     parent = tmp_path / "parent"
@@ -665,7 +759,12 @@ def test_staging_cleanup_refuses_replaced_directory_identity(tmp_path: Path) -> 
     stage_path = parent / ".target.migration-owned"
     stage_path.mkdir()
     staging = migration._capture_staging(stage_path)
-    stage_path.rmdir()
+    try:
+        stage_path.rmdir()
+    except PermissionError:
+        migration._remove_staging(staging, parent, "target")
+        assert not stage_path.exists()
+        return
     stage_path.mkdir()
     marker = stage_path / "foreign.txt"
     marker.write_text("foreign", encoding="utf-8")
@@ -674,6 +773,62 @@ def test_staging_cleanup_refuses_replaced_directory_identity(tmp_path: Path) -> 
         migration._remove_staging(staging, parent, "target")
 
     assert marker.read_text(encoding="utf-8") == "foreign"
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows handle-bound cleanup")
+def test_staging_cleanup_rejects_descendant_replacement_before_binding(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from presentation_studio import migration
+    from presentation_studio.fs import UnsafeFileError
+
+    parent = tmp_path / "parent"
+    parent.mkdir()
+    stage_path = parent / ".target.migration-owned"
+    stage_path.mkdir()
+    owned_child = stage_path / "child"
+    owned_child.mkdir()
+    owned_marker = owned_child / "owned.txt"
+    owned_marker.write_text("owned", encoding="utf-8")
+    foreign = parent / "foreign"
+    foreign.mkdir()
+    foreign_marker = foreign / "foreign.txt"
+    foreign_marker.write_text("foreign", encoding="utf-8")
+    saved_owned = parent / "saved-owned"
+    staging = migration._capture_staging(stage_path)
+    original_child = migration.BoundDirectory.child
+    original_close = migration.StagingArea.close
+    attack_executed = False
+    close_attempted = False
+
+    def replace_after_lstat(binding, name, **kwargs):
+        nonlocal attack_executed
+        if binding is staging.directory_binding and name == "child":
+            owned_child.rename(saved_owned)
+            foreign.rename(owned_child)
+            attack_executed = True
+        return original_child(binding, name, **kwargs)
+
+    def fail_after_close(stage):
+        nonlocal close_attempted
+        close_attempted = True
+        original_close(stage)
+        raise OSError("secondary close failure")
+
+    monkeypatch.setattr(migration.BoundDirectory, "child", replace_after_lstat)
+    monkeypatch.setattr(migration.StagingArea, "close", fail_after_close)
+
+    with pytest.raises(
+        UnsafeFileError, match="child directory identity changed"
+    ) as error:
+        migration._remove_staging(staging, parent, "target")
+
+    assert attack_executed
+    assert close_attempted
+    assert error.value.__notes__ == ["staging close failed: OSError"]
+    assert (owned_child / "foreign.txt").read_text(encoding="utf-8") == "foreign"
+    assert (saved_owned / "owned.txt").read_text(encoding="utf-8") == "owned"
+    assert stage_path.exists()
 
 
 def test_staging_capture_closes_both_bindings_when_identity_read_fails(
@@ -710,3 +865,43 @@ def test_staging_capture_closes_both_bindings_when_identity_read_fails(
 
     assert directory_binding.closed
     assert parent_binding.closed
+
+
+def test_staging_capture_close_failure_does_not_mask_primary_error(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from presentation_studio import migration
+
+    class FakeBinding:
+        def __init__(
+            self, descriptor: int, close_error: BaseException | None = None
+        ) -> None:
+            self.descriptor = descriptor
+            self.close_error = close_error
+            self.close_attempted = False
+
+        def close(self) -> None:
+            self.close_attempted = True
+            if self.close_error is not None:
+                raise self.close_error
+
+    parent_binding = FakeBinding(10)
+    directory_binding = FakeBinding(20, OSError("secondary close failure"))
+    bindings = iter((parent_binding, directory_binding))
+    monkeypatch.setattr(
+        migration.BoundDirectory,
+        "open",
+        lambda path, **kwargs: next(bindings),
+    )
+
+    def fail_identity(descriptor: int) -> os.stat_result:
+        raise ValueError("primary identity failure")
+
+    monkeypatch.setattr(migration.os, "fstat", fail_identity)
+
+    with pytest.raises(ValueError, match="primary identity failure") as error:
+        migration._capture_staging(tmp_path / "stage")
+
+    assert directory_binding.close_attempted
+    assert parent_binding.close_attempted
+    assert error.value.__notes__ == ["staging capture cleanup failed: OSError"]

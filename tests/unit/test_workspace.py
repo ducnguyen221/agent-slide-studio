@@ -5,6 +5,30 @@ import subprocess
 
 import pytest
 
+
+def test_bounded_read_rejects_hardlink(tmp_path: Path) -> None:
+    from presentation_studio.workspace import read_bytes_bounded
+
+    outside = tmp_path / "outside"
+    outside.write_bytes(b"private")
+    linked = tmp_path / "linked"
+    os.link(outside, linked)
+    with pytest.raises((OSError, ValueError)):
+        read_bytes_bounded(linked, max_bytes=100)
+
+
+@pytest.mark.skipif(os.name == "nt", reason="POSIX no-follow runtime")
+def test_bound_directory_rejects_symlink_ancestor(tmp_path: Path) -> None:
+    from presentation_studio.fs import BoundDirectory
+
+    outside = tmp_path / "outside"
+    (outside / "child").mkdir(parents=True)
+    linked = tmp_path / "linked"
+    linked.symlink_to(outside, target_is_directory=True)
+    with pytest.raises(OSError):
+        with BoundDirectory.open(linked / "child"):
+            pytest.fail("symlink ancestor was bound")
+
 from presentation_studio.workspace import (
     InputLimitError,
     PathOutsideWorkspace,
@@ -200,7 +224,16 @@ def test_bound_directory_keeps_mutation_on_captured_parent(tmp_path: Path) -> No
     with BoundDirectory.open(parent) as binding:
         if os.name == "nt":
             moved = tmp_path / "moved"
-            parent.rename(moved)
+            try:
+                parent.rename(moved)
+            except PermissionError:
+                descriptor = binding.open_file(
+                    "owned.tmp", os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600
+                )
+                os.close(descriptor)
+                assert (parent / "owned.tmp").is_file()
+                binding.unlink("owned.tmp")
+                return
             parent.mkdir()
             with pytest.raises(OSError):
                 binding.open_file(
