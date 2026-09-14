@@ -1,12 +1,37 @@
 from __future__ import annotations
 
-import json
+from pathlib import PurePosixPath, PureWindowsPath
 from typing import Annotated, Literal
 
-from pydantic import Field, model_validator
+from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, model_validator
 
-from .common import Identifier, RelativePath, SHA256, StrictModel
-from .visual import VisualError, VisualSemantics
+
+SchemaVersion = Literal["1.0"]
+Identifier = Annotated[
+    str, Field(pattern=r"^[a-z0-9][a-z0-9-]{0,63}$", min_length=1, max_length=64)
+]
+SHA256 = Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
+
+
+def _relative_path(value: object) -> object:
+    if not isinstance(value, str) or not value or "\\" in value or "\x00" in value:
+        raise ValueError("path must be a normalized relative POSIX path")
+    path = PurePosixPath(value)
+    if (
+        path.is_absolute()
+        or ".." in path.parts
+        or PureWindowsPath(value).is_absolute()
+        or path.as_posix() != value
+    ):
+        raise ValueError("path must be relative and traversal-free")
+    return value
+
+
+RelativePath = Annotated[str, BeforeValidator(_relative_path)]
+
+
+class StrictModel(BaseModel):
+    model_config = ConfigDict(extra="forbid", validate_assignment=True)
 
 
 class Canvas(StrictModel):
@@ -178,11 +203,10 @@ class SlideSpec(StrictModel):
     source_refs: list[Identifier] = Field(default_factory=list)
     learning: Learning | None = None
     html_ref: RelativePath | None = None
-    visual_semantics: VisualSemantics | None = None
 
 
 class DeckSpec(StrictModel):
-    schema_version: Literal["1.0", "1.1"] = "1.0"
+    schema_version: SchemaVersion = "1.0"
     title: str = Field(min_length=1)
     audience: str = Field(min_length=1)
     purpose: str = Field(min_length=1)
@@ -200,50 +224,8 @@ class DeckSpec(StrictModel):
             raise ValueError("source id must be unique")
         known = set(source_ids)
         missing = {
-            ref
-            for slide in self.slides
-            for ref in slide.source_refs
-            if ref not in known
+            ref for slide in self.slides for ref in slide.source_refs if ref not in known
         }
         if missing:
             raise ValueError(f"unknown source ids: {sorted(missing)}")
         return self
-
-
-def serialize_deck(deck: DeckSpec, target_version: str | None = None) -> bytes:
-    has_visual_semantics = any(
-        slide.visual_semantics is not None for slide in deck.slides
-    )
-    if target_version is None:
-        version = "1.1" if has_visual_semantics else "1.0"
-    else:
-        version = target_version
-    if version not in {"1.0", "1.1"}:
-        raise VisualError(
-            "UNSUPPORTED_SCHEMA_VERSION",
-            2,
-            f"DeckSpec không hỗ trợ phiên bản đích {version!r}.",
-        )
-    if version == "1.0" and has_visual_semantics:
-        raise VisualError(
-            "LOSSY_DOWNGRADE",
-            2,
-            "Không thể ghi DeckSpec 1.0 khi visual_semantics đang hiện diện.",
-        )
-    if version == "1.1" and not has_visual_semantics:
-        raise VisualError(
-            "SCHEMA_VERSION_MISMATCH",
-            2,
-            "DeckSpec 1.1 chỉ được ghi khi visual_semantics hiện diện.",
-        )
-    payload = deck.model_dump(mode="json")
-    payload["schema_version"] = version
-    if version == "1.0":
-        for slide in payload["slides"]:
-            slide.pop("visual_semantics", None)
-    return json.dumps(
-        payload,
-        ensure_ascii=False,
-        sort_keys=True,
-        separators=(",", ":"),
-    ).encode("utf-8")

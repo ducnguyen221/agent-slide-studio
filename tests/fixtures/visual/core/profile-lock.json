@@ -1,0 +1,12 @@
+{
+  "resolved_ref": "builtin:neutral@1.0.0",
+  "source_scope": "builtin",
+  "version": "1.0.0",
+  "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "applied_overrides": {},
+  "font_resolution": {
+    "body": "Arial",
+    "heading": "Arial"
+  },
+  "created_at": "2026-09-14T00:00:00Z"
+}

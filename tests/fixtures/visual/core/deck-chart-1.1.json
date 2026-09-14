@@ -1,0 +1,190 @@
+{
+  "schema_version": "1.1",
+  "title": "Biểu đồ chất lượng",
+  "audience": "Nhóm vận hành",
+  "purpose": "Đối chiếu số đo",
+  "canvas": {
+    "ratio": "16:9"
+  },
+  "sources": [
+    {
+      "id": "measurement-source",
+      "kind": "synthetic",
+      "title": "Nguồn số đo trung tính"
+    }
+  ],
+  "slides": [
+    {
+      "slide_id": "s03",
+      "title": "Điểm theo nhóm",
+      "message": "Nhóm A đạt 18,5 điểm.",
+      "layout_ref": "builtin:data@1.0.0",
+      "elements": [
+        {
+          "element_id": "c1",
+          "kind": "chart",
+          "content": {
+            "chart_type": "column",
+            "data": [
+              {
+                "label": "Nhóm A",
+                "value": 18.5
+              }
+            ],
+            "unit": "điểm",
+            "source_ref": "measurement-source"
+          }
+        }
+      ],
+      "notes": "Số liệu trung tính dùng để kiểm contract.",
+      "source_refs": [
+        "measurement-source"
+      ],
+      "visual_semantics": {
+        "nodes": [
+          {
+            "id": "chart-a",
+            "kind": "group",
+            "content_binding": {
+              "slide_id": "s03",
+              "element_id": null,
+              "field": "semantic-node",
+              "item_id": "chart-a",
+              "item_index": null
+            },
+            "parent_id": null,
+            "visible": false,
+            "required": true,
+            "semantic_role": "chart-group",
+            "facts": [],
+            "asset_ref": null
+          },
+          {
+            "id": "label-a",
+            "kind": "data-label",
+            "content_binding": {
+              "slide_id": "s03",
+              "element_id": "c1",
+              "field": "chart-label",
+              "item_id": null,
+              "item_index": 0
+            },
+            "parent_id": "chart-a",
+            "visible": true,
+            "required": true,
+            "semantic_role": "category-label",
+            "facts": [
+              {
+                "id": "label-fact-a",
+                "binding": {
+                  "slide_id": "s03",
+                  "element_id": "c1",
+                  "field": "chart-label",
+                  "item_id": null,
+                  "item_index": 0
+                },
+                "value_type": "string",
+                "value": "Nhóm A",
+                "source_ref": "measurement-source"
+              }
+            ],
+            "asset_ref": null
+          },
+          {
+            "id": "value-a",
+            "kind": "data-label",
+            "content_binding": {
+              "slide_id": "s03",
+              "element_id": "c1",
+              "field": "chart-value",
+              "item_id": null,
+              "item_index": 0
+            },
+            "parent_id": "chart-a",
+            "visible": true,
+            "required": true,
+            "semantic_role": "numeric-value",
+            "facts": [
+              {
+                "id": "value-fact-a",
+                "binding": {
+                  "slide_id": "s03",
+                  "element_id": "c1",
+                  "field": "chart-value",
+                  "item_id": null,
+                  "item_index": 0
+                },
+                "value_type": "decimal",
+                "value": "18.5",
+                "source_ref": "measurement-source"
+              }
+            ],
+            "asset_ref": null
+          },
+          {
+            "id": "unit",
+            "kind": "data-label",
+            "content_binding": {
+              "slide_id": "s03",
+              "element_id": "c1",
+              "field": "display-unit",
+              "item_id": null,
+              "item_index": null
+            },
+            "parent_id": "chart-a",
+            "visible": true,
+            "required": true,
+            "semantic_role": "unit",
+            "facts": [
+              {
+                "id": "unit-fact",
+                "binding": {
+                  "slide_id": "s03",
+                  "element_id": "c1",
+                  "field": "chart-unit",
+                  "item_id": null,
+                  "item_index": null
+                },
+                "value_type": "string",
+                "value": "điểm",
+                "source_ref": "measurement-source"
+              }
+            ],
+            "asset_ref": null
+          }
+        ],
+        "relations": [
+          {
+            "id": "contains-label",
+            "from_id": "chart-a",
+            "to_id": "label-a",
+            "kind": "contains",
+            "label": null,
+            "required": true
+          },
+          {
+            "id": "contains-value",
+            "from_id": "chart-a",
+            "to_id": "value-a",
+            "kind": "contains",
+            "label": null,
+            "required": true
+          },
+          {
+            "id": "contains-unit",
+            "from_id": "chart-a",
+            "to_id": "unit",
+            "kind": "contains",
+            "label": null,
+            "required": true
+          }
+        ],
+        "reading_order": [
+          "label-a",
+          "value-a",
+          "unit"
+        ]
+      }
+    }
+  ]
+}

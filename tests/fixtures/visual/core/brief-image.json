@@ -1,0 +1,309 @@
+{
+  "schema_version": "1.0",
+  "id": "visual-s03-image",
+  "slide_id": "s03",
+  "deck_binding": {
+    "deck_ref": "storyboard/deck.json",
+    "deck_raw_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "slide_content_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "projection_version": "1.0"
+  },
+  "revision": 1,
+  "mode": "IMAGE",
+  "purpose": "Minh họa một số đo trung tính",
+  "audience": "Nhóm vận hành",
+  "message": "Nhóm A đạt 18,5 điểm.",
+  "language": "vi",
+  "proper_names": [],
+  "canvas": {
+    "width_px": 1920,
+    "height_px": 1080,
+    "safe_area": {
+      "top": 0.05,
+      "right": 0.05,
+      "bottom": 0.05,
+      "left": 0.05
+    },
+    "background": "#FFFFFF"
+  },
+  "text_policy": "overlay",
+  "nodes": [
+    {
+      "id": "chart-a",
+      "kind": "group",
+      "content_binding": {
+        "slide_id": "s03",
+        "element_id": null,
+        "field": "semantic-node",
+        "item_id": "chart-a",
+        "item_index": null
+      },
+      "parent_id": null,
+      "visible": false,
+      "required": true,
+      "semantic_role": "chart-group",
+      "facts": [],
+      "asset_ref": null,
+      "text": null,
+      "preferred_box": {
+        "x": 0.1,
+        "y": 0.15,
+        "width": 0.8,
+        "height": 0.7
+      }
+    },
+    {
+      "id": "label-a",
+      "kind": "data-label",
+      "content_binding": {
+        "slide_id": "s03",
+        "element_id": "c1",
+        "field": "chart-label",
+        "item_id": null,
+        "item_index": 0
+      },
+      "parent_id": "chart-a",
+      "visible": true,
+      "required": true,
+      "semantic_role": "category-label",
+      "facts": [
+        {
+          "id": "label-fact-a",
+          "binding": {
+            "slide_id": "s03",
+            "element_id": "c1",
+            "field": "chart-label",
+            "item_id": null,
+            "item_index": 0
+          },
+          "value_type": "string",
+          "value": "Nhóm A",
+          "source_ref": "measurement-source"
+        }
+      ],
+      "asset_ref": null,
+      "text": "Nhóm A",
+      "preferred_box": null
+    },
+    {
+      "id": "value-a",
+      "kind": "data-label",
+      "content_binding": {
+        "slide_id": "s03",
+        "element_id": "c1",
+        "field": "chart-value",
+        "item_id": null,
+        "item_index": 0
+      },
+      "parent_id": "chart-a",
+      "visible": true,
+      "required": true,
+      "semantic_role": "numeric-value",
+      "facts": [
+        {
+          "id": "value-fact-a",
+          "binding": {
+            "slide_id": "s03",
+            "element_id": "c1",
+            "field": "chart-value",
+            "item_id": null,
+            "item_index": 0
+          },
+          "value_type": "decimal",
+          "value": "18.5",
+          "source_ref": "measurement-source"
+        }
+      ],
+      "asset_ref": null,
+      "text": "18,5",
+      "preferred_box": null
+    },
+    {
+      "id": "unit",
+      "kind": "data-label",
+      "content_binding": {
+        "slide_id": "s03",
+        "element_id": "c1",
+        "field": "display-unit",
+        "item_id": null,
+        "item_index": null
+      },
+      "parent_id": "chart-a",
+      "visible": true,
+      "required": true,
+      "semantic_role": "unit",
+      "facts": [
+        {
+          "id": "unit-fact",
+          "binding": {
+            "slide_id": "s03",
+            "element_id": "c1",
+            "field": "chart-unit",
+            "item_id": null,
+            "item_index": null
+          },
+          "value_type": "string",
+          "value": "điểm",
+          "source_ref": "measurement-source"
+        }
+      ],
+      "asset_ref": null,
+      "text": "điểm",
+      "preferred_box": null
+    }
+  ],
+  "relations": [
+    {
+      "id": "contains-label",
+      "from_id": "chart-a",
+      "to_id": "label-a",
+      "kind": "contains",
+      "label": null,
+      "required": true
+    },
+    {
+      "id": "contains-value",
+      "from_id": "chart-a",
+      "to_id": "value-a",
+      "kind": "contains",
+      "label": null,
+      "required": true
+    },
+    {
+      "id": "contains-unit",
+      "from_id": "chart-a",
+      "to_id": "unit",
+      "kind": "contains",
+      "label": null,
+      "required": true
+    }
+  ],
+  "reading_order": [
+    "label-a",
+    "value-a",
+    "unit"
+  ],
+  "references": [
+    {
+      "asset_ref": "reference-main",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "role": "composition",
+      "inspection": "measured",
+      "evidence_refs": [
+        {
+          "ref": "fixture:reference-main",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "note": "Reference fixture trung tính tự tạo."
+        }
+      ],
+      "locked_features": [
+        "geometry"
+      ]
+    }
+  ],
+  "reconstruction_policy": null,
+  "style": {
+    "preset_id": "neutral",
+    "archetype": "data-card",
+    "density": "balanced",
+    "palette_roles": {
+      "background": "#FFFFFF",
+      "accent": "#2463EB",
+      "text": "#172033"
+    },
+    "font_roles": {
+      "heading": "Arial",
+      "body": "Arial"
+    },
+    "icon_family": null,
+    "constraints": [
+      "Giữ nguyên nhãn, giá trị và đơn vị."
+    ]
+  },
+  "number_formatters": {
+    "value-a": {
+      "formatter_id": "fixed-decimal",
+      "version": "1.0.0",
+      "locale": "vi-VN",
+      "precision": 1,
+      "rounding": "reject-inexact",
+      "grouping": false,
+      "trim_trailing_zeros": false,
+      "approximation_marker": "none"
+    }
+  },
+  "profile_lock": {
+    "resolved_ref": "builtin:neutral@1.0.0",
+    "source_scope": "builtin",
+    "version": "1.0.0",
+    "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "applied_overrides": {},
+    "font_resolution": {
+      "body": "Arial",
+      "heading": "Arial"
+    },
+    "created_at": "2026-09-14T00:00:00Z"
+  },
+  "editability": {
+    "required_node_ids": [
+      "label-a",
+      "value-a",
+      "unit"
+    ],
+    "target": "mixed",
+    "allow_raster_decoration": true
+  },
+  "fit_policy": "reject",
+  "crop": null,
+  "motion": {
+    "enabled": false,
+    "adapter": null,
+    "duration_seconds": null,
+    "fps": null
+  },
+  "execution": {
+    "network": "offline",
+    "image_source": "import",
+    "import_asset_id": "reference-main",
+    "provider_id": null,
+    "model_id": null,
+    "max_provider_calls": 0,
+    "accounting_mode": "none",
+    "budget_amount": "0",
+    "currency": null,
+    "timeout_seconds": 120,
+    "reference_egress_allowed": false,
+    "grant_ref": null
+  },
+  "deliverables": [
+    "png",
+    "html-source"
+  ],
+  "accessibility": {
+    "alt_text": "Biểu đồ cho thấy Nhóm A đạt 18,5 điểm.",
+    "transcript": "Nhóm A; 18,5 điểm; giá trị nguồn 18.5.",
+    "notes": "Số liệu trung tính dùng để kiểm contract."
+  },
+  "qa_policy": {
+    "required_rule_ids": [
+      "content-parity",
+      "canvas-bounds"
+    ],
+    "max_repair_rounds": 2,
+    "fidelity_tolerances": {
+      "box_tolerance_px": null,
+      "ssim_min": null,
+      "iou_min": null,
+      "delta_e_max": null
+    }
+  },
+  "approval": {
+    "scope": "brief",
+    "approved_content_hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "evidence": {
+      "ref": "fixture:task-approval",
+      "sha256": null,
+      "note": "Ủy quyền fixture trung tính."
+    }
+  }
+}

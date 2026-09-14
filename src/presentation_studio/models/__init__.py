@@ -26,6 +26,7 @@ from .deck import (
     TimelineContent,
     TimelineElement,
     TimelineItem,
+    serialize_deck,
 )
 from .profile import Profile, ProfileLock
 from .project import Budget, Limits, ProjectConfig
@@ -59,6 +60,32 @@ from .template import (
     TemplateDraft,
     TemplatePack,
     TemplateSlot,
+)
+from .visual import (
+    Accessibility,
+    Approval,
+    Box,
+    ChartBinding,
+    ContentBinding,
+    Crop,
+    DeckBinding,
+    Editability,
+    Fact,
+    FidelityTolerances,
+    Motion,
+    NumberFormatter,
+    QAPolicy,
+    SafeArea,
+    SemanticNode,
+    VisualAssetBrief,
+    VisualCanvas,
+    VisualError,
+    VisualExecution,
+    VisualNode,
+    VisualReference,
+    VisualRelation,
+    VisualSemantics,
+    VisualStyle,
 )
 
 

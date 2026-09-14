@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "assets": [
+    {
+      "id": "reference-main",
+      "relative_path": "assets/reference-main.png",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "media_type": "image/png",
+      "width": 1920,
+      "height": 1080,
+      "role": "reference",
+      "alt_text": "Biểu đồ trung tính gồm nhãn, giá trị và đơn vị.",
+      "source_kind": "builtin",
+      "source_ref": "fixture:visual-core",
+      "rights": {
+        "license": "CC0-1.0",
+        "attribution": null,
+        "redistributable": true,
+        "source_url": null
+      },
+      "generation": null
+    }
+  ]
+}
