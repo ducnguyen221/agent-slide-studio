@@ -151,6 +151,9 @@ class SlideBuildResult(StrictModel):
     slide_id: Identifier
     status: Literal["passed", "failed", "unverified"]
     artifact_paths: list[RelativePath] = Field(default_factory=list)
+    element_editability: dict[
+        Identifier, Literal["native", "raster", "mixed", "unsupported"]
+    ] = Field(default_factory=dict)
     errors: list[CLIError] = Field(default_factory=list)
 
 

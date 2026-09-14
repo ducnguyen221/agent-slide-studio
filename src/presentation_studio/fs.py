@@ -45,6 +45,95 @@ def _windows_open(path: Path, *, access: int, creation: int, directory: bool = F
         raise
 
 
+def _windows_create_directory_at(
+    parent_descriptor: int, name: str, *, allow_delete: bool
+) -> int:
+    """Atomically create and bind a directory relative to a pinned parent handle."""
+    import msvcrt
+
+    class UnicodeString(ctypes.Structure):
+        _fields_ = [
+            ("length", ctypes.c_ushort),
+            ("maximum_length", ctypes.c_ushort),
+            ("buffer", ctypes.c_wchar_p),
+        ]
+
+    class ObjectAttributes(ctypes.Structure):
+        _fields_ = [
+            ("length", ctypes.c_uint32),
+            ("root_directory", ctypes.c_void_p),
+            ("object_name", ctypes.POINTER(UnicodeString)),
+            ("attributes", ctypes.c_uint32),
+            ("security_descriptor", ctypes.c_void_p),
+            ("security_quality_of_service", ctypes.c_void_p),
+        ]
+
+    class IoStatusBlock(ctypes.Structure):
+        _fields_ = [("status", ctypes.c_void_p), ("information", ctypes.c_size_t)]
+
+    name_buffer = ctypes.create_unicode_buffer(name)
+    object_name = UnicodeString(
+        length=len(name.encode("utf-16-le")),
+        maximum_length=ctypes.sizeof(name_buffer),
+        buffer=ctypes.cast(name_buffer, ctypes.c_wchar_p),
+    )
+    attributes = ObjectAttributes(
+        length=ctypes.sizeof(ObjectAttributes),
+        root_directory=ctypes.c_void_p(msvcrt.get_osfhandle(parent_descriptor)),
+        object_name=ctypes.pointer(object_name),
+        attributes=0x40,
+        security_descriptor=None,
+        security_quality_of_service=None,
+    )
+    io_status = IoStatusBlock()
+    handle = ctypes.c_void_p()
+    ntdll = ctypes.WinDLL("ntdll", use_last_error=True)
+    create = ntdll.NtCreateFile
+    create.argtypes = [
+        ctypes.POINTER(ctypes.c_void_p),
+        ctypes.c_uint32,
+        ctypes.POINTER(ObjectAttributes),
+        ctypes.POINTER(IoStatusBlock),
+        ctypes.c_void_p,
+        ctypes.c_uint32,
+        ctypes.c_uint32,
+        ctypes.c_uint32,
+        ctypes.c_uint32,
+        ctypes.c_void_p,
+        ctypes.c_uint32,
+    ]
+    create.restype = ctypes.c_long
+    desired_access = 0x0001 | 0x0020 | 0x0080 | 0x100000
+    if allow_delete:
+        desired_access |= 0x10000
+    status = create(
+        ctypes.byref(handle),
+        desired_access,
+        ctypes.byref(attributes),
+        ctypes.byref(io_status),
+        None,
+        0x80,
+        0x1 | 0x2,
+        2,
+        0x00000001 | 0x00000020 | 0x00200000,
+        None,
+        0,
+    )
+    if status < 0:
+        to_dos_error = ntdll.RtlNtStatusToDosError
+        to_dos_error.argtypes = [ctypes.c_long]
+        to_dos_error.restype = ctypes.c_uint32
+        raise ctypes.WinError(to_dos_error(status))
+    try:
+        return msvcrt.open_osfhandle(int(handle.value), os.O_RDONLY)
+    except BaseException:
+        kernel = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel.CloseHandle.argtypes = [ctypes.c_void_p]
+        kernel.CloseHandle.restype = ctypes.c_int
+        kernel.CloseHandle(handle)
+        raise
+
+
 def _windows_delete_by_handle(descriptor: int) -> None:
     import msvcrt
 
@@ -243,36 +332,47 @@ class BoundDirectory:
         name: str,
         *,
         create: bool = False,
+        exclusive: bool = False,
         allow_delete: bool = False,
         expected: os.stat_result | None = None,
     ) -> Self:
         if not name or name in {".", ".."} or Path(name).name != name or ":" in name:
             raise ValueError("bound directory name must be a basename")
         self.verify()
-        if create:
-            try:
-                if os.name == "nt":
-                    os.mkdir(self.path / name, 0o700)
-                else:
-                    os.mkdir(name, 0o700, dir_fd=self.descriptor)
-            except FileExistsError:
-                pass
-        before = self.lstat(name)
-        _safe_identity(before, directory=True)
-        if expected is not None:
-            _safe_identity(expected, directory=True)
-            if (before.st_dev, before.st_ino) != (expected.st_dev, expected.st_ino):
-                raise UnsafeFileError("child directory identity changed")
-        if os.name == "nt":
-            descriptor = _windows_open(
-                self.path / name,
-                access=0x80 | (0x10000 if allow_delete else 0),
-                creation=3,
-                directory=True,
-            )
-        else:
-            descriptor = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC, dir_fd=self.descriptor)
+        descriptor: int | None = None
         try:
+            if create and exclusive and os.name == "nt":
+                descriptor = _windows_create_directory_at(
+                    self.descriptor, name, allow_delete=allow_delete
+                )
+            elif create:
+                try:
+                    if os.name == "nt":
+                        os.mkdir(self.path / name, 0o700)
+                    else:
+                        os.mkdir(name, 0o700, dir_fd=self.descriptor)
+                except FileExistsError:
+                    if exclusive:
+                        raise
+            before = self.lstat(name)
+            _safe_identity(before, directory=True)
+            if expected is not None:
+                _safe_identity(expected, directory=True)
+                if (before.st_dev, before.st_ino) != (expected.st_dev, expected.st_ino):
+                    raise UnsafeFileError("child directory identity changed")
+            if descriptor is None and os.name == "nt":
+                descriptor = _windows_open(
+                    self.path / name,
+                    access=0x80 | (0x10000 if allow_delete else 0),
+                    creation=3,
+                    directory=True,
+                )
+            elif descriptor is None:
+                descriptor = os.open(
+                    name,
+                    os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
+                    dir_fd=self.descriptor,
+                )
             opened = os.fstat(descriptor)
             _safe_identity(opened, directory=True)
             if (before.st_dev, before.st_ino) != (opened.st_dev, opened.st_ino) or (
@@ -283,8 +383,15 @@ class BoundDirectory:
             child = type(self)(self.path / name, descriptor, opened.st_dev, opened.st_ino, [])
             child.verify()
             return child
-        except BaseException:
-            os.close(descriptor)
+        except BaseException as primary_error:
+            if descriptor is not None:
+                try:
+                    os.close(descriptor)
+                except BaseException as close_error:
+                    primary_error.add_note(
+                        "child descriptor close failed: "
+                        + type(close_error).__name__
+                    )
             raise
 
     def rename_noreplace(self, target: Path) -> None:

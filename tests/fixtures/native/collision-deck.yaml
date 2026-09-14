@@ -1,0 +1,23 @@
+schema_version: "1.0"
+title: Kiểm thử va chạm tên ảnh
+audience: Nhóm kiểm thử
+purpose: adversarial-render
+canvas:
+  ratio: "16:9"
+slides:
+  - slide_id: slide2
+    title: Slide canonical thứ nhất
+    layout_ref: builtin:content@1.0.0
+    elements:
+      - element_id: e-first
+        kind: text
+        content: Nội dung màu đỏ không được ghi đè ảnh kế tiếp.
+    notes: ID slide2 đứng trước slide1 để tái hiện va chạm với Slide1.PNG và Slide2.PNG.
+  - slide_id: slide1
+    title: Slide canonical thứ hai
+    layout_ref: builtin:content@1.0.0
+    elements:
+      - element_id: e-second
+        kind: text
+        content: Nội dung màu xanh phải giữ artifact và hash riêng.
+    notes: Artifact của slide1 phải tồn tại độc lập sau promotion.

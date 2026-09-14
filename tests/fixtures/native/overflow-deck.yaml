@@ -1,0 +1,55 @@
+schema_version: "1.0"
+title: Kiểm thử tràn hình học
+audience: Nhóm kiểm thử
+purpose: adversarial-overflow
+canvas:
+  ratio: "16:9"
+slides:
+  - slide_id: overflow
+    title: Bốn vùng chữ không được tràn canvas
+    layout_ref: builtin:content@1.0.0
+    elements:
+      - element_id: e-one
+        kind: text
+        content: |-
+          Dòng 1
+          Dòng 2
+          Dòng 3
+          Dòng 4
+          Dòng 5
+          Dòng 6
+          Dòng 7
+          Dòng 8
+      - element_id: e-two
+        kind: text
+        content: |-
+          Dòng 1
+          Dòng 2
+          Dòng 3
+          Dòng 4
+          Dòng 5
+          Dòng 6
+          Dòng 7
+          Dòng 8
+      - element_id: e-three
+        kind: text
+        content: |-
+          Dòng 1
+          Dòng 2
+          Dòng 3
+          Dòng 4
+          Dòng 5
+          Dòng 6
+          Dòng 7
+          Dòng 8
+      - element_id: e-four
+        kind: text
+        content: |-
+          Dòng 1
+          Dòng 2
+          Dòng 3
+          Dòng 4
+          Dòng 5
+          Dòng 6
+          Dòng 7
+          Dòng 8

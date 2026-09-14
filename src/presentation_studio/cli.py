@@ -33,6 +33,20 @@ _KNOWN_COMMANDS = frozenset(
 )
 
 
+def _ensure_builtin_backends() -> None:
+    from .backends import register_builtin_backends
+
+    def register_backend_if_missing(backend_id: str, handler: Handler) -> None:
+        _BACKENDS.setdefault(backend_id, handler)
+
+    def register_renderer_if_missing(backend_id: str, handler: Handler) -> None:
+        _RENDERERS.setdefault(backend_id, handler)
+
+    register_builtin_backends(
+        register_backend_if_missing, register_renderer_if_missing
+    )
+
+
 class CLIUsageError(ValueError):
     pass
 
@@ -216,6 +230,7 @@ def _run_command(args: argparse.Namespace) -> CLIResult:
         )
 
     if args.command == "build":
+        _ensure_builtin_backends()
         paths = resolve_paths(workspace=Path(args.workspace))
         backend = args.backend
         if (paths.project_root / "project.yaml").exists():
@@ -243,6 +258,7 @@ def _run_command(args: argparse.Namespace) -> CLIResult:
         )
 
     if args.command == "doctor":
+        _ensure_builtin_backends()
         return CLIResult(
             command="doctor",
             status="passed",
@@ -255,6 +271,7 @@ def _run_command(args: argparse.Namespace) -> CLIResult:
         )
 
     if args.command == "render":
+        _ensure_builtin_backends()
         paths = resolve_paths(workspace=Path(args.workspace))
         backend = args.backend
         if not backend and (paths.project_root / "project.yaml").exists():

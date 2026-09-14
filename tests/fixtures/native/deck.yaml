@@ -1,0 +1,55 @@
+schema_version: "1.0"
+title: Báo cáo vận hành minh họa
+audience: Nhóm vận hành
+purpose: executive-report
+canvas:
+  ratio: "16:9"
+sources:
+  - id: demo-data
+    kind: synthetic
+    title: Dữ liệu giả lập dùng minh họa
+slides:
+  - slide_id: tong-quan
+    title: Thời gian xử lý đã giảm
+    message: Hai thay đổi quy trình giúp giảm thời gian chờ.
+    layout_ref: builtin:metric-and-explanation@1.0.0
+    elements:
+      - element_id: e-kpi
+        kind: text
+        role: metric
+        content: 18%
+      - element_id: e-explain
+        kind: text
+        role: explanation
+        alt_text: Giải thích hai thay đổi quy trình
+        content: Hai thay đổi quy trình giúp giảm thời gian chờ.
+    notes: Đây là số liệu giả lập để minh họa bố cục, không phải kết quả kinh doanh.
+    source_refs: [demo-data]
+  - slide_id: bang-du-lieu
+    title: Chi tiết theo nhóm
+    layout_ref: builtin:data@1.0.0
+    elements:
+      - element_id: e-table
+        kind: table
+        content:
+          columns: [Nhóm, Trước, Sau]
+          rows:
+            - [A, 25, 18]
+            - [B, 30, 21]
+    notes: Bảng giữ nguyên nhãn và dữ liệu để người nhận chỉnh sửa.
+    source_refs: [demo-data]
+  - slide_id: bieu-do
+    title: Điểm chất lượng tăng qua hai tháng
+    layout_ref: builtin:data@1.0.0
+    elements:
+      - element_id: e-chart
+        kind: chart
+        content:
+          chart_type: column
+          unit: điểm
+          source_ref: demo-data
+          data:
+            - {label: Tháng 1, value: 72}
+            - {label: Tháng 2, value: 81}
+    notes: Biểu đồ và nhãn nguồn đều là đối tượng native.
+    source_refs: [demo-data]
