@@ -211,10 +211,31 @@ class SemanticNode(_VisualModel):
     facts: list[Fact] = Field(default_factory=list)
     asset_ref: Identifier | None = None
 
+    @model_validator(mode="after")
+    def decoration_uses_self_binding(self) -> SemanticNode:
+        if self.content_binding.field == "semantic-node":
+            if self.kind not in {"group", "shape"}:
+                raise ValueError(
+                    "semantic-node binding is reserved for group/shape decoration"
+                )
+            if self.content_binding.item_id != self.id:
+                raise ValueError(
+                    "semantic-node binding item_id must equal its node id"
+                )
+        elif self.kind in {"group", "shape"}:
+            raise ValueError("group/shape decoration requires semantic-node binding")
+        return self
+
 
 class VisualNode(SemanticNode):
     text: Text4000 | None = None
     preferred_box: Box | None = None
+
+    @model_validator(mode="after")
+    def decoration_has_no_text(self) -> VisualNode:
+        if self.kind in {"group", "shape"} and self.text is not None:
+            raise ValueError("group/shape decoration requires null text")
+        return self
 
 
 class VisualRelation(_VisualModel):
@@ -270,14 +291,6 @@ def _validate_graph(
                 raise ValueError("parent_id must reference a different known node")
             parent_edges.add((node.parent_id, node.id))
             parent_by_node[node.id] = node.parent_id
-        if node.content_binding.field == "semantic-node":
-            if node.kind not in {"group", "shape"}:
-                raise ValueError("semantic-node binding is reserved for group/shape decoration")
-            if node.content_binding.item_id != node.id:
-                raise ValueError("semantic-node binding item_id must equal its node id")
-        elif node.kind in {"group", "shape"}:
-            raise ValueError("group/shape decoration requires semantic-node binding")
-
     contains_edges = {
         (relation.from_id, relation.to_id)
         for relation in relations
@@ -595,10 +608,11 @@ class VisualAssetBrief(_VisualModel):
         if source_required and "html-source" not in self.deliverables:
             raise ValueError("reconstruction and overlay require html-source")
 
+        nodes_by_id = {node.id: node for node in self.nodes}
         visible_text = [
-            node.text
-            for node in self.nodes
-            if node.visible and node.text not in {None, ""}
+            nodes_by_id[node_id].text
+            for node_id in self.reading_order
+            if nodes_by_id[node_id].text not in {None, ""}
         ]
         relation_labels = [
             relation.label for relation in self.relations if relation.label not in {None, ""}
@@ -614,7 +628,18 @@ class VisualAssetBrief(_VisualModel):
                     and not node.text
                 ):
                     raise ValueError("visible text-bearing nodes require non-empty text")
-            required_transcript_values = [*visible_text, *relation_labels]
+            transcript_position = 0
+            for value in visible_text:
+                value_position = self.accessibility.transcript.find(
+                    value, transcript_position
+                )
+                if value_position < 0:
+                    raise ValueError(
+                        "transcript must preserve visible text in reading_order"
+                    )
+                transcript_position = value_position + len(value)
+
+            required_transcript_values = [*relation_labels]
             required_transcript_values.extend(
                 fact.value
                 for node in self.nodes

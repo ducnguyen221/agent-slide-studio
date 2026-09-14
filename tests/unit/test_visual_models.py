@@ -76,6 +76,23 @@ def test_writer_does_not_treat_an_empty_target_version_as_auto() -> None:
     assert error.value.exit_code == 2
 
 
+def test_deck_10_rejects_non_null_visual_semantics() -> None:
+    payload = fixture_json("deck-chart-1.1")
+    payload["schema_version"] = "1.0"
+
+    with pytest.raises(ValidationError):
+        DeckSpec.model_validate(payload)
+
+
+def test_deck_10_accepts_explicit_null_visual_semantics() -> None:
+    payload = fixture_json("deck-1.0")
+    payload["slides"][0]["visual_semantics"] = None
+
+    deck = DeckSpec.model_validate(payload)
+
+    assert deck.slides[0].visual_semantics is None
+
+
 def test_content_bindings_enforce_the_dispatch_allowlist_and_chart_shape() -> None:
     label = ChartBinding(
         slide_id="s03",
@@ -190,6 +207,29 @@ def test_semantic_node_binding_is_reserved_for_group_and_shape_decoration() -> N
     with pytest.raises(ValidationError):
         VisualSemantics.model_validate(wrong_binding)
 
+    wrong_self_binding = fixture_json("deck-chart-1.1")["slides"][0][
+        "visual_semantics"
+    ]
+    wrong_self_binding["nodes"][0]["content_binding"]["item_id"] = "label-a"
+    with pytest.raises(ValidationError):
+        VisualSemantics.model_validate(wrong_self_binding)
+
+
+@pytest.mark.parametrize("kind", ["group", "shape"])
+def test_decorative_group_and_shape_nodes_cannot_carry_text(kind: str) -> None:
+    payload = fixture_json("brief-image")
+    decoration = payload["nodes"][0]
+    decoration["kind"] = kind
+    decoration["visible"] = True
+    decoration["text"] = "Trang trí"
+    payload["reading_order"].insert(0, decoration["id"])
+    payload["accessibility"]["transcript"] = (
+        "Trang trí; " + payload["accessibility"]["transcript"]
+    )
+
+    with pytest.raises(ValidationError):
+        VisualAssetBrief.model_validate(payload)
+
 
 def test_visual_brief_fixtures_and_supporting_contracts_are_strict() -> None:
     image = load_brief()
@@ -234,6 +274,16 @@ def test_no_text_brief_is_valid_when_visible_text_and_transcript_are_absent() ->
         relation["label"] = None
 
     VisualAssetBrief.model_validate(payload)
+
+
+def test_transcript_preserves_visible_text_order_from_reading_order() -> None:
+    payload = fixture_json("brief-image")
+    payload["accessibility"]["transcript"] = (
+        "điểm; 18,5; Nhóm A; giá trị nguồn 18.5."
+    )
+
+    with pytest.raises(ValidationError):
+        VisualAssetBrief.model_validate(payload)
 
 
 def test_brief_rejects_reconstruction_baked_and_overlay_without_source() -> None:

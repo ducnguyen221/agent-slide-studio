@@ -192,6 +192,10 @@ class DeckSpec(StrictModel):
 
     @model_validator(mode="after")
     def unique_references(self) -> DeckSpec:
+        if self.schema_version == "1.0" and any(
+            slide.visual_semantics is not None for slide in self.slides
+        ):
+            raise ValueError("DeckSpec 1.0 cannot contain visual_semantics")
         slide_ids = [slide.slide_id for slide in self.slides]
         if len(slide_ids) != len(set(slide_ids)):
             raise ValueError("slide_id must be unique")
