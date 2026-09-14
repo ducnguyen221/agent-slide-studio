@@ -38,14 +38,14 @@ from .formatting import format_number
 
 _CHART_FIELDS = {"chart-label", "chart-value", "chart-unit", "display-unit"}
 _TEXT_NODE_KINDS = {"title", "text", "data-label"}
-_NUMBER_TOKEN = re.compile(r"(?<![\w])[-+]?\d+(?:[.,]\d+)*(?![\w])")
-_RELATION_CLAIM = re.compile(
-    r"(?<![a-z0-9-])"
-    r"([a-z0-9][a-z0-9-]{0,63})\s+"
-    r"(sequence|branch|cycle|contains|compares|associates)\s+"
-    r"([a-z0-9][a-z0-9-]{0,63})"
-    r"(?![a-z0-9-])"
-)
+_RELATION_ALT_PHRASES = {
+    "sequence": "đứng trước",
+    "branch": "phân nhánh tới",
+    "cycle": "quay lại",
+    "contains": "chứa",
+    "compares": "so sánh với",
+    "associates": "liên kết với",
+}
 
 
 @dataclass(frozen=True)
@@ -785,79 +785,65 @@ def _assert_fact_sets(
         raise _content_error(f"Facts của node {canonical.id!r} lệch canonical.")
 
 
-def _collect_number_tokens(value: Any, tokens: set[str]) -> None:
-    if isinstance(value, str):
-        tokens.update(_NUMBER_TOKEN.findall(_nfc(value) or ""))
-    elif isinstance(value, Decimal):
-        tokens.add(_decimal_text(value))
-    elif isinstance(value, (int, float)) and not isinstance(value, bool):
-        tokens.add(_decimal_text(_decimal(value, pointer="accessibility")))
-    elif isinstance(value, dict):
-        for item in value.values():
-            _collect_number_tokens(item, tokens)
-    elif isinstance(value, (list, tuple)):
-        for item in value:
-            _collect_number_tokens(item, tokens)
-
-
-def _canonical_accessibility_numbers(
+def _projected_alt_text(
     deck: DeckSpec,
     slide: SlideSpec,
-    brief: VisualAssetBrief,
-) -> set[str]:
-    tokens: set[str] = set()
-    _collect_number_tokens(
-        [
-            deck.title,
-            deck.audience,
-            deck.purpose,
-            slide.title,
-            slide.message,
-            slide.notes,
-        ],
-        tokens,
-    )
-    for element in slide.elements:
-        projected = _element_payload(slide, element)
-        _collect_number_tokens(projected["content"], tokens)
-        _collect_number_tokens(projected["alt_text"], tokens)
-    for node in brief.nodes:
-        _collect_number_tokens(node.text, tokens)
-        for fact in node.facts:
-            _collect_number_tokens(fact.value, tokens)
-    for relation in brief.relations:
-        _collect_number_tokens(relation.label, tokens)
-    return tokens
+    reading_order: list[str],
+    nodes: list[VisualNode],
+    relations: list[VisualRelation],
+) -> str:
+    nodes_by_id = {node.id: node for node in nodes}
+    content_parts: list[str] = []
+    for node_id in reading_order:
+        node = nodes_by_id[node_id]
+        value = node.text
+        if value is None:
+            scalar = resolve_binding(deck, node.content_binding).scalar
+            if isinstance(scalar, Decimal):
+                value = _decimal_text(scalar)
+            elif isinstance(scalar, str):
+                value = _nfc(scalar)
+        if value:
+            content_parts.append(value)
+
+    sentences: list[str] = []
+    if content_parts:
+        sentences.append(
+            f"Nội dung theo thứ tự đọc: {'; '.join(content_parts)}."
+        )
+    relation_parts: list[str] = []
+    for relation in sorted(relations, key=lambda item: item.id):
+        description = (
+            f"{relation.from_id} {_RELATION_ALT_PHRASES[relation.kind]} "
+            f"{relation.to_id}"
+        )
+        if relation.label:
+            description += f" ({relation.label})"
+        relation_parts.append(description)
+    if relation_parts:
+        sentences.append(f"Quan hệ: {'; '.join(relation_parts)}.")
+    if not sentences:
+        fallback = _nfc(slide.message) or _nfc(slide.title) or _nfc(deck.title)
+        sentences.append(f"Nội dung slide: {fallback}.")
+    return " ".join(sentences)
 
 
-def _assert_accessibility_semantics(
+def _assert_alt_text(
     deck: DeckSpec,
     slide: SlideSpec,
     brief: VisualAssetBrief,
 ) -> None:
-    allowed = _canonical_accessibility_numbers(deck, slide, brief)
-    node_ids = {node.id for node in brief.nodes}
-    allowed_relations = {
-        (relation.from_id, relation.kind, relation.to_id)
-        for relation in brief.relations
-    }
-    for field, value in (
-        ("transcript", brief.accessibility.transcript),
-        ("alt_text", brief.accessibility.alt_text),
-    ):
-        unexpected = set(_NUMBER_TOKEN.findall(_nfc(value) or "")) - allowed
-        if unexpected:
-            raise _content_error(
-                f"accessibility.{field} chứa số ngoài canonical: {sorted(unexpected)}."
-            )
-        for match in _RELATION_CLAIM.finditer(value):
-            claim = match.group(1), match.group(2), match.group(3)
-            if (
-                claim[0] in node_ids or claim[2] in node_ids
-            ) and claim not in allowed_relations:
-                raise _content_error(
-                    f"accessibility.{field} chứa relation ngoài canonical {claim!r}."
-                )
+    expected = _projected_alt_text(
+        deck,
+        slide,
+        brief.reading_order,
+        brief.nodes,
+        brief.relations,
+    )
+    if brief.accessibility.alt_text != expected:
+        raise _content_error(
+            "accessibility.alt_text lệch canonical projection."
+        )
 
 
 def _assert_transcript(
@@ -996,7 +982,7 @@ def assert_content_parity(deck: DeckSpec, brief: VisualAssetBrief) -> None:
                 rounded_source_values[node.id] = _decimal_text(resolved.scalar)
         _validate_chart_groups(deck, slide, brief.nodes)
     _assert_transcript(brief, nodes_by_id, rounded_source_values)
-    _assert_accessibility_semantics(deck, slide, brief)
+    _assert_alt_text(deck, slide, brief)
 
 
 def _projected_transcript(
@@ -1097,6 +1083,13 @@ def project_brief(
     accessibility = brief.accessibility.model_dump(mode="python")
     accessibility.update(
         {
+            "alt_text": _projected_alt_text(
+                deck,
+                slide,
+                reading_order,
+                nodes,
+                relations,
+            ),
             "notes": _nfc(slide.notes) or "",
             "transcript": _projected_transcript(
                 brief.text_policy,

@@ -769,6 +769,62 @@ def test_parity_rejects_a_structured_contradictory_alt_relation() -> None:
     _assert_error(error, "CONTENT_PARITY_FAILED")
 
 
+def test_project_brief_projects_exact_alt_from_canonical_content_and_graph() -> None:
+    deck = _chart_deck()
+    template = load_brief()
+    template.accessibility.alt_text = "Mô tả tự do đã cũ."
+
+    projected = project_brief(deck, template, RAW_DECK_HASH)
+
+    assert projected.accessibility.alt_text == (
+        "Nội dung theo thứ tự đọc: Nhóm A; 18,5; điểm. "
+        "Quan hệ: chart-a chứa label-a; chart-a chứa unit; "
+        "chart-a chứa value-a."
+    )
+    assert_content_parity(deck, projected)
+
+
+def test_parity_rejects_wrong_alt_label_value_unit_reassociation() -> None:
+    deck = _chart_deck()
+    projected = project_brief(deck, load_brief(), RAW_DECK_HASH)
+    projected.accessibility.alt_text = "Nhóm B đạt 18,5 lần."
+
+    with pytest.raises(VisualError) as error:
+        assert_content_parity(deck, projected)
+
+    _assert_error(error, "CONTENT_PARITY_FAILED")
+
+
+def test_parity_rejects_vietnamese_alt_relation_outside_canonical_graph() -> None:
+    deck = _chart_deck()
+    projected = project_brief(deck, load_brief(), RAW_DECK_HASH)
+    projected.accessibility.alt_text = (
+        "unit chứa chart-a; Nhóm A đạt 18,5 điểm."
+    )
+
+    with pytest.raises(VisualError) as error:
+        assert_content_parity(deck, projected)
+
+    _assert_error(error, "CONTENT_PARITY_FAILED")
+
+
+def test_reprojection_replaces_stale_alt_after_a_canonical_edit() -> None:
+    deck = _chart_deck()
+    _set_chart_value(deck, 19.5, "19.5")
+    template = load_brief()
+    assert "18,5" in template.accessibility.alt_text
+
+    projected = project_brief(deck, template, RAW_DECK_HASH)
+
+    assert projected.accessibility.alt_text == (
+        "Nội dung theo thứ tự đọc: Nhóm A; 19,5; điểm. "
+        "Quan hệ: chart-a chứa label-a; chart-a chứa unit; "
+        "chart-a chứa value-a."
+    )
+    assert "18,5" not in projected.accessibility.alt_text
+    assert_content_parity(deck, projected)
+
+
 def test_parity_rejects_a_formatter_for_an_unknown_node() -> None:
     deck = _chart_deck()
     projected = project_brief(deck, load_brief(), RAW_DECK_HASH)
