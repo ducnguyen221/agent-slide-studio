@@ -658,20 +658,24 @@ class VisualAssetBrief(_VisualModel):
             for fact in node.facts
             if fact.value_type == "decimal"
         }
-        numeric_nodes = {
+        formatter_candidates = {
             node.id
             for node in self.nodes
             if node.visible
             and self.text_policy != "none"
+            and node.content_binding.field in {"chart-value", "table-cell"}
+        }
+        required_formatters = {
+            node.id
+            for node in self.nodes
+            if node.id in formatter_candidates
             and (
                 node.content_binding.field == "chart-value"
-                or (
-                    node.content_binding.field == "table-cell"
-                    and _binding_pointer(node.content_binding) in numeric_pointers
-                )
+                or _binding_pointer(node.content_binding) in numeric_pointers
             )
         }
-        if set(self.number_formatters) != numeric_nodes:
+        formatter_ids = set(self.number_formatters)
+        if not required_formatters <= formatter_ids <= formatter_candidates:
             raise ValueError("number_formatters must map exactly the visible numeric nodes")
         return self
 

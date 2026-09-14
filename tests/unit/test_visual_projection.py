@@ -15,6 +15,7 @@ from presentation_studio.models import (
     SourceRef,
     VisualAssetBrief,
     VisualError,
+    VisualRelation,
 )
 from presentation_studio.state import hash_inputs
 from presentation_studio.visual.formatting import format_number
@@ -730,6 +731,44 @@ def test_parity_rejects_a_missing_approximation_marker() -> None:
     _assert_error(error, "CONTENT_PARITY_FAILED")
 
 
+@pytest.mark.parametrize(
+    ("field", "replacement"),
+    [
+        ("transcript", None),
+        ("alt_text", "Nhóm A đạt 999 điểm."),
+    ],
+)
+def test_parity_rejects_accessibility_numbers_outside_canonical_projection(
+    field: str,
+    replacement: str | None,
+) -> None:
+    deck = _chart_deck()
+    projected = project_brief(deck, load_brief(), RAW_DECK_HASH)
+    if field == "transcript":
+        projected.accessibility.transcript += " 999 điểm."
+    else:
+        assert replacement is not None
+        projected.accessibility.alt_text = replacement
+
+    with pytest.raises(VisualError) as error:
+        assert_content_parity(deck, projected)
+
+    _assert_error(error, "CONTENT_PARITY_FAILED")
+
+
+def test_parity_rejects_a_structured_contradictory_alt_relation() -> None:
+    deck = _chart_deck()
+    projected = project_brief(deck, load_brief(), RAW_DECK_HASH)
+    projected.accessibility.alt_text = (
+        "unit contains chart-a; Nhóm A đạt 18,5 điểm."
+    )
+
+    with pytest.raises(VisualError) as error:
+        assert_content_parity(deck, projected)
+
+    _assert_error(error, "CONTENT_PARITY_FAILED")
+
+
 def test_parity_rejects_a_formatter_for_an_unknown_node() -> None:
     deck = _chart_deck()
     projected = project_brief(deck, load_brief(), RAW_DECK_HASH)
@@ -822,6 +861,45 @@ def test_missing_chart_source_never_invents_facts() -> None:
     assert _node(projected, "value-a").text == "18,5"
     assert _node(projected, "unit").text == "điểm"
     assert_content_parity(deck, projected)
+
+
+def test_rounded_node_without_fact_preserves_resolved_source_scalar() -> None:
+    deck = _chart_deck()
+    chart = deck.slides[0].elements[0]
+    assert chart.kind == "chart"
+    chart.content.source_ref = None
+    deck.sources.clear()
+    deck.slides[0].source_refs.clear()
+    semantics = deck.slides[0].visual_semantics
+    assert semantics is not None
+    for node in semantics.nodes:
+        node.facts.clear()
+    _semantic_node(deck, "value-a").required = False
+    template = load_brief()
+    template.number_formatters["value-a"] = template.number_formatters[
+        "value-a"
+    ].model_copy(
+        update={
+            "precision": 0,
+            "rounding": "half-even",
+            "approximation_marker": "prefix",
+        }
+    )
+
+    projected = project_brief(deck, template, RAW_DECK_HASH)
+
+    value_node = _node(projected, "value-a")
+    assert value_node.facts == []
+    assert value_node.text == "≈18"
+    assert "giá trị nguồn 18.5" in projected.accessibility.transcript
+    assert_content_parity(deck, projected)
+
+    projected.accessibility.transcript = (
+        "Nhóm A; ≈18; điểm; giá trị hiển thị được làm tròn."
+    )
+    with pytest.raises(VisualError) as error:
+        assert_content_parity(deck, projected)
+    _assert_error(error, "CONTENT_PARITY_FAILED")
 
 
 def test_hidden_numeric_node_does_not_require_a_display_formatter() -> None:
@@ -917,6 +995,74 @@ def _table_case() -> tuple[DeckSpec, VisualAssetBrief]:
     )
 
 
+def _legacy_chart_case() -> tuple[DeckSpec, VisualAssetBrief]:
+    deck_payload = fixture_json("deck-chart-1.1")
+    deck_payload["schema_version"] = "1.0"
+    deck_payload["slides"][0]["visual_semantics"] = None
+
+    brief_payload = fixture_json("brief-image")
+    brief_payload["nodes"] = brief_payload["nodes"][1:3]
+    for node in brief_payload["nodes"]:
+        node["parent_id"] = None
+    brief_payload["relations"] = []
+    brief_payload["reading_order"] = ["label-a", "value-a"]
+    brief_payload["editability"]["required_node_ids"] = ["label-a", "value-a"]
+    brief_payload["accessibility"]["transcript"] = (
+        "Nhóm A; 18,5; giá trị nguồn 18.5."
+    )
+
+    return (
+        DeckSpec.model_validate(deck_payload),
+        VisualAssetBrief.model_validate(brief_payload),
+    )
+
+
+def test_legacy_adapter_rejects_two_node_reading_order_from_the_brief() -> None:
+    deck, template = _legacy_chart_case()
+    template.reading_order.reverse()
+    template.accessibility.transcript = (
+        "18,5; Nhóm A; giá trị nguồn 18.5."
+    )
+    projected = project_brief(deck, template, RAW_DECK_HASH)
+    assert projected.reading_order == ["label-a", "value-a"]
+    assert projected.accessibility.transcript == (
+        "Nhóm A; 18,5; giá trị nguồn 18.5."
+    )
+
+    projected.reading_order.reverse()
+    projected.accessibility.transcript = (
+        "18,5; Nhóm A; giá trị nguồn 18.5."
+    )
+
+    with pytest.raises(VisualError) as error:
+        assert_content_parity(deck, projected)
+
+    _assert_error(error, "CONTENT_PARITY_FAILED")
+
+
+def test_legacy_adapter_rejects_an_unprovable_relation_for_migration() -> None:
+    deck, template = _legacy_chart_case()
+    template.relations.append(
+        VisualRelation(
+            id="legacy-order",
+            from_id="label-a",
+            to_id="value-a",
+            kind="sequence",
+            label="tiếp theo",
+            required=True,
+        )
+    )
+    template.accessibility.transcript = (
+        "Nhóm A; 18,5; tiếp theo; giá trị nguồn 18.5."
+    )
+
+    with pytest.raises(VisualError) as error:
+        project_brief(deck, template, RAW_DECK_HASH)
+
+    assert error.value.code == "MIGRATION_REQUIRED"
+    assert error.value.exit_code == 2
+
+
 def test_numeric_table_cells_use_the_same_formatter_contract() -> None:
     deck, template = _table_case()
 
@@ -926,6 +1072,32 @@ def test_numeric_table_cells_use_the_same_formatter_contract() -> None:
     assert _node(projected, "value-a").text == "18,5"
     assert _node(projected, "value-a").facts[0].value == "18.5"
     assert_content_parity(deck, projected)
+
+
+def test_numeric_table_cell_without_fact_uses_the_resolved_scalar() -> None:
+    deck, template = _table_case()
+    _semantic_node(deck, "value-a").facts.clear()
+    _node(template, "value-a").facts.clear()
+
+    projected = project_brief(deck, template, RAW_DECK_HASH)
+
+    assert _node(projected, "value-a").facts == []
+    assert _node(projected, "value-a").text == "18,5"
+    assert_content_parity(deck, projected)
+
+
+def test_table_formatter_is_rejected_when_the_resolved_cell_is_a_string() -> None:
+    deck, template = _table_case()
+    table = deck.slides[0].elements[0]
+    assert table.kind == "table"
+    table.content.rows[0][1] = "18.5"
+    _semantic_node(deck, "value-a").facts.clear()
+    _node(template, "value-a").facts.clear()
+
+    with pytest.raises(VisualError) as error:
+        project_brief(deck, template, RAW_DECK_HASH)
+
+    _assert_error(error, "CONTENT_PARITY_FAILED")
 
 
 def test_build_projection_deep_copies_only_the_selected_original_slide() -> None:

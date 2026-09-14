@@ -38,6 +38,14 @@ from .formatting import format_number
 
 _CHART_FIELDS = {"chart-label", "chart-value", "chart-unit", "display-unit"}
 _TEXT_NODE_KINDS = {"title", "text", "data-label"}
+_NUMBER_TOKEN = re.compile(r"(?<![\w])[-+]?\d+(?:[.,]\d+)*(?![\w])")
+_RELATION_CLAIM = re.compile(
+    r"(?<![a-z0-9-])"
+    r"([a-z0-9][a-z0-9-]{0,63})\s+"
+    r"(sequence|branch|cycle|contains|compares|associates)\s+"
+    r"([a-z0-9][a-z0-9-]{0,63})"
+    r"(?![a-z0-9-])"
+)
 
 
 @dataclass(frozen=True)
@@ -49,6 +57,10 @@ class ResolvedContent:
 
 def _content_error(message: str) -> VisualError:
     return VisualError("CONTENT_PARITY_FAILED", 2, message)
+
+
+def _migration_error(message: str) -> VisualError:
+    return VisualError("MIGRATION_REQUIRED", 2, message)
 
 
 def _nfc(value: str | None) -> str | None:
@@ -667,6 +679,88 @@ def _expected_node_text(
     return resolved.scalar, False
 
 
+def _legacy_binding_order(
+    deck: DeckSpec,
+    slide: SlideSpec,
+    node: VisualNode,
+) -> tuple[int, int, int, int, str]:
+    binding = node.content_binding
+    if binding.field == "semantic-node":
+        raise _migration_error(
+            "DeckSpec 1.0 không chứng minh được semantic-node; cần migrate sang 1.1."
+        )
+    resolve_binding(deck, binding)
+    top_level = {
+        "slide-title": 0,
+        "slide-message": 1,
+        "deck-purpose": 2,
+        "deck-audience": 3,
+    }
+    if binding.field in top_level:
+        return (top_level[binding.field], 0, 0, 0, node.id)
+    if binding.field == "slide-notes":
+        return (5, 0, 0, 0, node.id)
+
+    element = _find_element(slide, binding.element_id)
+    element_index = next(
+        index
+        for index, candidate in enumerate(slide.elements)
+        if candidate is element
+    )
+    item_index = binding.item_index or 0
+    field_order = 0
+    if isinstance(binding, ChartBinding):
+        if binding.field in {"chart-unit", "display-unit"}:
+            item_index = len(element.content.data) if isinstance(element, ChartElement) else 0
+            field_order = 0 if binding.field == "chart-unit" else 1
+        else:
+            field_order = 0 if binding.field == "chart-label" else 1
+    elif binding.field in {"process-title", "process-description"}:
+        assert isinstance(element, ProcessElement)
+        item_index = next(
+            index
+            for index, step in enumerate(element.content.steps)
+            if step.id == binding.item_id
+        )
+        field_order = 0 if binding.field == "process-title" else 1
+    elif binding.field == "table-cell":
+        match = re.fullmatch(r"col-(\d+)", binding.item_id or "")
+        assert match is not None
+        field_order = int(match.group(1))
+    else:
+        field_order = {
+            "text-label": 0,
+            "text-content": 1,
+            "text-item": 2,
+            "image-content": 0,
+            "image-alt": 1,
+            "quote-text": 0,
+            "code-text": 0,
+        }[binding.field]
+    return (4, element_index, item_index, field_order, node.id)
+
+
+def _legacy_reading_order(
+    deck: DeckSpec,
+    slide: SlideSpec,
+    nodes: Iterable[VisualNode],
+    relations: Iterable[VisualRelation],
+) -> list[str]:
+    node_list = list(nodes)
+    if list(relations) or any(node.parent_id is not None for node in node_list):
+        raise _migration_error(
+            "DeckSpec 1.0 không chứng minh được graph relation; cần migrate sang 1.1."
+        )
+    ordered = sorted(
+        (node for node in node_list if node.visible),
+        key=lambda node: _legacy_binding_order(deck, slide, node),
+    )
+    for node in node_list:
+        if not node.visible:
+            _legacy_binding_order(deck, slide, node)
+    return [node.id for node in ordered]
+
+
 def _assert_fact_sets(
     deck: DeckSpec,
     slide: SlideSpec,
@@ -691,9 +785,85 @@ def _assert_fact_sets(
         raise _content_error(f"Facts của node {canonical.id!r} lệch canonical.")
 
 
+def _collect_number_tokens(value: Any, tokens: set[str]) -> None:
+    if isinstance(value, str):
+        tokens.update(_NUMBER_TOKEN.findall(_nfc(value) or ""))
+    elif isinstance(value, Decimal):
+        tokens.add(_decimal_text(value))
+    elif isinstance(value, (int, float)) and not isinstance(value, bool):
+        tokens.add(_decimal_text(_decimal(value, pointer="accessibility")))
+    elif isinstance(value, dict):
+        for item in value.values():
+            _collect_number_tokens(item, tokens)
+    elif isinstance(value, (list, tuple)):
+        for item in value:
+            _collect_number_tokens(item, tokens)
+
+
+def _canonical_accessibility_numbers(
+    deck: DeckSpec,
+    slide: SlideSpec,
+    brief: VisualAssetBrief,
+) -> set[str]:
+    tokens: set[str] = set()
+    _collect_number_tokens(
+        [
+            deck.title,
+            deck.audience,
+            deck.purpose,
+            slide.title,
+            slide.message,
+            slide.notes,
+        ],
+        tokens,
+    )
+    for element in slide.elements:
+        projected = _element_payload(slide, element)
+        _collect_number_tokens(projected["content"], tokens)
+        _collect_number_tokens(projected["alt_text"], tokens)
+    for node in brief.nodes:
+        _collect_number_tokens(node.text, tokens)
+        for fact in node.facts:
+            _collect_number_tokens(fact.value, tokens)
+    for relation in brief.relations:
+        _collect_number_tokens(relation.label, tokens)
+    return tokens
+
+
+def _assert_accessibility_semantics(
+    deck: DeckSpec,
+    slide: SlideSpec,
+    brief: VisualAssetBrief,
+) -> None:
+    allowed = _canonical_accessibility_numbers(deck, slide, brief)
+    node_ids = {node.id for node in brief.nodes}
+    allowed_relations = {
+        (relation.from_id, relation.kind, relation.to_id)
+        for relation in brief.relations
+    }
+    for field, value in (
+        ("transcript", brief.accessibility.transcript),
+        ("alt_text", brief.accessibility.alt_text),
+    ):
+        unexpected = set(_NUMBER_TOKEN.findall(_nfc(value) or "")) - allowed
+        if unexpected:
+            raise _content_error(
+                f"accessibility.{field} chứa số ngoài canonical: {sorted(unexpected)}."
+            )
+        for match in _RELATION_CLAIM.finditer(value):
+            claim = match.group(1), match.group(2), match.group(3)
+            if (
+                claim[0] in node_ids or claim[2] in node_ids
+            ) and claim not in allowed_relations:
+                raise _content_error(
+                    f"accessibility.{field} chứa relation ngoài canonical {claim!r}."
+                )
+
+
 def _assert_transcript(
     brief: VisualAssetBrief,
     nodes: dict[str, VisualNode],
+    rounded_source_values: dict[str, str],
 ) -> None:
     if brief.text_policy == "none":
         if brief.accessibility.transcript != "":
@@ -718,6 +888,22 @@ def _assert_transcript(
                 raise _content_error(
                     f"Transcript thiếu canonical Fact {fact.id!r}."
                 )
+    for node_id, source_value in rounded_source_values.items():
+        if f"giá trị nguồn {source_value}" not in brief.accessibility.transcript:
+            raise _content_error(
+                f"Transcript thiếu giá trị nguồn của rounded node {node_id!r}."
+            )
+    expected = _projected_transcript(
+        brief.text_policy,
+        brief.reading_order,
+        sorted(nodes.values(), key=lambda item: item.id),
+        sorted(brief.relations, key=lambda item: item.id),
+        rounded_source_values,
+    )
+    if brief.accessibility.transcript != expected:
+        raise _content_error(
+            "Transcript chứa nội dung semantic ngoài canonical projection."
+        )
 
 
 def assert_content_parity(deck: DeckSpec, brief: VisualAssetBrief) -> None:
@@ -743,6 +929,7 @@ def assert_content_parity(deck: DeckSpec, brief: VisualAssetBrief) -> None:
     if len(nodes_by_id) != len(brief.nodes):
         raise _content_error("Brief có node ID trùng.")
     semantics = slide.visual_semantics
+    rounded_source_values: dict[str, str] = {}
     expected_formatter_ids = {
         node.id
         for node in brief.nodes
@@ -763,9 +950,13 @@ def assert_content_parity(deck: DeckSpec, brief: VisualAssetBrief) -> None:
             if _semantic_node_signature(projected) != _semantic_node_signature(canonical):
                 raise _content_error(f"Node {node_id!r} lệch canonical semantics.")
             _assert_fact_sets(deck, slide, canonical, projected)
-            expected_text, _ = _expected_node_text(deck, brief, canonical)
+            expected_text, rounded = _expected_node_text(deck, brief, canonical)
             if _nfc(projected.text) != expected_text:
                 raise _content_error(f"Node text {node_id!r} lệch canonical/formatter.")
+            if rounded:
+                resolved = resolve_binding(deck, canonical.content_binding)
+                assert isinstance(resolved.scalar, Decimal)
+                rounded_source_values[node_id] = _decimal_text(resolved.scalar)
         canonical_relations = {
             relation.id: _relation_payload(relation)
             for relation in semantics.relations
@@ -784,16 +975,28 @@ def assert_content_parity(deck: DeckSpec, brief: VisualAssetBrief) -> None:
             raise _content_error("Brief reading_order lệch canonical.")
         _validate_chart_groups(deck, slide, brief.nodes)
     else:
+        expected_reading_order = _legacy_reading_order(
+            deck, slide, brief.nodes, brief.relations
+        )
+        if brief.reading_order != expected_reading_order:
+            raise _content_error(
+                "Brief reading_order lệch deterministic DeckSpec 1.0 adapter."
+            )
         for node in brief.nodes:
             if node.content_binding.slide_id != slide.slide_id:
                 raise _content_error(f"Node {node.id!r} trỏ slide khác.")
             for fact in node.facts:
                 _fact_payload(deck, slide, fact)
-            expected_text, _ = _expected_node_text(deck, brief, node)
+            expected_text, rounded = _expected_node_text(deck, brief, node)
             if _nfc(node.text) != expected_text:
                 raise _content_error(f"Node text {node.id!r} lệch canonical/formatter.")
+            if rounded:
+                resolved = resolve_binding(deck, node.content_binding)
+                assert isinstance(resolved.scalar, Decimal)
+                rounded_source_values[node.id] = _decimal_text(resolved.scalar)
         _validate_chart_groups(deck, slide, brief.nodes)
-    _assert_transcript(brief, nodes_by_id)
+    _assert_transcript(brief, nodes_by_id, rounded_source_values)
+    _assert_accessibility_semantics(deck, slide, brief)
 
 
 def _projected_transcript(
@@ -801,7 +1004,7 @@ def _projected_transcript(
     reading_order: list[str],
     nodes: list[VisualNode],
     relations: list[VisualRelation],
-    rounded_node_ids: set[str],
+    rounded_source_values: dict[str, str],
 ) -> str:
     if text_policy == "none":
         return ""
@@ -819,10 +1022,14 @@ def _projected_transcript(
             continue
         for fact in node.facts:
             if fact.value_type == "decimal":
-                parts.append(f"giá trị nguồn {fact.value}")
+                if rounded_source_values.get(node.id) != fact.value:
+                    parts.append(f"giá trị nguồn {fact.value}")
             elif fact.value not in parts:
                 parts.append(fact.value)
-    if rounded_node_ids:
+    for node_id in reading_order:
+        if node_id in rounded_source_values:
+            parts.append(f"giá trị nguồn {rounded_source_values[node_id]}")
+    if rounded_source_values:
         parts.append("giá trị hiển thị được làm tròn")
     return "; ".join(parts) + ("." if parts else "")
 
@@ -856,19 +1063,20 @@ def project_brief(
         reading_order = list(semantics.reading_order)
     else:
         source_nodes = sorted(brief.nodes, key=lambda item: item.id)
-        relations = [
-            relation.model_copy(deep=True)
-            for relation in sorted(brief.relations, key=lambda item: item.id)
-        ]
-        reading_order = list(brief.reading_order)
+        reading_order = _legacy_reading_order(
+            deck, slide, brief.nodes, brief.relations
+        )
+        relations = []
 
     nodes: list[VisualNode] = []
-    rounded_node_ids: set[str] = set()
+    rounded_source_values: dict[str, str] = {}
     for source_node in source_nodes:
         preferred_box = design_by_id[source_node.id].preferred_box
         text, rounded = _expected_node_text(deck, brief, source_node)
         if rounded:
-            rounded_node_ids.add(source_node.id)
+            resolved = resolve_binding(deck, source_node.content_binding)
+            assert isinstance(resolved.scalar, Decimal)
+            rounded_source_values[source_node.id] = _decimal_text(resolved.scalar)
         node_payload = source_node.model_dump(mode="python")
         node_payload.update(
             {
@@ -895,7 +1103,7 @@ def project_brief(
                 reading_order,
                 nodes,
                 relations,
-                rounded_node_ids,
+                rounded_source_values,
             ),
         }
     )

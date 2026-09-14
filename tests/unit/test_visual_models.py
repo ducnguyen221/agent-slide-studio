@@ -394,3 +394,20 @@ def test_table_cell_formatter_is_required_only_for_numeric_canonical_values() ->
     )
     with pytest.raises(ValidationError):
         VisualAssetBrief.model_validate(decimal_cell)
+
+
+def test_table_cell_formatter_can_be_declared_before_canonical_resolution() -> None:
+    payload = fixture_json("brief-image")
+    value_node = next(node for node in payload["nodes"] if node["id"] == "value-a")
+    value_node["content_binding"] = {
+        "slide_id": "s03",
+        "element_id": "t1",
+        "field": "table-cell",
+        "item_id": "col-1",
+        "item_index": 0,
+    }
+    value_node["facts"] = []
+
+    brief = VisualAssetBrief.model_validate(payload)
+
+    assert set(brief.number_formatters) == {"value-a"}
