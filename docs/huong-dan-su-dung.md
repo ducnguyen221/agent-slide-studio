@@ -128,4 +128,6 @@ Giữ `project.yaml`, `storyboard/`, `assets/`, `builds/`, `exports/`, `.present
 
 ## Giới hạn hiện tại
 
+Nếu dùng Codex host để tạo một ảnh infographic, đọc [skill slide-infographic](../skills/slide-infographic/SKILL.md) và [quy trình tạo ảnh](../processes/slide-infographic-image.md). Mặc định TEXT_SAFE giữ chữ Việt nguyên văn để đặt lớp chữ sau; DIRECT_TEXT chỉ best-effort với QA từng nhãn; NO_TEXT dành cho hình không chữ. Gói hướng dẫn này chỉ có Markdown, không thêm lệnh `presentation` hay runtime. Kết quả ảnh/overlay-ready phải được đo và xem thực; [eval](../evals/slide-infographic/cases.md) ghi riêng các phần chưa chạy.
+
 `doctor` chỉ báo capability registry. Khi `backends` hoặc `renderers` rỗng, `build`, `render`, `audit` và `export` có thể trả `CAPABILITY_UNAVAILABLE`; kết quả đó không phải lỗi cài đặt. Chưa có bằng chứng runtime cho PPTX/HTML/reveal, speaker notes, overflow, editability hoặc visual UAT.

@@ -92,4 +92,6 @@ Các thư mục profile, output, state và dữ liệu người dùng thuộc st
 
 ## Trạng thái phát hành
 
+Luồng [infographic bằng Codex Image](skills/slide-infographic/SKILL.md) có [quy trình và mẫu prompt/QA](processes/slide-infographic-image.md) dạng Markdown cho host Codex. Đây chưa phải backend CLI; ảnh raster và bảng chữ overlay-ready không đồng nghĩa PowerPoint native. Xem [trạng thái eval](evals/slide-infographic/cases.md); HTML reconstruction là Phase 2 planned.
+
 Đây là lõi pre-release. Backend/renderer, build/render end-to-end và visual UAT chưa được cung cấp trong bản hiện tại.
