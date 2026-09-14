@@ -798,7 +798,14 @@ def _projected_alt_text(
         node = nodes_by_id[node_id]
         value = node.text
         if value is None:
-            scalar = resolve_binding(deck, node.content_binding).scalar
+            binding = node.content_binding
+            if binding.field == "image-content":
+                binding = ContentBinding(
+                    slide_id=binding.slide_id,
+                    element_id=binding.element_id,
+                    field="image-alt",
+                )
+            scalar = resolve_binding(deck, binding).scalar
             if isinstance(scalar, Decimal):
                 value = _decimal_text(scalar)
             elif isinstance(scalar, str):

@@ -825,6 +825,101 @@ def test_reprojection_replaces_stale_alt_after_a_canonical_edit() -> None:
     assert_content_parity(deck, projected)
 
 
+def _image_accessibility_case(kind: str = "image") -> tuple[DeckSpec, VisualAssetBrief]:
+    deck_payload = fixture_json("deck-chart-1.1")
+    slide = deck_payload["slides"][0]
+    slide["elements"] = [
+        {
+            "element_id": "hero",
+            "kind": "image",
+            "content": {"asset_ref": "asset-photo"},
+            "alt_text": "Mô tả chuẩn của ảnh",
+        }
+    ]
+    slide["visual_semantics"] = {
+        "nodes": [
+            {
+                "id": "hero-image",
+                "kind": kind,
+                "content_binding": {
+                    "slide_id": "s03",
+                    "element_id": "hero",
+                    "field": "image-content",
+                },
+                "parent_id": None,
+                "visible": True,
+                "required": True,
+                "semantic_role": "hero-image",
+                "facts": [],
+                "asset_ref": "asset-photo",
+            }
+        ],
+        "relations": [],
+        "reading_order": ["hero-image"],
+    }
+
+    brief_payload = fixture_json("brief-image")
+    preferred_box = brief_payload["nodes"][0]["preferred_box"]
+    brief_payload["text_policy"] = "none"
+    brief_payload["nodes"] = [
+        {
+            **slide["visual_semantics"]["nodes"][0],
+            "text": None,
+            "preferred_box": preferred_box,
+        }
+    ]
+    brief_payload["relations"] = []
+    brief_payload["reading_order"] = ["hero-image"]
+    brief_payload["number_formatters"] = {}
+    brief_payload["references"][0]["asset_ref"] = "asset-photo"
+    brief_payload["editability"]["required_node_ids"] = ["hero-image"]
+    brief_payload["accessibility"]["alt_text"] = "asset-photo"
+    brief_payload["accessibility"]["transcript"] = ""
+
+    return (
+        DeckSpec.model_validate(deck_payload),
+        VisualAssetBrief.model_validate(brief_payload),
+    )
+
+
+@pytest.mark.parametrize("kind", ["image", "icon"])
+def test_image_content_uses_canonical_image_alt_for_accessibility(kind: str) -> None:
+    deck, template = _image_accessibility_case(kind)
+    binding = _node(template, "hero-image").content_binding
+    assert resolve_binding(deck, binding).scalar == "asset-photo"
+
+    projected = project_brief(deck, template, RAW_DECK_HASH)
+
+    assert _node(projected, "hero-image").asset_ref == "asset-photo"
+    assert projected.accessibility.transcript == ""
+    assert projected.accessibility.alt_text == (
+        "Nội dung theo thứ tự đọc: Mô tả chuẩn của ảnh."
+    )
+    assert "asset-photo" not in projected.accessibility.alt_text
+    assert_content_parity(deck, projected)
+
+
+def test_reprojection_refreshes_a_canonical_image_description() -> None:
+    deck, template = _image_accessibility_case()
+    before = project_brief(deck, template, RAW_DECK_HASH)
+    image = deck.slides[0].elements[0]
+    assert image.kind == "image"
+    image.alt_text = "Mô tả ảnh đã cập nhật"
+
+    after = project_brief(deck, before, RAW_DECK_HASH)
+
+    assert before.accessibility.alt_text == (
+        "Nội dung theo thứ tự đọc: Mô tả chuẩn của ảnh."
+    )
+    assert after.accessibility.alt_text == (
+        "Nội dung theo thứ tự đọc: Mô tả ảnh đã cập nhật."
+    )
+    assert before.deck_binding.slide_content_hash != (
+        after.deck_binding.slide_content_hash
+    )
+    assert_content_parity(deck, after)
+
+
 def test_parity_rejects_a_formatter_for_an_unknown_node() -> None:
     deck = _chart_deck()
     projected = project_brief(deck, load_brief(), RAW_DECK_HASH)
