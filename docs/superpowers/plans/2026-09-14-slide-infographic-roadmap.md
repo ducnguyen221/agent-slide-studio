@@ -44,7 +44,7 @@ PromptPack A3: deterministic canvas/objective/hierarchy/layout/style/exclusions,
 ## File ownership và luật chạy
 
 - A sở hữu `models/visual*.py`, `models/deck.py`, `models/reports.py`, `models/__init__.py`, `visual/`, `cli.py`, `state.py`, `scripts/generate-schemas.py`, `schemas/`, `pyproject.toml` và shared test helper. Models assets/project 1.0 giữ nguyên, policy adapter chuyển Decimal riêng. D được giao các file mới `visual/html_*.py` nêu riêng trong D; A không sửa chúng khi D chạy.
-- B sở hữu duy nhất `skills/slide-infographic/`, `evals/slide-infographic/`, integration router text trong `skills/slide-craft/SKILL.md`; không chạm runtime/CLI.
+- B sở hữu duy nhất package tự chứa `skills/slide-infographic/` (gồm agent, workflow, references và evals) cùng integration router text trong `skills/slide-craft/SKILL.md`; không chạm runtime/CLI.
 - C sở hữu `assets/`, `backends/image_deck.py`, `renderers/image.py`, `renderers/overlay.py`, shared IMAGE `validate/` và IMAGE tests Phase1.
 - D sở hữu `backends/html_static.py`, `renderers/html.py`, `visual/html_*.py` và HTML tests Phase2; chỉ tiếp quản/mở rộng shared validate files sau C4 bàn giao, không đồng thời ghi hoặc tạo QA engine mới.
 - E sở hữu release test/script/docs chỉ định; thay dependency/package registration vẫn do contract owner áp dụng trong cùng task.

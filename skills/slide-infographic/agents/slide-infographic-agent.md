@@ -6,7 +6,7 @@ status: documentation_contract
 
 # Hợp đồng agent tạo ảnh infographic
 
-Đây là mô tả vai trò để coordinator giao việc, không đăng ký agent vào host, không tạo tiến trình hoặc runtime. Agent dùng [skill slide-infographic](../skills/slide-infographic/SKILL.md) và [quy trình](../processes/slide-infographic-image.md).
+Đây là mô tả vai trò để coordinator giao việc, không đăng ký agent vào host, không tạo tiến trình hoặc runtime. Agent dùng [skill slide-infographic](../SKILL.md) và [workflow](../workflows/create-slide-infographic.md).
 
 ## Đầu vào
 
@@ -26,7 +26,7 @@ Dùng imagegen do Codex host cung cấp theo schema hiện hành; dùng công c�
 
 ## Đầu ra và bằng chứng
 
-Giao canonical mapping, mode/canvas đã chọn, prompt thực gửi, ảnh đúng revision, bảng overlay nếu cần, alt text và [QA record](../skills/slide-infographic/references/qa.md). Nêu số lượt và metadata biết/unknown, dimensions yêu cầu/thực, lỗi còn lại và mức sửa được của từng artifact.
+Giao canonical mapping, mode/canvas đã chọn, prompt thực gửi, ảnh đúng revision, bảng overlay nếu cần, alt text và [QA record](../references/qa.md). Nêu số lượt và metadata biết/unknown, dimensions yêu cầu/thực, lỗi còn lại và mức sửa được của từng artifact.
 
 Tách ba claim: “prompt đã biên soạn”, “tool đã trả ảnh”, “ảnh đã đạt QA”. Mỗi claim cần bằng chứng riêng. Ảnh raster không sửa từng đối tượng; TEXT_SAFE chưa tạo lớp chữ. Chỉ bàn giao file tồn tại; không bịa hash, số đo, model, seed, chi phí, test run hoặc image path.
 

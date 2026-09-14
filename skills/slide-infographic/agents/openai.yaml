@@ -1,0 +1,4 @@
+interface:
+  display_name: "Slide Infographic"
+  short_description: "Create slide-ready infographic images with Codex"
+  default_prompt: "Use $slide-infographic to create a slide-ready infographic image from my approved content."

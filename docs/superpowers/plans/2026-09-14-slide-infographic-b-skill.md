@@ -28,12 +28,15 @@ Owner **Astra**, chỉ skill/eval. Phase1 B1 độc lập; B2 sau B1+A/C, B3 sau
 
 | Files | Responsibility |
 |---|---|
-| `evals/slide-infographic/cases.json` | Baseline/heldout prompts, requirement/AC tags |
-| `evals/slide-infographic/rubric.md` | Decision/claim, schema/artifact, QA, runtime độc lập |
-| `evals/slide-infographic/evaluate.py` | Validate explicit evidence, score không bịa run |
-| `evals/slide-infographic/test_evaluate.py` | Harness unit tests |
-| `evals/slide-infographic/README.md` | Capture/control/variant/privacy/handoff procedure |
+| `skills/slide-infographic/evals/cases.json` | Baseline/heldout prompts, requirement/AC tags |
+| `skills/slide-infographic/evals/rubric.md` | Decision/claim, schema/artifact, QA, runtime độc lập |
+| `skills/slide-infographic/evals/evaluate.py` | Validate explicit evidence, score không bịa run |
+| `skills/slide-infographic/evals/test_evaluate.py` | Harness unit tests |
+| `skills/slide-infographic/evals/README.md` | Capture/control/variant/privacy/handoff procedure |
 | `skills/slide-infographic/SKILL.md` | Trigger và mandatory workflow |
+| `skills/slide-infographic/agents/openai.yaml` | Codex UI metadata và default invocation |
+| `skills/slide-infographic/agents/slide-infographic-agent.md` | Specialist role contract và stop conditions |
+| `skills/slide-infographic/workflows/create-slide-infographic.md` | End-to-end image workflow |
 | `skills/slide-infographic/references/image.md` | Image mode/protocol |
 | `skills/slide-infographic/references/html-reconstruction.md` | Static editable source/faithful/inspired |
 | `skills/slide-infographic/references/qa.md` | Independent QA/claim gates |
@@ -44,7 +47,7 @@ Owner **Astra**, chỉ skill/eval. Phase1 B1 độc lập; B2 sau B1+A/C, B3 sau
 
 **Files:** Create năm eval files ở map; chưa tạo specialist directory.
 
-**Interfaces:** Consumes spec §13. Produces `validate_evidence(record: dict) -> list[str]`, `score_record(record: dict) -> dict`; CLI `python evals/slide-infographic/evaluate.py --cases evals/slide-infographic/cases.json --evidence <station-json> --phase baseline --json`. Evidence là explicit local file được chọn, không scan chatstore.
+**Interfaces:** Consumes spec §13. Produces `validate_evidence(record: dict) -> list[str]`, `score_record(record: dict) -> dict`; CLI `python skills/slide-infographic/evals/evaluate.py --cases skills/slide-infographic/evals/cases.json --evidence <station-json> --phase baseline --json`. Evidence là explicit local file được chọn, không scan chatstore.
 
 - [ ] Viết harness test missingresponse trước implementation:
 
@@ -57,7 +60,7 @@ def test_no_response_is_unverified():
     assert result["runtime_status"] == "unverified"
 ```
 
-- [ ] RED: `python -m pytest evals/slide-infographic/test_evaluate.py -q`; expected missing scorer. Đây là harness RED, không baseline behavior RED.
+- [ ] RED: `python -m pytest skills/slide-infographic/evals/test_evaluate.py -q`; expected missing scorer. Đây là harness RED, không baseline behavior RED.
 - [ ] Tạo cases với fields `id,phase,prompt,required_behaviors,prohibited_behaviors,ac_ids`. Dùng nguyên prompts sau; rubric nêu evidence cần nhìn:
 
 | ID | Prompt | Correct behavior |
@@ -82,8 +85,8 @@ score_record(record: dict) -> dict
 ```
 
 - [ ] Chạy mỗi baseline case5freshcontexts không nạp specialist, ghi responses thật tại station. Chỉ dùng host/subagent được task cấp quyền; không dựng cross-tool call ngầm. Thiếu harness → behaviorgate unverified, không tạo giảRED. Ghi rationalization thực; control đã đúng giữ regression, không viết luật chữa lỗi chưa thấy.
-- [ ] GREEN harness `python -m pytest evals/slide-infographic/test_evaluate.py -q`; scorer command trên với path thật. Reportcomplete không đồng nghĩa agentcompliant; behavior RED phải có actual failure relevant guidance.
-- [ ] Commit `git add evals/slide-infographic/cases.json evals/slide-infographic/rubric.md evals/slide-infographic/evaluate.py evals/slide-infographic/test_evaluate.py evals/slide-infographic/README.md`; `git commit -m "test: capture infographic skill baseline scenarios"`. Không stage responses riêng.
+- [ ] GREEN harness `python -m pytest skills/slide-infographic/evals/test_evaluate.py -q`; scorer command trên với path thật. Reportcomplete không đồng nghĩa agentcompliant; behavior RED phải có actual failure relevant guidance.
+- [ ] Commit `git add skills/slide-infographic/evals`; `git commit -m "test: capture infographic skill baseline scenarios"`. Không stage responses riêng.
 
 ### Task B2: Minimal specialist và routing
 
@@ -107,15 +110,15 @@ description: Use when creating slide-ready infographic images or reconstructing 
 - [ ] Thêm routing link đúng một chỗ trong slide-craft:
 
 ```markdown
-Khi tạo infographic cho slide hoặc tái dựng visual đã duyệt thành source web chỉnh sửa được, dùng [slide-infographic](../slide-infographic/SKILL.md). Giữ DeckSpec canonical và kiểm capability trước khi giao specialist.
+Khi tạo infographic cho slide hoặc tái dựng visual đã duyệt thành source web chỉnh sửa được, dùng [slide-infographic](../../../skills/slide-infographic/SKILL.md). Giữ DeckSpec canonical và kiểm capability trước khi giao specialist.
 ```
 
-- [ ] GREEN fresh-context cùng cases với loadedskill5samples/variant, giữ control5samples; đọc artifact từng flaggedcase. `python -m pytest evals/slide-infographic/test_evaluate.py -q`; scorer `--phase green`. Budget/privacy/falseeditability cònfail thì sửa guidance và rerun, không đổi expected.
-- [ ] Commit `git add skills/slide-infographic skills/slide-craft/SKILL.md evals/slide-infographic/rubric.md`; `git commit -m "feat: add product owned slide infographic specialist"`.
+- [ ] GREEN fresh-context cùng cases với loadedskill5samples/variant, giữ control5samples; đọc artifact từng flaggedcase. `python -m pytest skills/slide-infographic/evals/test_evaluate.py -q`; scorer `--phase green`. Budget/privacy/falseeditability cònfail thì sửa guidance và rerun, không đổi expected.
+- [ ] Commit `git add skills/slide-infographic skills/slide-craft/SKILL.md`; `git commit -m "feat: add product owned slide infographic specialist"`.
 
 ### Task B3: Heldout/negative routing và runtime-linked eval
 
-**Files:** Modify eval `cases.json`, `rubric.md`, `evaluate.py`, `test_evaluate.py`, `README.md`; skillreferences chỉ khi observedfailure cần sửa.
+**Files:** Modify eval files under `skills/slide-infographic/evals/`; skill references chỉ khi observed failure cần sửa.
 
 **Interfaces:** Consumes B2revision và A/C CLIResult/VisualResult/QAReport exacthash trong Phase1; D artifacts chỉ Phase2. Produces separate GREEN/forward scoreboard qua scorer `--phase forward`; missing HTML runtime ghi planned/unverified, không chặn IMAGE-only gate hoặc claim HTML passed.
 
@@ -130,7 +133,7 @@ def test_good_claim_does_not_certify_runtime():
     assert result["runtime_status"] == "unverified"
 ```
 
-- [ ] RED `python -m pytest evals/slide-infographic/test_evaluate.py -q -k runtime`; expected assertion nếu hiện scorer gộp gates; alreadygreen ghi regression, không bịa RED.
+- [ ] RED `python -m pytest skills/slide-infographic/evals/test_evaluate.py -q -k runtime`; expected assertion nếu hiện scorer gộp gates; alreadygreen ghi regression, không bịa RED.
 - [ ] Thêm8heldout prompts chưa dùng authoring: canvas4:3; fivecards70Vietnamese words/card; cycle3nodes; no-textlight; importunknownmodel; sourceeditbranch; provider timeout; chart18.5“điểm”, localeen-US/precision2. Negative “giải thích infographic”, “viết email”, “video độc lập” expected không specialist/runtime route.
 - [ ] Chạy heldout mỗi pressurecase5control+5loadedfreshcontexts; không đưa expectedanswers vào prompt. Numericcase đi qua canonical/Fact/formatter/parityAC45–48; Phase1 artifactrefs dùng C, HTML cases chỉ kiểm unavailable routing. D runtime evidence thêm Phase2; missing vision giữunverified.
 - [ ] Thêm prompt optimization eval: skill dùng A3 PromptPack/style block, không lặp canonical body text khi overlay; báo estimator/model/version và unknown nếu thiếu tokenizer. One primary generation chỉ là mục tiêu, repair chỉ có QA issue và còn bounds; không ép one-call success bằng bỏ QA.
@@ -140,12 +143,12 @@ def test_good_claim_does_not_certify_runtime():
 score_record(record: dict) -> dict
 ```
 
-- [ ] GREEN `python -m pytest evals/slide-infographic/test_evaluate.py -q`; score bothgreen/forward thật; rerunbaselinecritical sau mọi guidancechange.
-- [ ] Commit `git add evals/slide-infographic/cases.json evals/slide-infographic/rubric.md evals/slide-infographic/evaluate.py evals/slide-infographic/test_evaluate.py evals/slide-infographic/README.md skills/slide-infographic`; `git commit -m "test: add held out infographic routing and fidelity evals"`.
+- [ ] GREEN `python -m pytest skills/slide-infographic/evals/test_evaluate.py -q`; score bothgreen/forward thật; rerunbaselinecritical sau mọi guidancechange.
+- [ ] Commit `git add skills/slide-infographic`; `git commit -m "test: add held out infographic routing and fidelity evals"`.
 
 ### Task B4: quick_validate và handoff
 
-**Files:** Modify `evals/slide-infographic/README.md`, `test_evaluate.py`, specialistreferences để sửa link; không generatedprivateartifact trong repo.
+**Files:** Modify `skills/slide-infographic/evals/README.md`, `test_evaluate.py`, specialist references để sửa link; không generated private artifact trong repo.
 
 **Interfaces:** Depends E2 sau B3; consumes B1–B3recordsets, installedvalidator, completed E2 IMAGE pilot evidence. B4 không là dependency của E2. Produces final IMAGE skillhash/evalcount/missinggate cho E3; HTML runtime tests giữ planned/unverified Phase1, không hạ rubric hoặc claim đã chạy. Không autoenableplugin.
 
@@ -159,7 +162,7 @@ def test_reference_files_exist():
         assert (root / "references" / f"{name}.md").is_file()
 ```
 
-- [ ] RED `python -m pytest evals/slide-infographic/test_evaluate.py -q -k reference`; missingfile→failure, alreadygreen ghi rõ.
+- [ ] RED `python -m pytest skills/slide-infographic/evals/test_evaluate.py -q -k reference`; missingfile→failure, alreadygreen ghi rõ.
 - [ ] Resolve validatorpath từ catalog đã đọc, không guess/download; PowerShell execution:
 
 ```powershell
@@ -170,8 +173,8 @@ python $validatorPath skills/slide-infographic
 ```
 
 - [ ] Đọc toàn bộ skill/references; kiểm link/schemaactualfilename, injection/privacy, không hứa command chưa có. Ghi validatorversion/hash ở station; missingvalidator vẫn unverified.
-- [ ] GREEN `python -m pytest evals/slide-infographic/test_evaluate.py -q`; `python -m pytest -q`; quick_validate expected0. Handoff observedRED IDs, GREEN/forwardcounts, remainingcriticalfailures, runtime/pilotgates riêng.
-- [ ] Commit `git add evals/slide-infographic/README.md evals/slide-infographic/test_evaluate.py skills/slide-infographic`; `git commit -m "docs: record infographic specialist validation gates"`.
+- [ ] GREEN `python -m pytest skills/slide-infographic/evals/test_evaluate.py -q`; `python -m pytest -q`; quick_validate expected0. Handoff observedRED IDs, GREEN/forwardcounts, remainingcriticalfailures, runtime/pilotgates riêng.
+- [ ] Commit `git add skills/slide-infographic`; `git commit -m "docs: record infographic specialist validation gates"`.
 
 ## Acceptance, risks và rollback
 

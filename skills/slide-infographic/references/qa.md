@@ -61,4 +61,4 @@ Khối này là mẫu Markdown, điền bằng bằng chứng thật; dùng `unk
 - Chữ chính xác để đặt sau: {bảng overlay nếu TEXT_SAFE; NO_TEXT không có chữ hiển thị}
 ```
 
-Nếu người dùng chỉ cần ảnh, handoff kết thúc ở đây. Khi được yêu cầu PowerPoint, chèn ảnh thủ công theo [quy trình](../../../processes/slide-infographic-image.md) rồi mở/xem lại slide thực. Không gọi ảnh nền là nguồn native; chỉ text box đã tạo và kiểm mới có thể được ghi editable.
+Nếu người dùng chỉ cần ảnh, handoff kết thúc ở đây. Khi được yêu cầu PowerPoint, chèn ảnh thủ công theo [workflow](../workflows/create-slide-infographic.md) rồi mở/xem lại slide thực. Không gọi ảnh nền là nguồn native; chỉ text box đã tạo và kiểm mới có thể được ghi editable.
