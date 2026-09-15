@@ -92,6 +92,6 @@ Các thư mục profile, output, state và dữ liệu người dùng thuộc st
 
 ## Trạng thái phát hành
 
-Luồng [infographic bằng Codex Image](skills/slide-infographic/SKILL.md) được đóng gói tự chứa với [workflow](skills/slide-infographic/workflows/create-slide-infographic.md), [agent contract](skills/slide-infographic/agents/slide-infographic-agent.md), references và [eval](skills/slide-infographic/evals/cases.md). Đây chưa phải backend CLI; ảnh raster và bảng chữ overlay-ready không đồng nghĩa PowerPoint native. HTML reconstruction là Phase 2 planned.
+Luồng [infographic bằng Codex Image](skills/slide-infographic/SKILL.md) được đóng gói tự chứa với [workflow](skills/slide-infographic/workflows/create-slide-infographic.md), [agent contract](skills/slide-infographic/agents/slide-infographic-agent.md), references và [eval](skills/slide-infographic/evals/cases.md). [Style library](skills/slide-infographic/references/style-library/index.md) giữ profile thiết kế đã chắt lọc; ảnh mẫu riêng nằm ngoài Git tại `~/.presentation/style-references/`, còn binary public phải qua [asset policy](skills/slide-infographic/assets/style-examples/POLICY.md). Đây chưa phải backend CLI; ảnh raster và bảng chữ overlay-ready không đồng nghĩa PowerPoint native. HTML reconstruction là Phase 2 planned.
 
 Đây là lõi pre-release. Backend/renderer, build/render end-to-end và visual UAT chưa được cung cấp trong bản hiện tại.

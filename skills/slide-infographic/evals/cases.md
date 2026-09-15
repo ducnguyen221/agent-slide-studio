@@ -10,7 +10,7 @@ updated: 2026-09-14
 
 ## Căn cứ trước authoring
 
-Hồ sơ dự án đã ghi nhận hai ảnh có kích thước **1664×824** và **1854×970**, dù yêu cầu muốn 16:9. Đây là số đo từ lần quan sát trước của dự án, **chưa đo lại trong checkout này**; không có ảnh riêng trong corpus public. [Đặc tả, mục cơ sở yêu cầu](../../../docs/superpowers/specs/2026-09-14-slide-infographic-design.md) ghi nhận sai tỷ lệ và trường hợp poster raster nhúng vào website. Hồ sơ trước đó cũng có vòng sửa chữ/chính tả; chưa có thống kê số vòng hay tỷ lệ thành công để công bố.
+Đợt nhập private reference đã đo lại hai ảnh có kích thước **1664×824** và **1854×970**, dù yêu cầu muốn 16:9; hash và file gốc chỉ nằm ở station riêng, không nằm trong corpus public. [Đặc tả, mục cơ sở yêu cầu](../../../docs/superpowers/specs/2026-09-14-slide-infographic-design.md) cũng ghi nhận sai tỷ lệ và trường hợp poster raster nhúng vào website. Hồ sơ trước đó có vòng sửa chữ/chính tả; chưa có thống kê số vòng hay tỷ lệ thành công để công bố.
 
 Các quan sát này là căn cứ chọn vấn đề cần kiểm: yêu cầu trong prompt không chứng minh kích thước thật, sửa chữ cần nhìn lại ảnh, và poster nằm trong một tài liệu không tự trở thành đối tượng chỉnh sửa được. Chúng **không phải** fresh-context RED, không chứng minh lỗi của mọi model, cũng không chứng minh skill mới khắc phục được lỗi. Không chép ảnh, transcript, ID hội thoại hoặc đường dẫn riêng vào repo.
 

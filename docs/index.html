@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Agent Presentation Studio chuẩn hóa nội dung, prompt và quy trình QA để tạo infographic 16:9 cho slide PowerPoint.">
+  <meta name="theme-color" content="#081c3a">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23081c3a'/%3E%3Cpath d='M15 17h34v30H15z' fill='none' stroke='%235fe2d1' stroke-width='4'/%3E%3Cpath d='M22 38l7-9 6 6 7-10' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <title>Agent Presentation Studio</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Agent Presentation Studio — về đầu trang">
+      <span class="brand-mark" aria-hidden="true">APS</span>
+      <span>Agent Presentation Studio</span>
+    </a>
+    <nav aria-label="Điều hướng chính">
+      <a href="#workflow">Quy trình</a>
+      <a href="#profiles">Phong cách</a>
+      <a href="#status">Trạng thái</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Phase 1 · Slide infographic bằng AI</p>
+        <h1>Từ nội dung chuẩn đến ảnh slide có thể kiểm chứng.</h1>
+        <p class="lead">Một skill dành cho Codex để khóa nội dung, biên soạn prompt gọn, tạo infographic đúng bố cục và kiểm ảnh thật trước khi đưa vào PowerPoint.</p>
+        <div class="actions">
+          <a class="button primary" href="https://github.com/ducnguyen221/agent-presentation-studio/blob/feat/presentation-studio/skills/slide-infographic/SKILL.md">Đọc skill</a>
+          <a class="button secondary" href="https://github.com/ducnguyen221/agent-presentation-studio/blob/feat/presentation-studio/docs/huong-dan-su-dung.md">Hướng dẫn sử dụng</a>
+        </div>
+        <ul class="proof-list" aria-label="Các nguyên tắc chính">
+          <li>Canvas mặc định 1920×1080, tỷ lệ 16:9</li>
+          <li>Lề an toàn 5% mỗi cạnh</li>
+          <li>Giữ nguyên chữ Việt, số, đơn vị và quan hệ</li>
+        </ul>
+      </div>
+
+      <div class="slide-preview" aria-label="Minh họa bố cục infographic bốn card">
+        <div class="preview-head">
+          <span>CANONICAL CONTENT</span>
+          <strong>→</strong>
+          <span>SLIDE IMAGE</span>
+        </div>
+        <div class="preview-grid">
+          <article><span>01</span><div class="glyph">◎</div><strong>Mục tiêu</strong><small>Một ý rõ ràng</small></article>
+          <article><span>02</span><div class="glyph">⌁</div><strong>Cấu trúc</strong><small>Đúng quan hệ</small></article>
+          <article><span>03</span><div class="glyph">◇</div><strong>Phong cách</strong><small>Một profile chính</small></article>
+          <article><span>04</span><div class="glyph">✓</div><strong>Kiểm chứng</strong><small>Xem ảnh thực</small></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="mode-strip" aria-labelledby="mode-title">
+      <div>
+        <p class="section-kicker">Ba chế độ chữ</p>
+        <h2 id="mode-title">Chọn mức kiểm soát phù hợp với slide.</h2>
+      </div>
+      <div class="mode-cards">
+        <article class="mode recommended">
+          <span>Khuyến nghị</span>
+          <h3>TEXT_SAFE</h3>
+          <p>Ảnh chừa vùng chữ; nội dung tiếng Việt được giữ riêng để overlay chính xác.</p>
+        </article>
+        <article class="mode">
+          <span>Ít nhãn</span>
+          <h3>DIRECT_TEXT</h3>
+          <p>Nhúng trực tiếp vài nhãn ngắn và kiểm lại từng dấu, số, tên riêng.</p>
+        </article>
+        <article class="mode">
+          <span>Minh họa</span>
+          <h3>NO_TEXT</h3>
+          <p>Tạo hình nền hoặc concept art, không chữ, số hay ký hiệu giả chữ.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="workflow" id="workflow" aria-labelledby="workflow-title">
+      <div class="section-intro">
+        <p class="section-kicker">Quy trình chuẩn</p>
+        <h2 id="workflow-title">Một lượt tạo chính, bốn cổng kiểm soát.</h2>
+        <p>Prompt chỉ mang phần model cần. Quyền, call budget và QA nằm trong quy trình, không lặp vào prompt ảnh.</p>
+      </div>
+      <ol class="steps">
+        <li><span>01</span><div><h3>Khóa nội dung</h3><p>Gán ID cho title, node, số liệu và quan hệ. Không tự tóm tắt hoặc sửa dữ kiện.</p></div></li>
+        <li><span>02</span><div><h3>Chọn hình học</h3><p>Card cho nhóm ngang hàng, lane cho quy trình, cycle cho vòng lặp, cột cho so sánh.</p></div></li>
+        <li><span>03</span><div><h3>Biên soạn prompt</h3><p>Bảy section cố định: canvas, mục tiêu, bố cục, style, nội dung, ràng buộc, negative.</p></div></li>
+        <li><span>04</span><div><h3>Đo và xem ảnh</h3><p>Đối chiếu kích thước, crop, chữ, node, connector và khả năng đọc trước khi kết luận.</p></div></li>
+      </ol>
+    </section>
+
+    <section class="profiles" id="profiles" aria-labelledby="profiles-title">
+      <div class="section-intro">
+        <p class="section-kicker">Style library</p>
+        <h2 id="profiles-title">Kế thừa ngôn ngữ thiết kế, không sao chép dữ liệu riêng.</h2>
+      </div>
+      <div class="profile-grid">
+        <article class="profile-card light-profile">
+          <div class="profile-visual" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <p class="tag">GOLD PROFILE</p>
+          <h3>Light Corporate Cards</h3>
+          <p>Dành cho 3–5 nhóm ngang hàng, so sánh cột, năng lực và kiến trúc khái niệm.</p>
+          <a href="https://github.com/ducnguyen221/agent-presentation-studio/blob/feat/presentation-studio/skills/slide-infographic/references/style-library/light-corporate-cards.md">Mở profile <span aria-hidden="true">↗</span></a>
+        </article>
+        <article class="profile-card process-profile">
+          <div class="process-visual" aria-hidden="true"><i></i><b>→</b><i></i><b>→</b><i></i><b>↩</b></div>
+          <p class="tag">SUPPORTING PROFILE</p>
+          <h3>Complex Process Flow</h3>
+          <p>Dành cho chuỗi 4–7 giai đoạn có handoff, checkpoint và một feedback loop rõ.</p>
+          <a href="https://github.com/ducnguyen221/agent-presentation-studio/blob/feat/presentation-studio/skills/slide-infographic/references/style-library/complex-process-flow.md">Mở profile <span aria-hidden="true">↗</span></a>
+        </article>
+      </div>
+    </section>
+
+    <section class="boundary" aria-labelledby="boundary-title">
+      <div>
+        <p class="section-kicker">Public source · Private station</p>
+        <h2 id="boundary-title">Repo sạch. Tài sản riêng ở đúng chỗ.</h2>
+      </div>
+      <div class="boundary-grid">
+        <article><strong>Public repo</strong><p>Skill, agent contract, workflow, profile trừu tượng, QA và eval.</p></article>
+        <span aria-hidden="true">≠</span>
+        <article><strong>Private station</strong><p>Ảnh ChatGPT, profile cá nhân, output, state và manifest nguồn.</p></article>
+      </div>
+    </section>
+
+    <section class="status" id="status" aria-labelledby="status-title">
+      <div>
+        <p class="section-kicker">Trạng thái</p>
+        <h2 id="status-title">Phase 1 sẵn sàng cho pilot.</h2>
+      </div>
+      <div class="status-copy">
+        <p>Skill Markdown đã được đóng gói với workflow tạo ảnh, workflow chắt mẫu, hai style profile và bộ eval. HTML reconstruction và renderer web nằm ở Phase 2.</p>
+        <a class="text-link" href="https://github.com/ducnguyen221/agent-presentation-studio">Xem source trên GitHub <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>Agent Presentation Studio</span>
+    <span>Public source · Vietnamese-first documentation</span>
+  </footer>
+</body>
+</html>

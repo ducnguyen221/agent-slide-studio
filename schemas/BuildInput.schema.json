@@ -262,6 +262,70 @@
       "title": "Canvas",
       "type": "object"
     },
+    "ChartBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "element_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Element Id",
+          "type": "string"
+        },
+        "field": {
+          "enum": [
+            "chart-label",
+            "chart-value",
+            "chart-unit",
+            "display-unit"
+          ],
+          "title": "Field",
+          "type": "string"
+        },
+        "item_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Item Id"
+        },
+        "item_index": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Item Index"
+        },
+        "slide_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Slide Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slide_id",
+        "element_id",
+        "field"
+      ],
+      "title": "ChartBinding",
+      "type": "object"
+    },
     "ChartContent": {
       "additionalProperties": false,
       "properties": {
@@ -471,6 +535,89 @@
       "title": "CodeElement",
       "type": "object"
     },
+    "ContentBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "element_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Element Id"
+        },
+        "field": {
+          "enum": [
+            "slide-title",
+            "slide-message",
+            "deck-audience",
+            "deck-purpose",
+            "text-content",
+            "text-label",
+            "text-item",
+            "process-title",
+            "process-description",
+            "quote-text",
+            "code-text",
+            "table-cell",
+            "image-content",
+            "image-alt",
+            "semantic-node",
+            "slide-notes"
+          ],
+          "title": "Field",
+          "type": "string"
+        },
+        "item_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Item Id"
+        },
+        "item_index": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Item Index"
+        },
+        "slide_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Slide Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slide_id",
+        "field"
+      ],
+      "title": "ContentBinding",
+      "type": "object"
+    },
     "DeckSpec": {
       "additionalProperties": false,
       "properties": {
@@ -488,8 +635,11 @@
           "type": "string"
         },
         "schema_version": {
-          "const": "1.0",
           "default": "1.0",
+          "enum": [
+            "1.0",
+            "1.1"
+          ],
           "title": "Schema Version",
           "type": "string"
         },
@@ -560,6 +710,84 @@
         "ref"
       ],
       "title": "EvidenceRef",
+      "type": "object"
+    },
+    "Fact": {
+      "additionalProperties": false,
+      "properties": {
+        "binding": {
+          "discriminator": {
+            "mapping": {
+              "chart-label": "#/$defs/ChartBinding",
+              "chart-unit": "#/$defs/ChartBinding",
+              "chart-value": "#/$defs/ChartBinding",
+              "code-text": "#/$defs/ContentBinding",
+              "deck-audience": "#/$defs/ContentBinding",
+              "deck-purpose": "#/$defs/ContentBinding",
+              "display-unit": "#/$defs/ChartBinding",
+              "image-alt": "#/$defs/ContentBinding",
+              "image-content": "#/$defs/ContentBinding",
+              "process-description": "#/$defs/ContentBinding",
+              "process-title": "#/$defs/ContentBinding",
+              "quote-text": "#/$defs/ContentBinding",
+              "semantic-node": "#/$defs/ContentBinding",
+              "slide-message": "#/$defs/ContentBinding",
+              "slide-notes": "#/$defs/ContentBinding",
+              "slide-title": "#/$defs/ContentBinding",
+              "table-cell": "#/$defs/ContentBinding",
+              "text-content": "#/$defs/ContentBinding",
+              "text-item": "#/$defs/ContentBinding",
+              "text-label": "#/$defs/ContentBinding"
+            },
+            "propertyName": "field"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ContentBinding"
+            },
+            {
+              "$ref": "#/$defs/ChartBinding"
+            }
+          ],
+          "title": "Binding"
+        },
+        "id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "source_ref": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Source Ref",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        },
+        "value_type": {
+          "enum": [
+            "string",
+            "decimal"
+          ],
+          "title": "Value Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "binding",
+        "value_type",
+        "value",
+        "source_ref"
+      ],
+      "title": "Fact",
       "type": "object"
     },
     "Generation": {
@@ -1255,6 +1483,128 @@
       "title": "RightsMetadata",
       "type": "object"
     },
+    "SemanticNode": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_ref": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asset Ref"
+        },
+        "content_binding": {
+          "discriminator": {
+            "mapping": {
+              "chart-label": "#/$defs/ChartBinding",
+              "chart-unit": "#/$defs/ChartBinding",
+              "chart-value": "#/$defs/ChartBinding",
+              "code-text": "#/$defs/ContentBinding",
+              "deck-audience": "#/$defs/ContentBinding",
+              "deck-purpose": "#/$defs/ContentBinding",
+              "display-unit": "#/$defs/ChartBinding",
+              "image-alt": "#/$defs/ContentBinding",
+              "image-content": "#/$defs/ContentBinding",
+              "process-description": "#/$defs/ContentBinding",
+              "process-title": "#/$defs/ContentBinding",
+              "quote-text": "#/$defs/ContentBinding",
+              "semantic-node": "#/$defs/ContentBinding",
+              "slide-message": "#/$defs/ContentBinding",
+              "slide-notes": "#/$defs/ContentBinding",
+              "slide-title": "#/$defs/ContentBinding",
+              "table-cell": "#/$defs/ContentBinding",
+              "text-content": "#/$defs/ContentBinding",
+              "text-item": "#/$defs/ContentBinding",
+              "text-label": "#/$defs/ContentBinding"
+            },
+            "propertyName": "field"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ContentBinding"
+            },
+            {
+              "$ref": "#/$defs/ChartBinding"
+            }
+          ],
+          "title": "Content Binding"
+        },
+        "facts": {
+          "items": {
+            "$ref": "#/$defs/Fact"
+          },
+          "title": "Facts",
+          "type": "array"
+        },
+        "id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "title",
+            "text",
+            "group",
+            "icon",
+            "shape",
+            "image",
+            "data-label"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Id"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "semantic_role": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Semantic Role",
+          "type": "string"
+        },
+        "visible": {
+          "title": "Visible",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "content_binding",
+        "visible",
+        "required",
+        "semantic_role"
+      ],
+      "title": "SemanticNode",
+      "type": "object"
+    },
     "SlideSpec": {
       "additionalProperties": false,
       "properties": {
@@ -1376,6 +1726,17 @@
           "minLength": 1,
           "title": "Title",
           "type": "string"
+        },
+        "visual_semantics": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VisualSemantics"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -1763,6 +2124,108 @@
         "title"
       ],
       "title": "TimelineItem",
+      "type": "object"
+    },
+    "VisualRelation": {
+      "additionalProperties": false,
+      "properties": {
+        "from_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "From Id",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "sequence",
+            "branch",
+            "cycle",
+            "contains",
+            "compares",
+            "associates"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "to_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "To Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "from_id",
+        "to_id",
+        "kind",
+        "required"
+      ],
+      "title": "VisualRelation",
+      "type": "object"
+    },
+    "VisualSemantics": {
+      "additionalProperties": false,
+      "properties": {
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/SemanticNode"
+          },
+          "maxItems": 200,
+          "minItems": 1,
+          "title": "Nodes",
+          "type": "array"
+        },
+        "reading_order": {
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+            "type": "string"
+          },
+          "title": "Reading Order",
+          "type": "array"
+        },
+        "relations": {
+          "items": {
+            "$ref": "#/$defs/VisualRelation"
+          },
+          "maxItems": 400,
+          "title": "Relations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "nodes",
+        "reading_order"
+      ],
+      "title": "VisualSemantics",
       "type": "object"
     }
   },
