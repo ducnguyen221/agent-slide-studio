@@ -44,6 +44,7 @@ status: active
 - [ ] **T4-H3:** placeholder gate phải đọc cả continuation lines đến section kế tiếp và bắt placeholder nằm ngoài dòng header.
 - [ ] **T4-M1:** cập nhật hoặc archive `render_previews.py` và `render_classified.py`; hai script maintenance này còn đọc đường dẫn layout/taxonomy cũ và không thuộc installed payload.
 - [ ] **T5-PILOT:** tạo pilot deck và gọi ImageGen thật cho một anchor cùng một slide phụ thuộc; đã hoãn theo yêu cầu người dùng, chưa được đánh dấu PASS.
+- [ ] **LOCAL-RENAME:** GitHub repo và remote đã đổi thành `agent-slide-studio`; folder local vẫn mang tên `agent-presentation-studio` vì Windows khóa workspace đang mở. Đóng task/Codex đang giữ folder rồi đổi tên tại `C:\Users\DucNguyen\Code\`.
 - [x] **T6-GOV:** đã được người dùng duyệt; đã sửa tên/path/count cũ và thêm frontmatter chuẩn trong `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`.
 - [x] **T6-CLEAN:** đã bỏ compatibility redirect và xóa hai root `references/`, `adapters/`; payload chỉ còn integration active trong `plugin/`.
 - [x] **FINAL:** đã chạy lại package/manifest fault injection, gallery test, active-link/frontmatter scan và byte hash `v1/`; runtime ImageGen pilot vẫn là mục T5-PILOT riêng.

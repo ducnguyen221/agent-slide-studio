@@ -29,6 +29,7 @@ status: active
 - Package installer regression suite: 27/27 PASS across dry-run, project/user install, rollback, symlink/junction, manifest and validator fault injection.
 - Gallery DOM/filter suite: 8/8 PASS. Root website: 323 local links, 0 missing.
 - `v1/`: 281 files, 0 mismatches; tree SHA-256 `9e537498a83b9167a68a98af156a8aecc44bdcc58337ecb472eef1d3dc12c8d4`.
+- GitHub repository is `ducnguyen221/agent-slide-studio`; Pages serves the root site at `https://ducnguyen.vn/agent-slide-studio/` with HTTP 200. The local folder rename remains blocked only by the active Windows workspace handle and is recorded in `plan.md`.
 
 ## Deferred by user request
 
