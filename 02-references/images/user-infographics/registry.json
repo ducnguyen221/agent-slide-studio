@@ -1,0 +1,65 @@
+[
+  {
+    "id": "R01",
+    "path": "02-references/images/user-infographics/R01_1.4.png",
+    "title": "Vòng lặp tác nhân với tâm kiểm duyệt",
+    "target": "I01",
+    "learn": "Vòng khép kín, bốn màu theo bước, biểu tượng lớn.",
+    "reduce": "Lược các đoạn giải thích ở rìa; Việt hóa các nhãn; không nhân đôi nội dung.",
+    "sha256": "08c56317f6dd1d04e69d397aa280323980800fbb9d82da59f2b94dc72e8fda77"
+  },
+  {
+    "id": "R02",
+    "path": "02-references/images/user-infographics/R02_1.5.png",
+    "title": "Các mức tự chủ và quản trị",
+    "target": "I09",
+    "learn": "Thẻ bậc thang, huy hiệu số, dải quản trị.",
+    "reduce": "Không dùng 10/40/75/95% như số liệu thực hoặc chuẩn tự chủ; ưu tiên nhãn định tính.",
+    "sha256": "97a619b8efd19750943b1df88f72c25f72fd64b8e838648cb4b64ecdaedfa65c"
+  },
+  {
+    "id": "R03",
+    "path": "02-references/images/user-infographics/R03_2.1.png",
+    "title": "Kiến trúc Antigravity ba tầng",
+    "target": "I08, I10, I06",
+    "learn": "Ba tầng phân biệt, hình người/AI, cụm công cụ ở đáy.",
+    "reduce": "Giảm xuống một ý mỗi tầng; không coi mô hình trong ảnh là tài liệu chức năng chính thức.",
+    "sha256": "638d455d03dac53042c5da9820b67ff5aa462cf27c3ffe45f412e630e9743de9"
+  },
+  {
+    "id": "R04",
+    "path": "02-references/images/user-infographics/R04_4.2.png",
+    "title": "Năm trụ cột vận hành",
+    "target": "I07, I12",
+    "learn": "Mái–trụ–nền, mỗi trụ một hình neo.",
+    "reduce": "Bỏ hàng quy trình dưới trụ khi các trụ không có quan hệ tuần tự; giảm ba ý còn một.",
+    "sha256": "c3ecd954f0387972abef2fb59e199a4b40d07f8ed8f489912bc21b9856804ba8"
+  },
+  {
+    "id": "R05",
+    "path": "02-references/images/user-infographics/R05_4.3.png",
+    "title": "Bốn bước xây dựng hệ vận hành",
+    "target": "I02, I04",
+    "learn": "Thẻ số tròn, icon, màu chuyển theo bước.",
+    "reduce": "Chỉ giữ một dòng hành động và một đầu ra mỗi thẻ; bỏ chân trang lặp.",
+    "sha256": "a2d9ce72dff6beb690f2c594996f1e877c4de0a8aa951c51e74f2c703a462dab"
+  },
+  {
+    "id": "R06",
+    "path": "02-references/images/user-infographics/R06_5.2.png",
+    "title": "Đúc kết kinh nghiệm theo vòng lặp",
+    "target": "I01",
+    "learn": "Nhấn cam bước cập nhật, nhánh tài liệu bên trong.",
+    "reduce": "Không kế thừa lời hứa miễn nhiễm lỗi hoặc tự sửa quy tắc không cần kiểm duyệt.",
+    "sha256": "d0601e513f7a04aa790fcc64ada572ff81f8d106514f5537b59e91bc3e04b34c"
+  },
+  {
+    "id": "R07",
+    "path": "02-references/images/user-infographics/R07_5.3.png",
+    "title": "Ba chặng xây dựng bộ não số",
+    "target": "I03, I11",
+    "learn": "Ba chặng minh họa, bệ tăng nhẹ, mũi tên mềm.",
+    "reduce": "Rút tiêu đề, lược bản dịch tiếng Anh, không tự gắn hiệu quả vượt trội khi chưa đo.",
+    "sha256": "867685bd0e094b793137c125be28d863a0fb59a664dccaa1cfa5952cd621313e"
+  }
+]

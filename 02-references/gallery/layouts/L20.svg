@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/></marker></defs>
+<rect x="0" y="0" width="1600" height="900" rx="0" fill="#F8FAFC" stroke="none" stroke-width="2"/>
+<rect x="0" y="0" width="1600" height="900" rx="0" fill="#0A192F" stroke="none" stroke-width="2"/>
+<path d="M 0 370 C 190 120, 350 700, 570 760" fill="none" stroke="#0F766E" stroke-width="1.5"/>
+<path d="M 0 405 C 190 175, 350 680, 570 768" fill="none" stroke="#0F766E" stroke-width="1.5"/>
+<path d="M 0 440 C 190 230, 350 660, 570 776" fill="none" stroke="#0F766E" stroke-width="1.5"/>
+<path d="M 0 475 C 190 285, 350 640, 570 784" fill="none" stroke="#0F766E" stroke-width="1.5"/>
+<path d="M 0 510 C 190 340, 350 620, 570 792" fill="none" stroke="#0F766E" stroke-width="1.5"/>
+<path d="M 0 545 C 190 395, 350 600, 570 800" fill="none" stroke="#0F766E" stroke-width="1.5"/>
+<path d="M 0 580 C 190 450, 350 580, 570 808" fill="none" stroke="#0F766E" stroke-width="1.5"/>
+<path d="M 0 615 C 190 505, 350 560, 570 816" fill="none" stroke="#0F766E" stroke-width="1.5"/>
+<polygon points="1160,610 1232,572 1306,610 1232,652" fill="none" stroke="#0891B2" stroke-width="3"/>
+<path d="M1160,610 V704 L1232,748 L1306,704 V610 M1232,652 V748" fill="none" stroke="#0891B2" stroke-width="2"/>
+<polygon points="1205,560 1277,522 1351,560 1277,602" fill="none" stroke="#0891B2" stroke-width="3"/>
+<path d="M1205,560 V654 L1277,698 L1351,654 V560 M1277,602 V698" fill="none" stroke="#0891B2" stroke-width="2"/>
+<polygon points="1250,510 1322,472 1396,510 1322,552" fill="none" stroke="#0891B2" stroke-width="3"/>
+<path d="M1250,510 V604 L1322,648 L1396,604 V510 M1322,552 V648" fill="none" stroke="#0891B2" stroke-width="2"/>
+<polygon points="1295,460 1367,422 1441,460 1367,502" fill="none" stroke="#0891B2" stroke-width="3"/>
+<path d="M1295,460 V554 L1367,598 L1441,554 V460 M1367,502 V598" fill="none" stroke="#0891B2" stroke-width="2"/>
+<polygon points="1340,410 1412,372 1486,410 1412,452" fill="none" stroke="#0891B2" stroke-width="3"/>
+<path d="M1340,410 V504 L1412,548 L1486,504 V410 M1412,452 V548" fill="none" stroke="#0891B2" stroke-width="2"/>
+<polygon points="1385,360 1457,322 1531,360 1457,402" fill="none" stroke="#0891B2" stroke-width="3"/>
+<path d="M1385,360 V454 L1457,498 L1531,454 V360 M1457,402 V498" fill="none" stroke="#0891B2" stroke-width="2"/>
+<circle cx="40" cy="160" r="3" fill="#67E8F9" stroke="none" stroke-width="0"/>
+<circle cx="57" cy="221" r="3" fill="#67E8F9" stroke="none" stroke-width="0"/>
+<circle cx="74" cy="282" r="3" fill="#67E8F9" stroke="none" stroke-width="0"/>
+<circle cx="91" cy="343" r="3" fill="#67E8F9" stroke="none" stroke-width="0"/>
+<circle cx="108" cy="404" r="3" fill="#67E8F9" stroke="none" stroke-width="0"/>
+<circle cx="125" cy="465" r="3" fill="#67E8F9" stroke="none" stroke-width="0"/>
+<circle cx="142" cy="526" r="3" fill="#67E8F9" stroke="none" stroke-width="0"/>
+<circle cx="159" cy="587" r="3" fill="#67E8F9" stroke="none" stroke-width="0"/>
+<circle cx="176" cy="648" r="3" fill="#67E8F9" stroke="none" stroke-width="0"/>
+<circle cx="193" cy="709" r="3" fill="#67E8F9" stroke="none" stroke-width="0"/>
+<circle cx="210" cy="200" r="3" fill="#67E8F9" stroke="none" stroke-width="0"/>
+<circle cx="227" cy="261" r="3" fill="#67E8F9" stroke="none" stroke-width="0"/>
+<circle cx="244" cy="322" r="3" fill="#67E8F9" stroke="none" stroke-width="0"/>
+<circle cx="261" cy="383" r="3" fill="#67E8F9" stroke="none" stroke-width="0"/>
+<circle cx="278" cy="444" r="3" fill="#67E8F9" stroke="none" stroke-width="0"/>
+</svg>

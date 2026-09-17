@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/></marker></defs>
+<rect x="0" y="0" width="1600" height="900" rx="0" fill="#F8FAFC" stroke="none" stroke-width="2"/>
+<text x="90" y="86" font-family="Noto Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#0F766E" text-anchor="start">L35   /   THƯ VIỆN BỐ CỤC AIA</text>
+<text x="90" y="150" font-family="Noto Sans, Arial, sans-serif" font-size="43" font-weight="800" fill="#0A192F" text-anchor="start">Luồng phân bổ nguồn lực</text>
+<line x1="90" y1="184" x2="1510" y2="184" stroke="#CBD5E1" stroke-width="2"/>
+<path d="M270,330 C570,330 585,455 795,455 S1130,360 1340,360" fill="none" stroke="#2563EB" stroke-width="45"/>
+<path d="M270,640 C575,640 565,500 795,500 S1110,650 1340,650" fill="none" stroke="#0F766E" stroke-width="45"/>
+<rect x="115" y="250" width="240" height="125" rx="20" fill="white" stroke="#2563EB" stroke-width="2"/>
+<text x="235.0" y="308" font-family="Noto Sans, Arial, sans-serif" font-size="27" font-weight="700" fill="#2563EB" text-anchor="middle">Nguồn A</text>
+<rect x="141" y="344" width="178.6" height="9" rx="4" fill="#CBD5E1" stroke="none" stroke-width="2"/>
+<rect x="115" y="580" width="240" height="125" rx="20" fill="white" stroke="#0F766E" stroke-width="2"/>
+<text x="235.0" y="638" font-family="Noto Sans, Arial, sans-serif" font-size="27" font-weight="700" fill="#0F766E" text-anchor="middle">Nguồn B</text>
+<rect x="141" y="674" width="178.6" height="9" rx="4" fill="#CBD5E1" stroke="none" stroke-width="2"/>
+<rect x="1280" y="270" width="240" height="125" rx="20" fill="white" stroke="#2563EB" stroke-width="2"/>
+<text x="1400.0" y="328" font-family="Noto Sans, Arial, sans-serif" font-size="27" font-weight="700" fill="#2563EB" text-anchor="middle">Đích X</text>
+<rect x="1306" y="364" width="178.6" height="9" rx="4" fill="#CBD5E1" stroke="none" stroke-width="2"/>
+<rect x="1280" y="590" width="240" height="125" rx="20" fill="white" stroke="#0F766E" stroke-width="2"/>
+<text x="1400.0" y="648" font-family="Noto Sans, Arial, sans-serif" font-size="27" font-weight="700" fill="#0F766E" text-anchor="middle">Đích Y</text>
+<rect x="1306" y="684" width="178.6" height="9" rx="4" fill="#CBD5E1" stroke="none" stroke-width="2"/>
+<text x="800" y="754" font-family="Noto Sans, Arial, sans-serif" font-size="23" font-weight="500" fill="#475569" text-anchor="middle">Luồng khái niệm — bề rộng chưa theo dữ liệu</text>
+<line x1="90" y1="802" x2="1510" y2="802" stroke="#CBD5E1" stroke-width="2"/>
+<text x="90" y="847" font-family="Noto Sans, Arial, sans-serif" font-size="21" font-weight="500" fill="#475569" text-anchor="start">Sơ đồ khung gốc • Không phải đối tượng SmartArt hoặc mẫu PPTX dựng sẵn</text>
+<text x="1510" y="847" font-family="Noto Sans, Arial, sans-serif" font-size="22" font-weight="700" fill="#2563EB" text-anchor="end">L35</text>
+</svg>

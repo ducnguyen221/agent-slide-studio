@@ -1,0 +1,122 @@
+[
+  {
+    "source": "01_tu_duy_kien_truc_slide.md",
+    "path": "references/originals/01_tu_duy_kien_truc_slide.md",
+    "sha256": "98275dc3d9609080947e7e1f45c69c6971f94d41a5a1fa2b5e6f0eecbcddaed6"
+  },
+  {
+    "source": "02_thiet_ke_infographic_va_prompts.md",
+    "path": "references/originals/02_thiet_ke_infographic_va_prompts.md",
+    "sha256": "440a35ba812013753edac696e5955e032ef6ebe375faf7e5875bbc11f1039fb3"
+  },
+  {
+    "source": "AIA102_Infographic_Project_Kit.zip:AIA102_Infographic_Project_Kit/00_BAT_DAU.md",
+    "path": "references/legacy/v18/00_BAT_DAU.md",
+    "sha256": "766ef291604325c93dabb1801798f498929a7c4676179b06b913d0336ff7ecf8"
+  },
+  {
+    "source": "AIA102_Infographic_Project_Kit.zip:AIA102_Infographic_Project_Kit/01_PROJECT_INSTRUCTIONS.md",
+    "path": "references/legacy/v18/01_PROJECT_INSTRUCTIONS.md",
+    "sha256": "63a06e0a736356f55fc7400dd35e9ea4d7f2d49991593df0489cef2478d32f12"
+  },
+  {
+    "source": "AIA102_Infographic_Project_Kit.zip:AIA102_Infographic_Project_Kit/02_QUY_CHUAN_THIET_KE.md",
+    "path": "references/legacy/v18/02_QUY_CHUAN_THIET_KE.md",
+    "sha256": "bbbaf99c60f6029e1e913ee3ce8a6e86f7033b341f02d7ec9f7f35ed96f4ccaf"
+  },
+  {
+    "source": "AIA102_Infographic_Project_Kit.zip:AIA102_Infographic_Project_Kit/03_THU_VIEN_BO_CUC.md",
+    "path": "references/legacy/v18/03_THU_VIEN_BO_CUC.md",
+    "sha256": "2f814e8790aedf919a0fe6b9b1fdb1a61b863d9aeacc755ef5989fe632a07bbf"
+  },
+  {
+    "source": "AIA102_Infographic_Project_Kit.zip:AIA102_Infographic_Project_Kit/04_PHIEU_YEU_CAU_VA_PROMPT.md",
+    "path": "references/legacy/v18/04_PHIEU_YEU_CAU_VA_PROMPT.md",
+    "sha256": "06c61673a0d8789b5a289688207934446ab9e681a590906999efe5fafc3a19d9"
+  },
+  {
+    "source": "AIA102_Infographic_Project_Kit.zip:AIA102_Infographic_Project_Kit/05_KIEM_DINH_VA_CHINH_SUA.md",
+    "path": "references/legacy/v18/05_KIEM_DINH_VA_CHINH_SUA.md",
+    "sha256": "feebfa52a6a6706ca2acf3cec98431e4a8ad4814c2d92e977d1f5428619d8589"
+  },
+  {
+    "source": "AIA102_Infographic_Project_Kit.zip:AIA102_Infographic_Project_Kit/06_VI_DU_AIA102.md",
+    "path": "references/legacy/v18/06_VI_DU_AIA102.md",
+    "sha256": "0beb72bdf21a82fdbd20cb9738ded928e46292abb3773c7c4b9b7c9cdeb9e7a8"
+  },
+  {
+    "source": "AIA102_Infographic_Project_Kit.zip:AIA102_Infographic_Project_Kit/07_NGUON_VA_QUYET_DINH.md",
+    "path": "references/legacy/v18/07_NGUON_VA_QUYET_DINH.md",
+    "sha256": "4364866a6b696f4bd113c609b1b76770b0a704948448e627377e07b8b8132691"
+  },
+  {
+    "source": "AIA102_Infographic_Project_Kit.zip:AIA102_Infographic_Project_Kit/AIA102_Cam_nang_Infographic.md",
+    "path": "references/legacy/v18/AIA102_Cam_nang_Infographic.md",
+    "sha256": "e5ddb0f23f3f800c6cb0f83706716ad7c1ca464010445c65baa995fbf52bf138"
+  },
+  {
+    "source": "AIA102_Infographic_Project_Kit.zip:AIA102_Infographic_Project_Kit/REFERENCES/01_tu_duy_kien_truc_slide.md",
+    "path": "references/legacy/v18/REFERENCES/01_tu_duy_kien_truc_slide.md",
+    "sha256": "f01dbb2007d277244dd63c104253ad214beca745bf003d2852602afb581addfe"
+  },
+  {
+    "source": "AIA102_Infographic_Project_Kit.zip:AIA102_Infographic_Project_Kit/REFERENCES/02_thiet_ke_infographic_va_prompts.md",
+    "path": "references/legacy/v18/REFERENCES/02_thiet_ke_infographic_va_prompts.md",
+    "sha256": "c8f28bbf72539fa03658856633f0e76f639c7e5544264b739b9e39accd10dfc8"
+  },
+  {
+    "source": "AIA102_Infographic_Project_Kit.zip:AIA102_Infographic_Project_Kit/VISUAL_REFERENCES/README.md",
+    "path": "references/legacy/v18/VISUAL_REFERENCES/README.md",
+    "sha256": "5fe180ec3e3ebe34c05bce4f9a30908127ecb8dee64cb256b2afbe59eed15988"
+  },
+  {
+    "source": "Bo_Project_Infographic_PowerPoint_Tieng_Viet.zip:PowerPoint_Infographic_VI_Kit/00_BAT_DAU.md",
+    "path": "references/legacy/v20/00_BAT_DAU.md",
+    "sha256": "7403b613ae91186400d40085eb8a2882db236d2046e8216b2dd874b9e6e64169"
+  },
+  {
+    "source": "Bo_Project_Infographic_PowerPoint_Tieng_Viet.zip:PowerPoint_Infographic_VI_Kit/01_CHI_DAN_PROJECT.md",
+    "path": "references/legacy/v20/01_CHI_DAN_PROJECT.md",
+    "sha256": "2a06d281f8a9fc4e1f3dcc8baf89ce114eed6044ef61f193d83c5a54eaf2a53d"
+  },
+  {
+    "source": "Bo_Project_Infographic_PowerPoint_Tieng_Viet.zip:PowerPoint_Infographic_VI_Kit/02_QUY_CHUAN_THIET_KE.md",
+    "path": "references/legacy/v20/02_QUY_CHUAN_THIET_KE.md",
+    "sha256": "e9413d4df1181098a078e89ab3edc52758167aaaff1ff180e05c6b0404f510b4"
+  },
+  {
+    "source": "Bo_Project_Infographic_PowerPoint_Tieng_Viet.zip:PowerPoint_Infographic_VI_Kit/03_THU_VIEN_20_BO_CUC.md",
+    "path": "references/legacy/v20/03_THU_VIEN_20_BO_CUC.md",
+    "sha256": "34e9f93801bfd64dcc9bd5d740052524a378b5ca99790fd9c5362b17f9ff4ced"
+  },
+  {
+    "source": "Bo_Project_Infographic_PowerPoint_Tieng_Viet.zip:PowerPoint_Infographic_VI_Kit/04_MAU_YEU_CAU_VA_PROMPT.md",
+    "path": "references/legacy/v20/04_MAU_YEU_CAU_VA_PROMPT.md",
+    "sha256": "c8ab47460358a7efa3bd7474b8e9625ea48e9cda30f95a8578ff1d8d25399afd"
+  },
+  {
+    "source": "Bo_Project_Infographic_PowerPoint_Tieng_Viet.zip:PowerPoint_Infographic_VI_Kit/05_KIEM_DINH_VA_BAN_GIAO.md",
+    "path": "references/legacy/v20/05_KIEM_DINH_VA_BAN_GIAO.md",
+    "sha256": "77b9cef15fef6b67722dbe33e92079aae76b906028b57db3f8b509e429e8fcc1"
+  },
+  {
+    "source": "Bo_Project_Infographic_PowerPoint_Tieng_Viet.zip:PowerPoint_Infographic_VI_Kit/06_SO_THEO_DOI_PROJECT.md",
+    "path": "references/legacy/v20/06_SO_THEO_DOI_PROJECT.md",
+    "sha256": "59dfbd45aeebb5a7d804d5ccd3e743f9976a04493926e37cd0609a0e151d7dbe"
+  },
+  {
+    "source": "Bo_Project_Infographic_PowerPoint_Tieng_Viet.zip:PowerPoint_Infographic_VI_Kit/references/01_tu_duy_kien_truc_slide.md",
+    "path": "references/legacy/v20/references/01_tu_duy_kien_truc_slide.md",
+    "sha256": "98275dc3d9609080947e7e1f45c69c6971f94d41a5a1fa2b5e6f0eecbcddaed6"
+  },
+  {
+    "source": "Bo_Project_Infographic_PowerPoint_Tieng_Viet.zip:PowerPoint_Infographic_VI_Kit/references/02_thiet_ke_infographic_va_prompts.md",
+    "path": "references/legacy/v20/references/02_thiet_ke_infographic_va_prompts.md",
+    "sha256": "440a35ba812013753edac696e5955e032ef6ebe375faf7e5875bbc11f1039fb3"
+  },
+  {
+    "source": "Bo_Project_Infographic_PowerPoint_Tieng_Viet.zip:PowerPoint_Infographic_VI_Kit/references/NGUON_VA_DIEU_CHINH.md",
+    "path": "references/legacy/v20/references/NGUON_VA_DIEU_CHINH.md",
+    "sha256": "673aa2f48cf121609805bfaf0a72922fb71a82f1fec065729e8dd7b2b4c2425f"
+  }
+]

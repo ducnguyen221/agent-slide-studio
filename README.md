@@ -1,97 +1,47 @@
-# Agent Presentation Studio
+---
+title: "agent-slide-studio"
+description: "Tài liệu agent-slide-studio trong agent-slide-studio."
+document_type: repository-overview
+status: active
+---
 
-Agent Presentation Studio là lõi chuẩn hóa workspace, schema, state và migration cho quy trình tạo presentation bằng agent. Repo hiện cung cấp package `presentation_studio` và lệnh `presentation`; backend dựng slide và renderer chưa được đăng ký trong bản hiện tại.
+# agent-slide-studio
 
-## Cài đặt
+Knowledge package để lập cấu trúc deck, chọn bố cục và tạo ảnh slide 16:9 bằng ImageGen native của host. `SKILL.md` ở gốc là entrypoint hiện hành duy nhất.
 
-Yêu cầu Python 3.12 trở lên.
+## Dùng bộ hiện hành
 
-```bash
-python -m venv .venv
-# PowerShell: .venv\Scripts\Activate.ps1
-# macOS/Linux: source .venv/bin/activate
-cd agent-presentation-studio
-python -m pip install -e .
-```
+1. Bắt đầu tại [SKILL.md](SKILL.md) và đi đúng đường đọc bắt buộc.
+2. Map toàn bộ deck trước khi sinh ảnh; mỗi slide phải có ID, nguồn, exact visible text, topology và mã L/I.
+3. Chọn bố cục trong [reference index](02-references/INDEX.md), rồi mở đặc tả, preview và ảnh mẫu thật được dẫn tới.
+4. Khóa brand, font appearance, style và nội dung. Nếu còn thiếu, hỏi người dùng một lượt gọn trừ khi họ đã cho phép tự chọn.
+5. Dùng prompt bảy phần và integration trong [plugin](plugin/README.md): [Codex](plugin/codex.md), [Claude](plugin/claude.md) hoặc [Antigravity](plugin/antigravity.md).
+6. Mở ảnh thật ở kích thước đầy đủ, sửa lỗi bằng ImageGen edit/regenerate và QA lại toàn ảnh trước khi bàn giao.
 
-Để chạy bộ kiểm thử:
+Image generation chỉ dùng capability native mà host hiện tại thực sự cung cấp. Thiếu capability thì trả `CAPABILITY_UNAVAILABLE` và bàn giao prompt/content lock; không chuyển sang Python, HTML, SVG, browser screenshot hoặc renderer khác.
 
-```bash
-python -m pip install -e ".[test]"
-python -m pytest -q -p no:cacheprovider
-```
-
-Xem [hướng dẫn sử dụng chi tiết](docs/huong-dan-su-dung.md) để biết cấu trúc workspace, exit code và migration.
-
-## Station và project
-
-Convention của studio là station mặc định `~/.presentation/`. Một station chứa các project dưới `projects/<project-id>/`; dữ liệu cá nhân, profile, asset, output và state nên nằm ở station hoặc project, không đưa vào source public.
-
-CLI hiện chưa tự đọc biến môi trường `PRESENTATION_HOME` và chưa tự suy ra `~/.presentation`. Vì vậy phải truyền station bằng `--home` khi tạo project:
-
-```bash
-presentation init --home "$HOME/.presentation" --project demo --title "Bộ slide mẫu" --json
-```
-
-Trên Windows PowerShell, dùng đường dẫn tương ứng:
-
-```powershell
-presentation init --home "$HOME\.presentation" --project demo --title "Bộ slide mẫu" --json
-```
-
-Hoặc tạo một workspace độc lập bằng đường dẫn cụ thể:
-
-```bash
-presentation init --workspace ./my-presentation --title "Bộ slide mẫu" --json
-```
-
-`init` tạo `project.yaml`, `storyboard/`, `design/`, `assets/files/`, `builds/`, `exports/` và `.presentation/`. Chạy lại với cùng cấu hình là no-op; cấu hình khác trả lỗi conflict.
-
-## Kiểm tra và capability
-
-`doctor` chỉ báo registry capability của lõi, backend và renderer đã đăng ký. Kết quả `passed` của doctor không chứng minh dependency, workspace, build hoặc render đã sẵn sàng:
-
-```bash
-presentation doctor --workspace ./my-presentation --json
-```
-
-Ở bản hiện tại, `backends` và `renderers` có thể là mảng rỗng. Vì vậy các lệnh dưới đây có thể trả `CAPABILITY_UNAVAILABLE`:
-
-```bash
-presentation build --workspace ./my-presentation --json
-presentation render --workspace ./my-presentation --build demo-build --json
-presentation audit --workspace ./my-presentation --build demo-build --json
-presentation export --workspace ./my-presentation --build demo-build --format pptx --json
-```
-
-`validate` và `audit` hiện là tên lệnh CLI, nhưng chưa có pipeline sản phẩm end-to-end. Chưa có bằng chứng runtime cho PPTX/HTML/reveal, notes, overflow, editability, image-deck hay visual UAT.
-
-## Migration legacy
-
-Migration nhận thư mục nguồn legacy và một workspace đích mới. `--dry-run` chỉ quét và báo kế hoạch; `--apply` tạo project, deck schema mới, bản sao các file nguồn đã chọn và `migration-report.json`. Đích đã tồn tại sẽ bị từ chối để tránh ghi đè.
-
-```bash
-presentation migrate --source ./legacy-deck --workspace ./imported-deck --dry-run --json
-presentation migrate --source ./legacy-deck --workspace ./imported-deck --apply --json
-```
-
-`--deck` là đường dẫn tương đối với `--source` (ví dụ `--deck decks/demo.yaml`); đường dẫn tuyệt đối, đi lên bằng `..`, symlink/junction và thư mục ẩn đều bị từ chối. Khi bỏ `--deck`, CLI chỉ chọn một file deck ở ngay thư mục gốc theo allowlist tên chuẩn (`deck.*`, `presentation.*`, `slides.*`), hoặc một YAML duy nhất ở gốc; lựa chọn mơ hồ bị từ chối. CLI chỉ đọc deck đã chọn và các file được deck tham chiếu rõ ràng (`source_files`, `notes_file`, `speaker_notes_file`); file khác trong source không được đọc hay sao chép.
-
-Migration đang được hoàn thiện; hãy dùng `--dry-run` trước và kiểm tra `migration-report.json` sau khi áp dụng. File được ghi dùng fsync; trên Windows, fsync mục directory không được hệ điều hành hỗ trợ nên chỉ độ bền của file được bảo đảm. Linux runtime chưa có trong môi trường phát hành hiện tại. Migration không phải là bộ biên dịch slide và không tạo PPTX.
-
-## Cấu trúc source
+## Cấu trúc hiện hành
 
 ```text
-src/presentation_studio/     # package public: CLI, models, workspace, state, migration
-src/slidecraft/               # prototype legacy, chưa phải entry point public của studio
-tests/                        # unit/integration tests cho core hiện có
-schemas/                      # schema artifacts
+SKILL.md                    entrypoint/router duy nhất
+01-design/                  nguyên tắc và hệ thiết kế
+02-references/INDEX.md      chỉ mục L01-L48, I01-I12, preview và ảnh mẫu
+03-workflow/                bốn bước từ đọc nguồn đến QA/handoff
+04-templates/               deck plan, slide prompt, review/handoff
+plugin/                     tích hợp Codex, Claude và Antigravity
+scripts/                    công cụ hỗ trợ tùy chọn
 ```
 
-Các thư mục profile, output, state và dữ liệu người dùng thuộc station/project. `skills/` và phần prototype legacy vẫn còn trong source để giữ tương thích và provenance; chúng không phải bằng chứng rằng các workflow/backend tương ứng đã chạy.
+Nội dung lịch sử dưới `02-references/sources/` chỉ để đối chiếu, không thuộc đường đọc active.
 
-## Trạng thái phát hành
+## `v1/` là snapshot bất biến
 
-Luồng [infographic bằng Codex Image](skills/slide-infographic/SKILL.md) được đóng gói tự chứa với [workflow](skills/slide-infographic/workflows/create-slide-infographic.md), [agent contract](skills/slide-infographic/agents/slide-infographic-agent.md), references và [eval](skills/slide-infographic/evals/cases.md). [Style library](skills/slide-infographic/references/style-library/index.md) giữ profile thiết kế đã chắt lọc; ảnh mẫu riêng nằm ngoài Git tại `~/.presentation/style-references/`, còn binary public phải qua [asset policy](skills/slide-infographic/assets/style-examples/POLICY.md). Đây chưa phải backend CLI; ảnh raster và bảng chữ overlay-ready không đồng nghĩa PowerPoint native. HTML reconstruction là Phase 2 planned.
+`v1/` giữ bản cũ để truy nguyên. Không sửa, di chuyển, cài hoặc dùng `v1/` như entrypoint. Root hiện tại luôn thắng khi nội dung lịch sử khác với workflow hiện hành.
 
-Đây là lõi pre-release. Backend/renderer, build/render end-to-end và visual UAT chưa được cung cấp trong bản hiện tại.
+## Python chỉ là công cụ hỗ trợ
+
+Không cần Python để đọc skill hoặc tạo ảnh qua host. Các script chỉ phục vụ kiểm link/hash/package, validate, cài đặt tùy chọn và bảo trì gallery khi được gọi rõ. Chúng không phải backend tạo slide và không được dùng làm fallback renderer. Xem [scripts/README.md](scripts/README.md) và [INSTALL.md](INSTALL.md) khi cần các thao tác hỗ trợ này.
+
+## Giới hạn trung thực
+
+Ảnh ImageGen là raster. Nó không chứng minh font family, point size hoặc editability thật. Một slide chỉ được đánh dấu đạt khi ảnh đúng revision đã được mở đầy đủ và đối chiếu với content lock, topology, safe margins và style lock.

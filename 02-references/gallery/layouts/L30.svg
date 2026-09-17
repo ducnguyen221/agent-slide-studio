@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/></marker></defs>
+<rect x="0" y="0" width="1600" height="900" rx="0" fill="#F8FAFC" stroke="none" stroke-width="2"/>
+<text x="90" y="86" font-family="Noto Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#0F766E" text-anchor="start">L30   /   THƯ VIỆN BỐ CỤC AIA</text>
+<text x="90" y="150" font-family="Noto Sans, Arial, sans-serif" font-size="43" font-weight="800" fill="#0A192F" text-anchor="start">Thông điệp điều hành</text>
+<line x1="90" y1="184" x2="1510" y2="184" stroke="#CBD5E1" stroke-width="2"/>
+<rect x="115" y="235" width="1370" height="125" rx="20" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+<text x="800" y="307" font-family="Noto Sans, Arial, sans-serif" font-size="36" font-weight="700" fill="#2563EB" text-anchor="middle">Kết luận cần quyết định</text>
+<rect x="115" y="405" width="440" height="195" rx="20" fill="white" stroke="#0F766E" stroke-width="2"/>
+<text x="335.0" y="463" font-family="Noto Sans, Arial, sans-serif" font-size="27" font-weight="700" fill="#0F766E" text-anchor="middle">Bằng chứng 1</text>
+<rect x="141" y="499" width="368.59999999999997" height="9" rx="4" fill="#CBD5E1" stroke="none" stroke-width="2"/>
+<rect x="141" y="523" width="322.03999999999996" height="9" rx="4" fill="#CBD5E1" stroke="none" stroke-width="2"/>
+<rect x="141" y="547" width="275.47999999999996" height="9" rx="4" fill="#CBD5E1" stroke="none" stroke-width="2"/>
+<rect x="585" y="405" width="440" height="195" rx="20" fill="white" stroke="#0F766E" stroke-width="2"/>
+<text x="805.0" y="463" font-family="Noto Sans, Arial, sans-serif" font-size="27" font-weight="700" fill="#0F766E" text-anchor="middle">Bằng chứng 2</text>
+<rect x="611" y="499" width="368.59999999999997" height="9" rx="4" fill="#CBD5E1" stroke="none" stroke-width="2"/>
+<rect x="611" y="523" width="322.03999999999996" height="9" rx="4" fill="#CBD5E1" stroke="none" stroke-width="2"/>
+<rect x="611" y="547" width="275.47999999999996" height="9" rx="4" fill="#CBD5E1" stroke="none" stroke-width="2"/>
+<rect x="1055" y="405" width="440" height="195" rx="20" fill="white" stroke="#0F766E" stroke-width="2"/>
+<text x="1275.0" y="463" font-family="Noto Sans, Arial, sans-serif" font-size="27" font-weight="700" fill="#0F766E" text-anchor="middle">Bằng chứng 3</text>
+<rect x="1081" y="499" width="368.59999999999997" height="9" rx="4" fill="#CBD5E1" stroke="none" stroke-width="2"/>
+<rect x="1081" y="523" width="322.03999999999996" height="9" rx="4" fill="#CBD5E1" stroke="none" stroke-width="2"/>
+<rect x="1081" y="547" width="275.47999999999996" height="9" rx="4" fill="#CBD5E1" stroke="none" stroke-width="2"/>
+<rect x="115" y="650" width="1370" height="80" rx="20" fill="#FFF7ED" stroke="#F97316" stroke-width="2"/>
+<text x="800" y="701" font-family="Noto Sans, Arial, sans-serif" font-size="30" font-weight="700" fill="#9A3412" text-anchor="middle">Hành động và phạm vi đề xuất</text>
+<line x1="90" y1="802" x2="1510" y2="802" stroke="#CBD5E1" stroke-width="2"/>
+<text x="90" y="847" font-family="Noto Sans, Arial, sans-serif" font-size="21" font-weight="500" fill="#475569" text-anchor="start">Sơ đồ khung gốc • Không phải đối tượng SmartArt hoặc mẫu PPTX dựng sẵn</text>
+<text x="1510" y="847" font-family="Noto Sans, Arial, sans-serif" font-size="22" font-weight="700" fill="#2563EB" text-anchor="end">L30</text>
+</svg>

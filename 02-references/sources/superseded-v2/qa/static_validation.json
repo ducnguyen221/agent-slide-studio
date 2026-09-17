@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "scope": "Static package validation, not host runtime or model behavior",
+  "stats": {
+    "files": 349,
+    "markdown": 177,
+    "frontmatter": 7,
+    "yaml_files": 1,
+    "json_files": 15,
+    "local_links": 871,
+    "layouts": 48,
+    "preview_png": 73,
+    "preview_svg": 60,
+    "preserved_sources": 24,
+    "infographics": 12,
+    "groups": 10
+  },
+  "errors": [],
+  "warnings": [],
+  "manifest_checked": false
+}

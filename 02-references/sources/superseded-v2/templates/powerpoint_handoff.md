@@ -1,0 +1,16 @@
+# Bàn giao vào PowerPoint
+
+Mã/phiên bản: … · Mode: … · Layout: …
+Tệp ảnh: … · Pixel thực: … · Tỷ lệ thực: … · Alpha: có/không/chưa kiểm tra.
+Bản khóa chữ: … · Thành phần chỉnh sửa riêng được: …
+
+| Thành phần | Tệp/chuỗi | x | y | rộng | cao | lớp |
+|---|---|---|---|---|---|---|
+| … | … | … | … | … | … | … |
+
+Đơn vị: px tham chiếu 1920×1080 hoặc inch, ghi rõ.
+Giữ tỷ lệ; không crop vùng tiêu đề chừa sẵn.
+Mô tả thay thế: …
+Thứ tự đọc: …
+Ghi chú và nguồn: …
+Slide Show / Accessibility Checker: đạt/lỗi/chưa kiểm tra.

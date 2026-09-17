@@ -1,0 +1,1602 @@
+[
+  {
+    "id": "L01",
+    "pattern": "cover",
+    "name": "Bìa hoặc chuyển chương",
+    "family": "Định vị",
+    "purpose": "Một thông điệp lớn và một hình neo, chuyển nhịp chương.",
+    "check": "Không nhét quy trình hay bảng chi tiết vào trang mở.",
+    "file": "L01_cover.md",
+    "home_group": "G01",
+    "parent_group": "G01",
+    "representation": "structural",
+    "intent": [
+      "mo-dau",
+      "dinh-huong"
+    ],
+    "topology": "hero",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "open"
+    ],
+    "preview_png": "02-references/gallery/layouts/L01.png",
+    "preview_svg": "02-references/gallery/layouts/L01.svg",
+    "spec_path": "02-references/layouts/archetypes/L01_cover.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L02",
+    "pattern": "roadmap",
+    "name": "Lộ trình học tập",
+    "family": "Định vị",
+    "purpose": "3–5 chặng, tô rõ vị trí đang học.",
+    "check": "Chỉ một chặng active; không giả thời lượng nếu chưa có ngày.",
+    "file": "L02_roadmap.md",
+    "home_group": "G01",
+    "parent_group": "G01",
+    "representation": "structural",
+    "intent": [
+      "mo-dau",
+      "dinh-huong"
+    ],
+    "topology": "tuyen-tinh",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "open"
+    ],
+    "preview_png": "02-references/gallery/layouts/L02.png",
+    "preview_svg": "02-references/gallery/layouts/L02.svg",
+    "spec_path": "02-references/layouts/archetypes/L02_roadmap.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L03",
+    "pattern": "anatomy",
+    "name": "Giải phẫu khái niệm",
+    "family": "Kiến thức",
+    "purpose": "Một định nghĩa nối đến 3–4 thuộc tính.",
+    "check": "Đường nhánh là cấu thành, không thứ tự hoặc nhân quả.",
+    "file": "L03_anatomy.md",
+    "home_group": "G02",
+    "parent_group": "G02",
+    "representation": "structural",
+    "intent": [
+      "giai-thich",
+      "tong-hop"
+    ],
+    "topology": "phan-ra",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L03.png",
+    "preview_svg": "02-references/gallery/layouts/L03.svg",
+    "spec_path": "02-references/layouts/archetypes/L03_anatomy.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L04",
+    "pattern": "matrix",
+    "name": "Ma trận hai chiều",
+    "family": "So sánh",
+    "purpose": "Phân loại theo hai tiêu chí độc lập và bốn vùng.",
+    "check": "Có nhãn cả hai trục; bốn thẻ không có trục không là ma trận.",
+    "file": "L04_matrix.md",
+    "home_group": "G04",
+    "parent_group": "G04",
+    "representation": "structural",
+    "intent": [
+      "so-sanh",
+      "quyet-dinh",
+      "dinh-vi"
+    ],
+    "topology": "ma-tran",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L04.png",
+    "preview_svg": "02-references/gallery/layouts/L04.svg",
+    "spec_path": "02-references/layouts/archetypes/L04_matrix.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L05",
+    "pattern": "process",
+    "name": "Quy trình tuyến tính",
+    "family": "Quy trình",
+    "purpose": "3–5 bước theo thứ tự, mỗi bước có kết quả.",
+    "check": "Đủ bước thật; đầu ra bước trước khớp đầu vào bước sau.",
+    "file": "L05_process.md",
+    "home_group": "G03",
+    "parent_group": "G03",
+    "representation": "structural",
+    "intent": [
+      "huong-dan",
+      "to-chuc"
+    ],
+    "topology": "tuyen-tinh",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L05.png",
+    "preview_svg": "02-references/gallery/layouts/L05.svg",
+    "spec_path": "02-references/layouts/archetypes/L05_process.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L06",
+    "pattern": "comparison",
+    "name": "So sánh và lựa chọn",
+    "family": "So sánh",
+    "purpose": "2–3 phương án so theo cùng 3–4 tiêu chí.",
+    "check": "Không tô một cột là người thắng khi chưa có căn cứ/tiêu chí.",
+    "file": "L06_comparison.md",
+    "home_group": "G04",
+    "parent_group": "G04",
+    "representation": "structural",
+    "intent": [
+      "so-sanh",
+      "quyet-dinh",
+      "dinh-vi"
+    ],
+    "topology": "song-song",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L06.png",
+    "preview_svg": "02-references/gallery/layouts/L06.svg",
+    "spec_path": "02-references/layouts/archetypes/L06_comparison.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L07",
+    "pattern": "layers",
+    "name": "Kiến trúc phân tầng",
+    "family": "Kiến trúc",
+    "purpose": "3–4 tầng trách nhiệm với giao diện trao đổi.",
+    "check": "Tầng không có nghĩa tốt/xấu; mũi tên hai chiều cần có phản hồi thật.",
+    "file": "L07_layers.md",
+    "home_group": "G05",
+    "parent_group": "G05",
+    "representation": "structural",
+    "intent": [
+      "giai-thich",
+      "quan-tri"
+    ],
+    "topology": "phan-tang",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L07.png",
+    "preview_svg": "02-references/gallery/layouts/L07.svg",
+    "spec_path": "02-references/layouts/archetypes/L07_layers.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L08",
+    "pattern": "case",
+    "name": "Tình huống thực tiễn",
+    "family": "Ứng dụng",
+    "purpose": "Bài toán, cách can thiệp và tác động quan sát.",
+    "check": "Tách kết quả kỳ vọng với số đã đo; ví dụ phải có nhãn.",
+    "file": "L08_case.md",
+    "home_group": "G07",
+    "parent_group": "G07",
+    "representation": "structural",
+    "intent": [
+      "giai-thich",
+      "kham-pha"
+    ],
+    "topology": "tuyen-tinh",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L08.png",
+    "preview_svg": "02-references/gallery/layouts/L08.svg",
+    "spec_path": "02-references/layouts/archetypes/L08_case.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L09",
+    "pattern": "exercise",
+    "name": "Bài tập thực hành",
+    "family": "Giảng dạy",
+    "purpose": "Một nhiệm vụ, dữ liệu, sản phẩm và tiêu chí hoàn thành.",
+    "check": "Không đưa toàn bộ lời giải lên trước khi học viên làm.",
+    "file": "L09_exercise.md",
+    "home_group": "G08",
+    "parent_group": "G08",
+    "representation": "structural",
+    "intent": [
+      "thuc-hanh",
+      "ap-dung"
+    ],
+    "topology": "bang-nhiem-vu",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "practice",
+      "close"
+    ],
+    "preview_png": "02-references/gallery/layouts/L09.png",
+    "preview_svg": "02-references/gallery/layouts/L09.svg",
+    "spec_path": "02-references/layouts/archetypes/L09_exercise.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L10",
+    "pattern": "bento",
+    "name": "Đúc kết dạng lưới mô-đun",
+    "family": "Đúc kết",
+    "purpose": "Một ý chủ đạo, 2–3 ý hỗ trợ và điều kiện quan trọng.",
+    "check": "Thẻ lớn là ý quan trọng nhất, không phải thẻ nhiều chữ nhất.",
+    "file": "L10_bento.md",
+    "home_group": "G02",
+    "parent_group": "G02",
+    "representation": "structural",
+    "intent": [
+      "giai-thich",
+      "tong-hop"
+    ],
+    "topology": "luoi-mo-dun",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply",
+      "close"
+    ],
+    "preview_png": "02-references/gallery/layouts/L10.png",
+    "preview_svg": "02-references/gallery/layouts/L10.svg",
+    "spec_path": "02-references/layouts/archetypes/L10_bento.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L11",
+    "pattern": "hub",
+    "name": "Trung tâm và vệ tinh",
+    "family": "Kiến trúc",
+    "purpose": "Một lõi phối hợp 3–5 mô-đun.",
+    "check": "Không vẽ vệ tinh như thứ tự vòng lặp; tránh đường xuyên chữ.",
+    "file": "L11_hub.md",
+    "home_group": "G05",
+    "parent_group": "G05",
+    "representation": "structural",
+    "intent": [
+      "giai-thich",
+      "quan-tri"
+    ],
+    "topology": "tam-ve-tinh",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L11.png",
+    "preview_svg": "02-references/gallery/layouts/L11.svg",
+    "spec_path": "02-references/layouts/archetypes/L11_hub.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L12",
+    "pattern": "cycle",
+    "name": "Vòng lặp khép kín",
+    "family": "Quy trình",
+    "purpose": "Quan sát, phân tích, cập nhật có kiểm soát và áp dụng lại.",
+    "check": "Phải có đường quay về; sửa luật cần duyệt, không hứa miễn nhiễm lỗi.",
+    "file": "L12_cycle.md",
+    "home_group": "G03",
+    "parent_group": "G03",
+    "representation": "structural",
+    "intent": [
+      "huong-dan",
+      "to-chuc"
+    ],
+    "topology": "vong-lap",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L12.png",
+    "preview_svg": "02-references/gallery/layouts/L12.svg",
+    "spec_path": "02-references/layouts/archetypes/L12_cycle.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L13",
+    "pattern": "document",
+    "name": "Giải phẫu tài liệu hoặc mã",
+    "family": "Giảng dạy",
+    "purpose": "Tài liệu và 3–4 vùng chú giải khớp số.",
+    "check": "Cú pháp phải đúng; không nhét cả file dài hoặc tự bịa schema.",
+    "file": "L13_document.md",
+    "home_group": "G07",
+    "parent_group": "G07",
+    "representation": "structural",
+    "intent": [
+      "giai-thich",
+      "kham-pha"
+    ],
+    "topology": "chu-giai",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L13.png",
+    "preview_svg": "02-references/gallery/layouts/L13.svg",
+    "spec_path": "02-references/layouts/archetypes/L13_document.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L14",
+    "pattern": "ui",
+    "name": "Giao diện có chú giải",
+    "family": "Giảng dạy",
+    "purpose": "Ảnh giao diện và 3–4 vùng thao tác được đánh số.",
+    "check": "Mô phỏng cần ghi minh họa; không giả nút chức năng sản phẩm.",
+    "file": "L14_ui.md",
+    "home_group": "G07",
+    "parent_group": "G07",
+    "representation": "structural",
+    "intent": [
+      "giai-thich",
+      "kham-pha"
+    ],
+    "topology": "chu-giai",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L14.png",
+    "preview_svg": "02-references/gallery/layouts/L14.svg",
+    "spec_path": "02-references/layouts/archetypes/L14_ui.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L15",
+    "pattern": "tree",
+    "name": "Cây phân cấp",
+    "family": "Kiến trúc",
+    "purpose": "Quan hệ cha–con 2–3 tầng; tối đa 7–9 nút cho tổng quan.",
+    "check": "Không dùng cây cho mạng nhiều cha; cấp tên phải nhất quán.",
+    "file": "L15_tree.md",
+    "home_group": "G05",
+    "parent_group": "G05",
+    "representation": "structural",
+    "intent": [
+      "giai-thich",
+      "quan-tri"
+    ],
+    "topology": "phan-cap",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L15.png",
+    "preview_svg": "02-references/gallery/layouts/L15.svg",
+    "spec_path": "02-references/layouts/archetypes/L15_tree.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L16",
+    "pattern": "stair",
+    "name": "Thang trưởng thành",
+    "family": "Định vị",
+    "purpose": "3–5 mức năng lực có điều kiện chuyển bậc.",
+    "check": "Không hứa bậc cao nhất luôn phù hợp; chiều cao không giả số đo.",
+    "file": "L16_stair.md",
+    "home_group": "G04",
+    "parent_group": "G04",
+    "representation": "structural",
+    "intent": [
+      "so-sanh",
+      "quyet-dinh",
+      "dinh-vi"
+    ],
+    "topology": "bac-thang",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L16.png",
+    "preview_svg": "02-references/gallery/layouts/L16.svg",
+    "spec_path": "02-references/layouts/archetypes/L16_stair.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L17",
+    "pattern": "ipo",
+    "name": "Đầu vào – xử lý – đầu ra",
+    "family": "Quy trình",
+    "purpose": "Các nguồn được xử lý thành sản phẩm công việc.",
+    "check": "Ghi bước thủ công/duyệt; không gọi copy là tích hợp tự động.",
+    "file": "L17_ipo.md",
+    "home_group": "G03",
+    "parent_group": "G03",
+    "representation": "structural",
+    "intent": [
+      "huong-dan",
+      "to-chuc"
+    ],
+    "topology": "dau-vao-dau-ra",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L17.png",
+    "preview_svg": "02-references/gallery/layouts/L17.svg",
+    "spec_path": "02-references/layouts/archetypes/L17_ipo.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L18",
+    "pattern": "wave",
+    "name": "Chuỗi tình huống so le",
+    "family": "Ứng dụng",
+    "purpose": "4–5 ứng dụng độc lập theo nhịp cao–thấp.",
+    "check": "Đường cong dẫn mắt không có mũi tên chỉ thứ tự giả.",
+    "file": "L18_wave.md",
+    "home_group": "G08",
+    "parent_group": "G08",
+    "representation": "structural",
+    "intent": [
+      "thuc-hanh",
+      "ap-dung"
+    ],
+    "topology": "so-le",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "practice",
+      "close"
+    ],
+    "preview_png": "02-references/gallery/layouts/L18.png",
+    "preview_svg": "02-references/gallery/layouts/L18.svg",
+    "spec_path": "02-references/layouts/archetypes/L18_wave.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L19",
+    "pattern": "decision",
+    "name": "Quy trình phân nhánh",
+    "family": "Quy trình",
+    "purpose": "Một quyết định chính với 2–3 kết quả hoặc ngoại lệ.",
+    "check": "Mỗi nhánh có nhãn; không đường cụt không giải thích.",
+    "file": "L19_decision.md",
+    "home_group": "G04",
+    "parent_group": "G04",
+    "representation": "structural",
+    "intent": [
+      "so-sanh",
+      "quyet-dinh",
+      "dinh-vi"
+    ],
+    "topology": "phan-nhanh",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L19.png",
+    "preview_svg": "02-references/gallery/layouts/L19.svg",
+    "spec_path": "02-references/layouts/archetypes/L19_decision.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L20",
+    "pattern": "background",
+    "name": "Minh họa hoặc nền không chữ",
+    "family": "Minh họa",
+    "purpose": "Ẩn dụ ở rìa, vùng trống lớn để chèn nội dung.",
+    "check": "Cấm mọi chữ/số/ký tự, kể cả trên vật thể.",
+    "file": "L20_background.md",
+    "home_group": "G01",
+    "parent_group": "G01",
+    "representation": "structural",
+    "intent": [
+      "mo-dau",
+      "dinh-huong"
+    ],
+    "topology": "khong-chu",
+    "density": "D0",
+    "style": "navy-visual",
+    "data_requirement": "none",
+    "deck_phase": [
+      "open"
+    ],
+    "preview_png": "02-references/gallery/layouts/L20.png",
+    "preview_svg": "02-references/gallery/layouts/L20.svg",
+    "spec_path": "02-references/layouts/archetypes/L20_background.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_NO_TEXT"
+    ]
+  },
+  {
+    "id": "L21",
+    "pattern": "timeline",
+    "name": "Dòng thời gian sự kiện",
+    "family": "Quy trình",
+    "purpose": "4–6 mốc có thứ tự ngày hoặc giai đoạn rõ.",
+    "check": "Không khoảng đều giả thời gian đều; ghi sơ đồ không theo tỷ lệ khi cần.",
+    "file": "L21_timeline.md",
+    "home_group": "G03",
+    "parent_group": "G03",
+    "representation": "structural",
+    "intent": [
+      "huong-dan",
+      "to-chuc"
+    ],
+    "topology": "thoi-gian",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L21.png",
+    "preview_svg": "02-references/gallery/layouts/L21.svg",
+    "spec_path": "02-references/layouts/archetypes/L21_timeline.md",
+    "max_main_units": 6,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L22",
+    "pattern": "swimlane",
+    "name": "Làn trách nhiệm",
+    "family": "Quy trình",
+    "purpose": "3 làn vai trò, 3–4 chặng, chỉ rõ bàn giao.",
+    "check": "Bước ở đúng làn; đường vượt làn biểu thị chuyển giao có hướng.",
+    "file": "L22_swimlane.md",
+    "home_group": "G03",
+    "parent_group": "G03",
+    "representation": "structural",
+    "intent": [
+      "huong-dan",
+      "to-chuc"
+    ],
+    "topology": "lan-trach-nhiem",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L22.png",
+    "preview_svg": "02-references/gallery/layouts/L22.svg",
+    "spec_path": "02-references/layouts/archetypes/L22_swimlane.md",
+    "max_main_units": 6,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L23",
+    "pattern": "funnel",
+    "name": "Phễu chuyển đổi",
+    "family": "Dữ liệu",
+    "purpose": "3–5 tập con giảm dần hoặc tầng sàng lọc.",
+    "check": "Bề rộng từ số thật khi định lượng; tỷ lệ có mẫu số/đơn vị.",
+    "file": "L23_funnel.md",
+    "home_group": "G06",
+    "parent_group": "G06",
+    "representation": "structural",
+    "intent": [
+      "chung-minh",
+      "phan-tich"
+    ],
+    "topology": "pheu",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "quantitative-or-labeled-demo",
+    "deck_phase": [
+      "evidence"
+    ],
+    "preview_png": "02-references/gallery/layouts/L23.png",
+    "preview_svg": "02-references/gallery/layouts/L23.svg",
+    "spec_path": "02-references/layouts/archetypes/L23_funnel.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L24",
+    "pattern": "pyramid",
+    "name": "Kim tự tháp nền tảng",
+    "family": "Kiến thức",
+    "purpose": "3–4 tầng nền tảng/phụ thuộc có ý nghĩa.",
+    "check": "Không tạo thứ bậc cho nhóm ngang hàng; diện tích không giả tỷ trọng.",
+    "file": "L24_pyramid.md",
+    "home_group": "G02",
+    "parent_group": "G02",
+    "representation": "structural",
+    "intent": [
+      "giai-thich",
+      "tong-hop"
+    ],
+    "topology": "phan-tang",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L24.png",
+    "preview_svg": "02-references/gallery/layouts/L24.svg",
+    "spec_path": "02-references/layouts/archetypes/L24_pyramid.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L25",
+    "pattern": "rings",
+    "name": "Các vòng phạm vi",
+    "family": "Kiến trúc",
+    "purpose": "3 lớp bao hàm, phạm vi tác động hoặc bảo vệ.",
+    "check": "Bao hàm không phải tiến trình; nhãn phải khớp đúng vòng.",
+    "file": "L25_rings.md",
+    "home_group": "G02",
+    "parent_group": "G02",
+    "representation": "structural",
+    "intent": [
+      "giai-thich",
+      "tong-hop"
+    ],
+    "topology": "bao-ham",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L25.png",
+    "preview_svg": "02-references/gallery/layouts/L25.svg",
+    "spec_path": "02-references/layouts/archetypes/L25_rings.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L26",
+    "pattern": "venn",
+    "name": "Vùng giao và chồng lấp",
+    "family": "So sánh",
+    "purpose": "Hai hoặc ba tập có phần chung và riêng.",
+    "check": "Không tạo giao giả; diện tích không là dữ liệu khi chỉ khái niệm.",
+    "file": "L26_venn.md",
+    "home_group": "G02",
+    "parent_group": "G02",
+    "representation": "structural",
+    "intent": [
+      "giai-thich",
+      "tong-hop"
+    ],
+    "topology": "chong-lap",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L26.png",
+    "preview_svg": "02-references/gallery/layouts/L26.svg",
+    "spec_path": "02-references/layouts/archetypes/L26_venn.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L27",
+    "pattern": "network",
+    "name": "Mạng lưới hệ sinh thái",
+    "family": "Kiến trúc",
+    "purpose": "5–7 thực thể kết nối chọn lọc, không một lõi duy nhất.",
+    "check": "Không nối tất cả; có chú giải loại liên kết nếu khác nhau.",
+    "file": "L27_network.md",
+    "home_group": "G05",
+    "parent_group": "G05",
+    "representation": "structural",
+    "intent": [
+      "giai-thich",
+      "quan-tri"
+    ],
+    "topology": "mang-luoi",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L27.png",
+    "preview_svg": "02-references/gallery/layouts/L27.svg",
+    "spec_path": "02-references/layouts/archetypes/L27_network.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L28",
+    "pattern": "dashboard",
+    "name": "Tổng quan chỉ số",
+    "family": "Dữ liệu",
+    "purpose": "3 KPI, 1–2 hình phân tích cùng thời kỳ.",
+    "check": "Số, nguồn, đơn vị rõ; không KPI ngẫu nhiên như báo cáo thật.",
+    "file": "L28_dashboard.md",
+    "home_group": "G06",
+    "parent_group": "G06",
+    "representation": "structural",
+    "intent": [
+      "chung-minh",
+      "phan-tich"
+    ],
+    "topology": "luoi-du-lieu",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "quantitative-or-labeled-demo",
+    "deck_phase": [
+      "evidence"
+    ],
+    "preview_png": "02-references/gallery/layouts/L28.png",
+    "preview_svg": "02-references/gallery/layouts/L28.svg",
+    "spec_path": "02-references/layouts/archetypes/L28_dashboard.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L29",
+    "pattern": "chart",
+    "name": "Một biểu đồ – một thông điệp",
+    "family": "Dữ liệu",
+    "purpose": "Một biểu đồ làm bằng chứng cho tiêu đề và một chú thích.",
+    "check": "Không 3D làm méo tỷ lệ; kiểm trục, phép tính, dữ liệu gốc.",
+    "file": "L29_chart.md",
+    "home_group": "G06",
+    "parent_group": "G06",
+    "representation": "structural",
+    "intent": [
+      "chung-minh",
+      "phan-tich"
+    ],
+    "topology": "bieu-do",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "quantitative-or-labeled-demo",
+    "deck_phase": [
+      "evidence"
+    ],
+    "preview_png": "02-references/gallery/layouts/L29.png",
+    "preview_svg": "02-references/gallery/layouts/L29.svg",
+    "spec_path": "02-references/layouts/archetypes/L29_chart.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L30",
+    "pattern": "executive",
+    "name": "Thông điệp điều hành",
+    "family": "Đúc kết",
+    "purpose": "Một kết luận, 2–3 bằng chứng và một quyết định cần chốt.",
+    "check": "Bằng chứng phải hỗ trợ kết luận; không giấu rủi ro quan trọng.",
+    "file": "L30_executive.md",
+    "home_group": "G01",
+    "parent_group": "G01",
+    "representation": "structural",
+    "intent": [
+      "mo-dau",
+      "dinh-huong"
+    ],
+    "topology": "luoi-mo-dun",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "open",
+      "close"
+    ],
+    "preview_png": "02-references/gallery/layouts/L30.png",
+    "preview_svg": "02-references/gallery/layouts/L30.svg",
+    "spec_path": "02-references/layouts/archetypes/L30_executive.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L31",
+    "pattern": "bridge",
+    "name": "Chuyển đổi trước – sau",
+    "family": "So sánh",
+    "purpose": "Trạng thái hiện tại, cơ chế thay đổi và đích cùng tiêu chí.",
+    "check": "Không trình bày trạng thái mới như hoàn hảo; ghi điều kiện triển khai.",
+    "file": "L31_bridge.md",
+    "home_group": "G04",
+    "parent_group": "G04",
+    "representation": "structural",
+    "intent": [
+      "so-sanh",
+      "quyet-dinh",
+      "dinh-vi"
+    ],
+    "topology": "truoc-sau",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L31.png",
+    "preview_svg": "02-references/gallery/layouts/L31.svg",
+    "spec_path": "02-references/layouts/archetypes/L31_bridge.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L32",
+    "pattern": "storyboard",
+    "name": "Chuỗi cảnh minh họa",
+    "family": "Ứng dụng",
+    "purpose": "3–4 cảnh người–công cụ, mỗi cảnh một hành động và đầu ra.",
+    "check": "Nhất quán nhân vật; không thay sơ đồ kỹ thuật cần chính xác bằng cảnh mơ hồ.",
+    "file": "L32_storyboard.md",
+    "home_group": "G07",
+    "parent_group": "G07",
+    "representation": "structural",
+    "intent": [
+      "giai-thich",
+      "kham-pha"
+    ],
+    "topology": "chuoi-canh",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L32.png",
+    "preview_svg": "02-references/gallery/layouts/L32.svg",
+    "spec_path": "02-references/layouts/archetypes/L32_storyboard.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L33",
+    "pattern": "stat",
+    "name": "Trích dẫn hoặc số liệu chủ đạo",
+    "family": "Định vị",
+    "purpose": "Một số liệu lớn hoặc trích dẫn có nguồn để mở vấn đề.",
+    "check": "Không số thiếu mẫu số/ngày; không bịa trích dẫn của chuyên gia.",
+    "file": "L33_stat.md",
+    "home_group": "G01",
+    "parent_group": "G01",
+    "representation": "structural",
+    "intent": [
+      "mo-dau",
+      "dinh-huong"
+    ],
+    "topology": "hero",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "quantitative-or-labeled-demo",
+    "deck_phase": [
+      "open"
+    ],
+    "preview_png": "02-references/gallery/layouts/L33.png",
+    "preview_svg": "02-references/gallery/layouts/L33.svg",
+    "spec_path": "02-references/layouts/archetypes/L33_stat.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L34",
+    "pattern": "gantt",
+    "name": "Lịch triển khai theo thời lượng",
+    "family": "Quy trình",
+    "purpose": "3–5 hạng mục có điểm bắt đầu/kết thúc, chạy song song.",
+    "check": "Thanh theo thời gian thật; không tự đặt SLA thiếu căn cứ.",
+    "file": "L34_gantt.md",
+    "home_group": "G03",
+    "parent_group": "G03",
+    "representation": "structural",
+    "intent": [
+      "huong-dan",
+      "to-chuc"
+    ],
+    "topology": "thoi-gian",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L34.png",
+    "preview_svg": "02-references/gallery/layouts/L34.svg",
+    "spec_path": "02-references/layouts/archetypes/L34_gantt.md",
+    "max_main_units": 6,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L35",
+    "pattern": "sankey",
+    "name": "Luồng phân bổ nguồn lực",
+    "family": "Dữ liệu",
+    "purpose": "Nguồn chia vào đích: khái niệm hoặc lượng cân đối.",
+    "check": "Định lượng phải theo số/cân bằng; khái niệm ghi không theo tỷ lệ.",
+    "file": "L35_sankey.md",
+    "home_group": "G06",
+    "parent_group": "G06",
+    "representation": "structural",
+    "intent": [
+      "chung-minh",
+      "phan-tich"
+    ],
+    "topology": "phan-bo",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "quantitative-or-labeled-demo",
+    "deck_phase": [
+      "evidence"
+    ],
+    "preview_png": "02-references/gallery/layouts/L35.png",
+    "preview_svg": "02-references/gallery/layouts/L35.svg",
+    "spec_path": "02-references/layouts/archetypes/L35_sankey.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L36",
+    "pattern": "fishbone",
+    "name": "Nguyên nhân – hệ quả",
+    "family": "Kiến thức",
+    "purpose": "3–4 nhóm giả thuyết nguyên nhân cho một vấn đề cần kiểm tra.",
+    "check": "Không biến giả thuyết thành nhân quả đã chứng minh; có bước kiểm chứng.",
+    "file": "L36_fishbone.md",
+    "home_group": "G07",
+    "parent_group": "G07",
+    "representation": "structural",
+    "intent": [
+      "giai-thich",
+      "kham-pha"
+    ],
+    "topology": "nguyen-nhan",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L36.png",
+    "preview_svg": "02-references/gallery/layouts/L36.svg",
+    "spec_path": "02-references/layouts/archetypes/L36_fishbone.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L37",
+    "pattern": "agenda",
+    "name": "Bản đồ nội dung chương",
+    "family": "Định vị",
+    "purpose": "Định hướng 3–4 chủ đề xoay quanh một câu hỏi dẫn đường.",
+    "check": "Không dùng mũi tên tuần tự khi các chủ đề độc lập.",
+    "file": "L37_agenda.md",
+    "wireframe": "[Câu hỏi của chương]\n[Chủ đề A]  [Chủ đề B]\n[Chủ đề C]  [Chủ đề D]",
+    "sample_labels": [
+      "Bản đồ chương",
+      "Hiểu đúng",
+      "Chọn cách",
+      "Thử làm",
+      "Rút kinh nghiệm"
+    ],
+    "home_group": "G01",
+    "parent_group": "G01",
+    "representation": "structural",
+    "intent": [
+      "mo-dau",
+      "dinh-huong"
+    ],
+    "topology": "ban-do",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "open"
+    ],
+    "preview_png": "02-references/gallery/layouts/L37.png",
+    "preview_svg": "02-references/gallery/layouts/L37.svg",
+    "spec_path": "02-references/layouts/archetypes/L37_agenda.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L38",
+    "pattern": "formula",
+    "name": "Công thức và ý nghĩa biến",
+    "family": "Kiến thức",
+    "purpose": "Một biểu thức trung tâm có 3–4 nhánh giải thích các thành phần.",
+    "check": "Không minh họa công thức bằng dữ liệu hoặc hệ số tự tạo.",
+    "file": "L38_formula.md",
+    "wireframe": "[Biến A]    [Biến B]    [Biến C]\n     \\         |         /\n          [Công thức]\n          [Ý nghĩa]",
+    "sample_labels": [
+      "Hiểu công thức",
+      "Doanh thu",
+      "Chi phí",
+      "Lợi nhuận",
+      "Lợi nhuận = Doanh thu − Chi phí"
+    ],
+    "home_group": "G02",
+    "parent_group": "G02",
+    "representation": "structural",
+    "intent": [
+      "giai-thich",
+      "tong-hop"
+    ],
+    "topology": "phan-ra",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L38.png",
+    "preview_svg": "02-references/gallery/layouts/L38.svg",
+    "spec_path": "02-references/layouts/archetypes/L38_formula.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L39",
+    "pattern": "persona",
+    "name": "Chân dung và nhu cầu",
+    "family": "Ứng dụng",
+    "purpose": "Một người sử dụng điển hình kết nối mục tiêu, trở ngại và hỗ trợ cần có.",
+    "check": "Chân dung giả định phải được ghi nhãn; không suy diễn thuộc tính cá nhân từ ảnh.",
+    "file": "L39_persona.md",
+    "wireframe": "[Chân dung] | [Mục tiêu]\n            | [Trở ngại]\n            | [Cần hỗ trợ]",
+    "sample_labels": [
+      "Chân dung người học",
+      "Minh họa",
+      "Nhân viên mới",
+      "Mục tiêu",
+      "Làm đúng quy trình",
+      "Trở ngại",
+      "Chưa rõ bước xử lý",
+      "Hỗ trợ",
+      "Ví dụ và hướng dẫn"
+    ],
+    "home_group": "G07",
+    "parent_group": "G07",
+    "representation": "structural",
+    "intent": [
+      "giai-thich",
+      "kham-pha"
+    ],
+    "topology": "chu-giai",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L39.png",
+    "preview_svg": "02-references/gallery/layouts/L39.svg",
+    "spec_path": "02-references/layouts/archetypes/L39_persona.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L40",
+    "pattern": "tradeoff",
+    "name": "Cân đối lợi ích và đánh đổi",
+    "family": "So sánh",
+    "purpose": "Hai mục tiêu cạnh tranh đặt trên trục đánh đổi với điều kiện quyết định.",
+    "check": "Không dùng độ cao hoặc độ lớn để ngầm chấm điểm khi chưa có dữ liệu.",
+    "file": "L40_tradeoff.md",
+    "wireframe": "[Lợi ích A]  <— ĐÁNH ĐỔI —> [Lợi ích B]\n          [Điều kiện lựa chọn]",
+    "sample_labels": [
+      "Cân đối hai mục tiêu",
+      "Tốc độ",
+      "Thời gian xử lý",
+      "Kiểm soát",
+      "Mức kiểm tra",
+      "Chọn theo rủi ro"
+    ],
+    "home_group": "G04",
+    "parent_group": "G04",
+    "representation": "structural",
+    "intent": [
+      "so-sanh",
+      "quyet-dinh",
+      "dinh-vi"
+    ],
+    "topology": "song-song",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L40.png",
+    "preview_svg": "02-references/gallery/layouts/L40.svg",
+    "spec_path": "02-references/layouts/archetypes/L40_tradeoff.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L41",
+    "pattern": "scorecard",
+    "name": "Bảng tiêu chí lựa chọn",
+    "family": "Ứng dụng",
+    "purpose": "Đối chiếu 2–3 phương án bằng 3–4 tiêu chí với ô đủ/chưa đủ rõ ràng.",
+    "check": "Không tự gán điểm tổng hoặc phương án thắng; nêu dữ kiện còn thiếu.",
+    "file": "L41_scorecard.md",
+    "wireframe": "[Tiêu chí] | [A] | [B]\n[Phù hợp]  |  ✓  |  ?\n[Chi phí]  |  ?  |  ✓\n[Kiểm soát]|  ✓  |  ✓",
+    "sample_labels": [
+      "Đối chiếu điều kiện",
+      "Tiêu chí",
+      "Phương án A",
+      "Phương án B",
+      "Phù hợp",
+      "Chi phí",
+      "Kiểm soát",
+      "Cần xác minh"
+    ],
+    "home_group": "G08",
+    "parent_group": "G08",
+    "representation": "structural",
+    "intent": [
+      "thuc-hanh",
+      "ap-dung"
+    ],
+    "topology": "bang-tieu-chi",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "practice",
+      "close"
+    ],
+    "preview_png": "02-references/gallery/layouts/L41.png",
+    "preview_svg": "02-references/gallery/layouts/L41.svg",
+    "spec_path": "02-references/layouts/archetypes/L41_scorecard.md",
+    "max_main_units": 6,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L42",
+    "pattern": "gates",
+    "name": "Cổng kiểm soát theo giai đoạn",
+    "family": "Kiến trúc",
+    "purpose": "Các vùng chuẩn bị, phê duyệt và triển khai được ngăn bởi điểm dừng có điều kiện.",
+    "check": "Không nối tắt qua cổng duyệt hoặc coi phê duyệt là một trang trí.",
+    "file": "L42_gates.md",
+    "wireframe": "[Chuẩn bị] → <ĐỦ?> → [Phê duyệt] → <DUYỆT?> → [Triển khai]\n                ↓                       ↓\n            [Bổ sung]               [Điều chỉnh]",
+    "sample_labels": [
+      "Kiểm soát trước thực thi",
+      "Chuẩn bị",
+      "Đủ hồ sơ?",
+      "Phê duyệt",
+      "Được duyệt?",
+      "Triển khai",
+      "Chưa đạt: quay lại bổ sung"
+    ],
+    "home_group": "G05",
+    "parent_group": "G05",
+    "representation": "structural",
+    "intent": [
+      "giai-thich",
+      "quan-tri"
+    ],
+    "topology": "phan-nhanh",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L42.png",
+    "preview_svg": "02-references/gallery/layouts/L42.svg",
+    "spec_path": "02-references/layouts/archetypes/L42_gates.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L43",
+    "pattern": "boundary",
+    "name": "Ranh giới quyền và trách nhiệm",
+    "family": "Kiến trúc",
+    "purpose": "Một vùng làm việc được phép và một vùng tác động bên ngoài, nối qua phê duyệt.",
+    "check": "Không dùng vùng bao như bảo đảm an toàn; chỉ rõ đó là phạm vi được quy định.",
+    "file": "L43_boundary.md",
+    "wireframe": "[Trong phạm vi cho phép]\n[Đọc] [Soạn nháp] [Kiểm tra]\n          ↓ <PHÊ DUYỆT>\n[Ngoài phạm vi: gửi / công bố]",
+    "sample_labels": [
+      "Rõ phạm vi được phép",
+      "Trong không gian làm việc",
+      "Đọc",
+      "Soạn nháp",
+      "Kiểm tra",
+      "Cần phê duyệt",
+      "Gửi ra ngoài"
+    ],
+    "home_group": "G05",
+    "parent_group": "G05",
+    "representation": "structural",
+    "intent": [
+      "giai-thich",
+      "quan-tri"
+    ],
+    "topology": "bao-ham",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/layouts/L43.png",
+    "preview_svg": "02-references/gallery/layouts/L43.svg",
+    "spec_path": "02-references/layouts/archetypes/L43_boundary.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L44",
+    "pattern": "waterfall",
+    "name": "Cầu nối biến động chỉ số",
+    "family": "Dữ liệu",
+    "purpose": "Giải thích giá trị đầu kỳ, đóng góp tăng giảm và giá trị cuối kỳ.",
+    "check": "Tổng phải khớp; số ví dụ không được trình bày như dữ liệu thật.",
+    "file": "L44_waterfall.md",
+    "wireframe": "[Đầu] → [+Tăng] → [−Giảm] → [Cuối]\n         Tổng các biến động phải khớp",
+    "sample_labels": [
+      "Giải thích biến động",
+      "Đầu kỳ",
+      "Tăng",
+      "Giảm",
+      "Cuối kỳ",
+      "Minh họa, chưa gắn số liệu"
+    ],
+    "home_group": "G06",
+    "parent_group": "G06",
+    "representation": "structural",
+    "intent": [
+      "chung-minh",
+      "phan-tich"
+    ],
+    "topology": "bieu-do",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "quantitative-or-labeled-demo",
+    "deck_phase": [
+      "evidence"
+    ],
+    "preview_png": "02-references/gallery/layouts/L44.png",
+    "preview_svg": "02-references/gallery/layouts/L44.svg",
+    "spec_path": "02-references/layouts/archetypes/L44_waterfall.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L45",
+    "pattern": "drivers",
+    "name": "Cây yếu tố tác động chỉ tiêu",
+    "family": "Dữ liệu",
+    "purpose": "Tách một chỉ tiêu thành các yếu tố định nghĩa/tác động có công thức hoặc giả thuyết rõ.",
+    "check": "Phân biệt quan hệ tính toán với quan hệ nhân quả; không trộn hai loại.",
+    "file": "L45_drivers.md",
+    "wireframe": "             [Chỉ tiêu]\n            /          \\\n      [Yếu tố A]     [Yếu tố B]\n      /     \\         /      \\\n    [A1]   [A2]     [B1]    [B2]",
+    "sample_labels": [
+      "Phân rã một chỉ tiêu",
+      "Doanh thu",
+      "Số lượng",
+      "Đơn giá",
+      "Doanh thu = Số lượng × Đơn giá"
+    ],
+    "home_group": "G06",
+    "parent_group": "G06",
+    "representation": "structural",
+    "intent": [
+      "chung-minh",
+      "phan-tich"
+    ],
+    "topology": "phan-cap",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "quantitative-or-labeled-demo",
+    "deck_phase": [
+      "evidence"
+    ],
+    "preview_png": "02-references/gallery/layouts/L45.png",
+    "preview_svg": "02-references/gallery/layouts/L45.svg",
+    "spec_path": "02-references/layouts/archetypes/L45_drivers.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L46",
+    "pattern": "mistakes",
+    "name": "Ba lỗi và cách sửa",
+    "family": "Giảng dạy",
+    "purpose": "Ba cặp lỗi–cách sửa theo cùng hàng để hỗ trợ tự kiểm tra.",
+    "check": "Phê bình thao tác, không gán nhãn xấu cho người học.",
+    "file": "L46_mistakes.md",
+    "wireframe": "[Lỗi 1] → [Cách sửa 1]\n[Lỗi 2] → [Cách sửa 2]\n[Lỗi 3] → [Cách sửa 3]",
+    "sample_labels": [
+      "Sửa ba lỗi thường gặp",
+      "Quá nhiều chữ",
+      "Giữ ý chính",
+      "Thiếu lề",
+      "Tăng khoảng trống",
+      "Mũi tên rối",
+      "Giữ một hướng đọc"
+    ],
+    "home_group": "G08",
+    "parent_group": "G08",
+    "representation": "structural",
+    "intent": [
+      "thuc-hanh",
+      "ap-dung"
+    ],
+    "topology": "cap-doi",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "practice",
+      "close"
+    ],
+    "preview_png": "02-references/gallery/layouts/L46.png",
+    "preview_svg": "02-references/gallery/layouts/L46.svg",
+    "spec_path": "02-references/layouts/archetypes/L46_mistakes.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L47",
+    "pattern": "teach",
+    "name": "Kiến thức – minh họa – thực hành",
+    "family": "Giảng dạy",
+    "purpose": "Một nguyên lý được nối với ví dụ ngắn và yêu cầu tự làm.",
+    "check": "Không điền sẵn toàn bộ đáp án phần thực hành.",
+    "file": "L47_teach.md",
+    "wireframe": "[Hiểu nguyên lý] → [Xem ví dụ] → [Tự thực hiện]",
+    "sample_labels": [
+      "Từ hiểu đến làm",
+      "Kiến thức",
+      "Một nguyên lý",
+      "Minh họa",
+      "Một ví dụ",
+      "Thực hành",
+      "Một nhiệm vụ"
+    ],
+    "home_group": "G08",
+    "parent_group": "G08",
+    "representation": "structural",
+    "intent": [
+      "thuc-hanh",
+      "ap-dung"
+    ],
+    "topology": "tuyen-tinh",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "practice",
+      "close"
+    ],
+    "preview_png": "02-references/gallery/layouts/L47.png",
+    "preview_svg": "02-references/gallery/layouts/L47.svg",
+    "spec_path": "02-references/layouts/archetypes/L47_teach.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "L48",
+    "pattern": "actionplan",
+    "name": "Kế hoạch hành động một trang",
+    "family": "Đúc kết",
+    "purpose": "Ba cam kết hành động có người phụ trách, thời điểm và điều kiện hoàn thành.",
+    "check": "Không tự gán người hoặc hạn chót chưa được người dùng xác nhận.",
+    "file": "L48_actionplan.md",
+    "wireframe": "[Việc cần làm] | [Phụ trách] | [Mốc] | [Hoàn thành]\n[Việc 1]       | [Vai trò]  | [...] | [Bằng chứng]\n[Việc 2]       | [Vai trò]  | [...] | [Bằng chứng]",
+    "sample_labels": [
+      "Chốt bước tiếp theo",
+      "Việc cần làm",
+      "Phụ trách",
+      "Thời điểm",
+      "Hoàn thành",
+      "Chuẩn bị",
+      "Thử nghiệm",
+      "Đánh giá"
+    ],
+    "home_group": "G08",
+    "parent_group": "G08",
+    "representation": "structural",
+    "intent": [
+      "thuc-hanh",
+      "ap-dung"
+    ],
+    "topology": "bang-nhiem-vu",
+    "density": "D1",
+    "style": "white-flat",
+    "data_requirement": "none",
+    "deck_phase": [
+      "practice",
+      "close"
+    ],
+    "preview_png": "02-references/gallery/layouts/L48.png",
+    "preview_svg": "02-references/gallery/layouts/L48.svg",
+    "spec_path": "02-references/layouts/archetypes/L48_actionplan.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  }
+]

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/></marker></defs>
+<rect x="0" y="0" width="1600" height="900" rx="0" fill="#F8FAFC" stroke="none" stroke-width="2"/>
+<text x="90" y="86" font-family="Noto Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#0F766E" text-anchor="start">L29   /   THƯ VIỆN BỐ CỤC AIA</text>
+<text x="90" y="150" font-family="Noto Sans, Arial, sans-serif" font-size="43" font-weight="800" fill="#0A192F" text-anchor="start">Một biểu đồ – một thông điệp</text>
+<line x1="90" y1="184" x2="1510" y2="184" stroke="#CBD5E1" stroke-width="2"/>
+<rect x="110" y="235" width="960" height="465" rx="20" fill="white" stroke="#CBD5E1" stroke-width="2"/>
+<line x1="190" y1="640" x2="1000" y2="640" stroke="#475569" stroke-width="2"/>
+<line x1="190" y1="640" x2="190" y2="285" stroke="#475569" stroke-width="2"/>
+<path d="M220,580 L375,515 L530,550 L685,415 L840,440 L990,320" fill="none" stroke="#2563EB" stroke-width="7"/>
+<circle cx="220" cy="580" r="7" fill="#2563EB" stroke="#2563EB" stroke-width="3"/>
+<circle cx="375" cy="515" r="7" fill="#2563EB" stroke="#2563EB" stroke-width="3"/>
+<circle cx="530" cy="550" r="7" fill="#2563EB" stroke="#2563EB" stroke-width="3"/>
+<circle cx="685" cy="415" r="7" fill="#2563EB" stroke="#2563EB" stroke-width="3"/>
+<circle cx="840" cy="440" r="7" fill="#2563EB" stroke="#2563EB" stroke-width="3"/>
+<circle cx="990" cy="320" r="7" fill="#2563EB" stroke="#2563EB" stroke-width="3"/>
+<rect x="1120" y="335" width="380" height="250" rx="20" fill="white" stroke="#0F766E" stroke-width="2"/>
+<text x="1310.0" y="393" font-family="Noto Sans, Arial, sans-serif" font-size="27" font-weight="700" fill="#0F766E" text-anchor="middle">Điểm cần chú ý</text>
+<rect x="1146" y="429" width="311.59999999999997" height="9" rx="4" fill="#CBD5E1" stroke="none" stroke-width="2"/>
+<rect x="1146" y="453" width="272.24" height="9" rx="4" fill="#CBD5E1" stroke="none" stroke-width="2"/>
+<rect x="1146" y="477" width="232.88" height="9" rx="4" fill="#CBD5E1" stroke="none" stroke-width="2"/>
+<text x="130" y="745" font-family="Noto Sans, Arial, sans-serif" font-size="21" font-weight="500" fill="#475569" text-anchor="start">Dữ liệu minh họa — đơn vị và nguồn cần điền</text>
+<line x1="90" y1="802" x2="1510" y2="802" stroke="#CBD5E1" stroke-width="2"/>
+<text x="90" y="847" font-family="Noto Sans, Arial, sans-serif" font-size="21" font-weight="500" fill="#475569" text-anchor="start">Sơ đồ khung gốc • Không phải đối tượng SmartArt hoặc mẫu PPTX dựng sẵn</text>
+<text x="1510" y="847" font-family="Noto Sans, Arial, sans-serif" font-size="22" font-weight="700" fill="#2563EB" text-anchor="end">L29</text>
+</svg>

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Agent Slide Studio"
+  short_description: "Slide 16:9 tiếng Việt, infographic và sơ đồ kiến thức"
+  brand_color: "#2563EB"
+  default_prompt: "Dùng $agent-slide-studio để thiết kế slide 16:9 tiếng Việt."
+policy:
+  allow_implicit_invocation: true

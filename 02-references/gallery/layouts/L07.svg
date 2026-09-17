@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/></marker></defs>
+<rect x="0" y="0" width="1600" height="900" rx="0" fill="#F8FAFC" stroke="none" stroke-width="2"/>
+<text x="90" y="86" font-family="Noto Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#0F766E" text-anchor="start">L07   /   THƯ VIỆN BỐ CỤC AIA</text>
+<text x="90" y="150" font-family="Noto Sans, Arial, sans-serif" font-size="43" font-weight="800" fill="#0A192F" text-anchor="start">Kiến trúc phân tầng</text>
+<line x1="90" y1="184" x2="1510" y2="184" stroke="#CBD5E1" stroke-width="2"/>
+<rect x="220" y="240" width="1160" height="125" rx="20" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+<text x="800" y="289" font-family="Noto Sans, Arial, sans-serif" font-size="32" font-weight="700" fill="#2563EB" text-anchor="middle">Con người và quản trị</text>
+<rect x="270" y="312" width="335" height="28" rx="7" fill="white" stroke="#CBD5E1" stroke-width="2"/>
+<rect x="635" y="312" width="335" height="28" rx="7" fill="white" stroke="#CBD5E1" stroke-width="2"/>
+<rect x="1000" y="312" width="335" height="28" rx="7" fill="white" stroke="#CBD5E1" stroke-width="2"/>
+<line x1="800" y1="372" x2="800" y2="405" stroke="#2563EB" stroke-width="4" marker-end="url(#arrow)"/>
+<rect x="220" y="413" width="1160" height="125" rx="20" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+<text x="800" y="462" font-family="Noto Sans, Arial, sans-serif" font-size="32" font-weight="700" fill="#2563EB" text-anchor="middle">Nền tảng và năng lực</text>
+<rect x="270" y="485" width="335" height="28" rx="7" fill="white" stroke="#CBD5E1" stroke-width="2"/>
+<rect x="635" y="485" width="335" height="28" rx="7" fill="white" stroke="#CBD5E1" stroke-width="2"/>
+<rect x="1000" y="485" width="335" height="28" rx="7" fill="white" stroke="#CBD5E1" stroke-width="2"/>
+<line x1="800" y1="545" x2="800" y2="578" stroke="#2563EB" stroke-width="4" marker-end="url(#arrow)"/>
+<rect x="220" y="586" width="1160" height="125" rx="20" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+<text x="800" y="635" font-family="Noto Sans, Arial, sans-serif" font-size="32" font-weight="700" fill="#2563EB" text-anchor="middle">Dữ liệu và công cụ</text>
+<rect x="270" y="658" width="335" height="28" rx="7" fill="white" stroke="#CBD5E1" stroke-width="2"/>
+<rect x="635" y="658" width="335" height="28" rx="7" fill="white" stroke="#CBD5E1" stroke-width="2"/>
+<rect x="1000" y="658" width="335" height="28" rx="7" fill="white" stroke="#CBD5E1" stroke-width="2"/>
+<line x1="90" y1="802" x2="1510" y2="802" stroke="#CBD5E1" stroke-width="2"/>
+<text x="90" y="847" font-family="Noto Sans, Arial, sans-serif" font-size="21" font-weight="500" fill="#475569" text-anchor="start">Sơ đồ khung gốc • Không phải đối tượng SmartArt hoặc mẫu PPTX dựng sẵn</text>
+<text x="1510" y="847" font-family="Noto Sans, Arial, sans-serif" font-size="22" font-weight="700" fill="#2563EB" text-anchor="end">L07</text>
+</svg>

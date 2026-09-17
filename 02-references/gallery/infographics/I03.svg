@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs>
+  <linearGradient id="cardbg" x1="0" x2="1" y2="1"><stop stop-color="#FFFFFF"/><stop offset="1" stop-color="#F1F7FF"/></linearGradient>
+  <linearGradient id="hero" x1="0" x2="1" y2="1"><stop stop-color="#163E7A"/><stop offset="1" stop-color="#0A192F"/></linearGradient>
+  <linearGradient id="blue" x1="0" x2="1" y2="1"><stop stop-color="#60A5FA"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient>
+  <linearGradient id="teal" x1="0" x2="1" y2="1"><stop stop-color="#2DD4BF"/><stop offset="1" stop-color="#0F766E"/></linearGradient>
+  <linearGradient id="purple" x1="0" x2="1" y2="1"><stop stop-color="#C4B5FD"/><stop offset="1" stop-color="#6D28D9"/></linearGradient>
+  <linearGradient id="amber" x1="0" x2="1" y2="1"><stop stop-color="#FBBF24"/><stop offset="1" stop-color="#C2410C"/></linearGradient>
+  </defs>
+<rect x="0" y="0" width="1600" height="900" rx="0" fill="white" stroke="none" stroke-width="2"/>
+<text x="88" y="62.0" font-family="Noto Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#0F766E" text-anchor="start">I03   /   INFOGRAPHIC MINH HỌA</text>
+<text x="88" y="132.0" font-family="Noto Sans, Arial, sans-serif" font-size="46" font-weight="700" fill="#0A192F" text-anchor="start">Lộ trình ba chặng</text>
+<line x1="90" y1="166" x2="1510" y2="166" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>
+<rect x="150" y="357" width="408" height="370" rx="24" fill="#D9E3F1" opacity="0.45"/>
+<rect x="150" y="350" width="408" height="370" rx="24" fill="url(#cardbg)" stroke="#2563EB" stroke-width="2"/>
+<circle cx="186" cy="362" r="28" fill="#2563EB" stroke="white" stroke-width="4"/>
+<text x="186" y="372.0" font-family="Noto Sans, Arial, sans-serif" font-size="29" font-weight="700" fill="white" text-anchor="middle">1</text>
+<circle cx="354.0" cy="451.0" r="60.160000000000004" fill="#EFF6FF" stroke="none" stroke-width="2"/>
+<g transform="translate(307.0,404) scale(0.94)" fill="none" stroke="#2563EB" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M10 30V19H40L49 28H89V81H10Z" fill="#DCEBFF" stroke="#2563EB" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+<path d="M10 38H94L83 88H7Z" fill="url(#blue)" stroke="#2563EB" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+</g>
+<text x="354.0" y="543.0" font-family="Noto Sans, Arial, sans-serif" font-size="34" font-weight="700" fill="#2563EB" text-anchor="middle">Tập trung</text>
+<text x="354.0" y="606.0" font-family="Noto Sans, Arial, sans-serif" font-size="30" font-weight="400" fill="#0A192F" text-anchor="middle">Gom tri thức</text>
+<rect x="142" y="728" width="424" height="31" rx="9" fill="#2563EB" stroke="none" stroke-width="2"/>
+<line x1="566" y1="560" x2="589" y2="540" stroke="#2563EB" stroke-width="5" stroke-linecap="round"/>
+<polygon points="589,540 566.3618343350948,544.4456107936155 581.4539447783649,561.801537803376" fill="#2563EB" stroke="#2563EB" stroke-width="1" stroke-linejoin="round"/>
+<rect x="596" y="302" width="408" height="370" rx="24" fill="#D9E3F1" opacity="0.45"/>
+<rect x="596" y="295" width="408" height="370" rx="24" fill="url(#cardbg)" stroke="#0F766E" stroke-width="2"/>
+<circle cx="632" cy="307" r="28" fill="#0F766E" stroke="white" stroke-width="4"/>
+<text x="632" y="317.0" font-family="Noto Sans, Arial, sans-serif" font-size="29" font-weight="700" fill="white" text-anchor="middle">2</text>
+<circle cx="800.0" cy="396.0" r="60.160000000000004" fill="#EFF6FF" stroke="none" stroke-width="2"/>
+<g transform="translate(753.0,349) scale(0.94)" fill="none" stroke="#0F766E" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M49 25C36 13 17 15 8 19V84C24 79 40 83 49 91C58 83 76 79 92 84V19C78 13 62 16 49 25Z" fill="#EFF6FF" stroke="#0F766E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+<line x1="49" y1="25" x2="49" y2="88" stroke="#0F766E" stroke-width="4" stroke-linecap="round"/>
+<line x1="19" y1="37" x2="37" y2="37" stroke="#0F766E" stroke-width="3" stroke-linecap="round"/>
+<line x1="62" y1="37" x2="81" y2="37" stroke="#0F766E" stroke-width="3" stroke-linecap="round"/>
+<line x1="19" y1="50" x2="37" y2="50" stroke="#0F766E" stroke-width="3" stroke-linecap="round"/>
+<line x1="62" y1="50" x2="81" y2="50" stroke="#0F766E" stroke-width="3" stroke-linecap="round"/>
+<line x1="19" y1="63" x2="37" y2="63" stroke="#0F766E" stroke-width="3" stroke-linecap="round"/>
+<line x1="62" y1="63" x2="81" y2="63" stroke="#0F766E" stroke-width="3" stroke-linecap="round"/>
+</g>
+<text x="800.0" y="488.0" font-family="Noto Sans, Arial, sans-serif" font-size="34" font-weight="700" fill="#0F766E" text-anchor="middle">Chuẩn hóa</text>
+<text x="800.0" y="551.0" font-family="Noto Sans, Arial, sans-serif" font-size="30" font-weight="400" fill="#0A192F" text-anchor="middle">Thống nhất cách làm</text>
+<rect x="588" y="673" width="424" height="31" rx="9" fill="#0F766E" stroke="none" stroke-width="2"/>
+<line x1="1012" y1="505" x2="1035" y2="485" stroke="#0F766E" stroke-width="5" stroke-linecap="round"/>
+<polygon points="1035,485 1012.3618343350948,489.4456107936154 1027.453944778365,506.80153780337605" fill="#0F766E" stroke="#0F766E" stroke-width="1" stroke-linejoin="round"/>
+<rect x="1042" y="247" width="408" height="370" rx="24" fill="#D9E3F1" opacity="0.45"/>
+<rect x="1042" y="240" width="408" height="370" rx="24" fill="url(#cardbg)" stroke="#C2410C" stroke-width="2"/>
+<circle cx="1078" cy="252" r="28" fill="#C2410C" stroke="white" stroke-width="4"/>
+<text x="1078" y="262.0" font-family="Noto Sans, Arial, sans-serif" font-size="29" font-weight="700" fill="white" text-anchor="middle">3</text>
+<circle cx="1246.0" cy="341.0" r="60.160000000000004" fill="#EFF6FF" stroke="none" stroke-width="2"/>
+<g transform="translate(1199.0,294) scale(0.94)" fill="none" stroke="#C2410C" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M25 63C34 39 48 15 84 10C84 42 63 68 43 77Z" fill="#DBEAFE" stroke="#C2410C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+<circle cx="64" cy="32" r="10" fill="white" stroke="#C2410C" stroke-width="4"/>
+<path d="M27 51L11 53L7 79L31 68M52 73L49 91L26 96L35 72" fill="#EFF6FF" stroke="#C2410C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+<path d="M21 78L10 90M30 86L21 96" fill="none" stroke="#C2410C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+</g>
+<text x="1246.0" y="433.0" font-family="Noto Sans, Arial, sans-serif" font-size="34" font-weight="700" fill="#C2410C" text-anchor="middle">Nhân rộng</text>
+<text x="1246.0" y="496.0" font-family="Noto Sans, Arial, sans-serif" font-size="30" font-weight="400" fill="#0A192F" text-anchor="middle">Chia sẻ cho nhóm</text>
+<rect x="1034" y="618" width="424" height="31" rx="9" fill="#C2410C" stroke="none" stroke-width="2"/>
+<text x="800" y="223.0" font-family="Noto Sans, Arial, sans-serif" font-size="35" font-weight="700" fill="#0A192F" text-anchor="middle">Từ tri thức đến năng lực dùng chung</text>
+<line x1="90" y1="800" x2="1510" y2="800" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>
+<text x="90" y="848.0" font-family="Noto Sans, Arial, sans-serif" font-size="25" font-weight="400" fill="#475569" text-anchor="start">Hoàn thiện nền tảng trước khi mở rộng.</text>
+<text x="1510" y="848.0" font-family="Noto Sans, Arial, sans-serif" font-size="25" font-weight="700" fill="#2563EB" text-anchor="end">I03</text>
+</svg>

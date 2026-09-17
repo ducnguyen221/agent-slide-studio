@@ -1,0 +1,162 @@
+[
+  {
+    "id": "G01",
+    "name": "Mở đầu & định hướng",
+    "members": [
+      "L01",
+      "L02",
+      "L20",
+      "L30",
+      "L33",
+      "L37"
+    ],
+    "subtitle": "Mở chủ đề • Đặt bối cảnh • Dẫn đường",
+    "color": "#2563EB",
+    "preview": "02-references/gallery/groups/G01.png",
+    "parent": null
+  },
+  {
+    "id": "G02",
+    "name": "Khái niệm & khung tư duy",
+    "members": [
+      "L03",
+      "L10",
+      "L24",
+      "L25",
+      "L26",
+      "L38"
+    ],
+    "subtitle": "Giải thích bản chất • Tổ chức các ý",
+    "color": "#0F766E",
+    "preview": "02-references/gallery/groups/G02.png",
+    "parent": null
+  },
+  {
+    "id": "G03",
+    "name": "Quy trình & thời gian",
+    "members": [
+      "L05",
+      "L12",
+      "L17",
+      "L21",
+      "L22",
+      "L34"
+    ],
+    "subtitle": "Các bước • Vòng lặp • Mốc và bàn giao",
+    "color": "#0369A1",
+    "preview": "02-references/gallery/groups/G03.png",
+    "parent": null
+  },
+  {
+    "id": "G04",
+    "name": "So sánh & quyết định",
+    "members": [
+      "L04",
+      "L06",
+      "L16",
+      "L19",
+      "L31",
+      "L40"
+    ],
+    "subtitle": "Đối chiếu • Chọn phương án • Chuyển đổi",
+    "color": "#7C3AED",
+    "preview": "02-references/gallery/groups/G04.png",
+    "parent": null
+  },
+  {
+    "id": "G05",
+    "name": "Kiến trúc & điều hành",
+    "members": [
+      "L07",
+      "L11",
+      "L15",
+      "L27",
+      "L42",
+      "L43"
+    ],
+    "subtitle": "Tầng • Mô-đun • Quyền và điểm kiểm soát",
+    "color": "#0F766E",
+    "preview": "02-references/gallery/groups/G05.png",
+    "parent": null
+  },
+  {
+    "id": "G06",
+    "name": "Dữ liệu & bằng chứng",
+    "members": [
+      "L23",
+      "L28",
+      "L29",
+      "L35",
+      "L44",
+      "L45"
+    ],
+    "subtitle": "Chỉ số • Phân tích • Dẫn chứng",
+    "color": "#1D4ED8",
+    "preview": "02-references/gallery/groups/G06.png",
+    "parent": null
+  },
+  {
+    "id": "G07",
+    "name": "Giải thích & khám phá",
+    "members": [
+      "L08",
+      "L13",
+      "L14",
+      "L32",
+      "L36",
+      "L39"
+    ],
+    "subtitle": "Tình huống • Chú giải • Tìm nguyên nhân",
+    "color": "#B45309",
+    "preview": "02-references/gallery/groups/G07.png",
+    "parent": null
+  },
+  {
+    "id": "G08",
+    "name": "Thực hành & ứng dụng",
+    "members": [
+      "L09",
+      "L18",
+      "L41",
+      "L46",
+      "L47",
+      "L48"
+    ],
+    "subtitle": "Thử làm • Đối chiếu • Chốt hành động",
+    "color": "#15803D",
+    "preview": "02-references/gallery/groups/G08.png",
+    "parent": null
+  },
+  {
+    "id": "G09A",
+    "name": "Infographic · Quy trình & kiểm soát",
+    "members": [
+      "I01",
+      "I02",
+      "I03",
+      "I04",
+      "I05",
+      "I06"
+    ],
+    "subtitle": "Minh họa + biểu tượng + nội dung mẫu ngắn",
+    "color": "#2563EB",
+    "preview": "02-references/gallery/groups/G09A.png",
+    "parent": "G09"
+  },
+  {
+    "id": "G09B",
+    "name": "Infographic · Khung năng lực & kiến trúc",
+    "members": [
+      "I07",
+      "I08",
+      "I09",
+      "I10",
+      "I11",
+      "I12"
+    ],
+    "subtitle": "Minh họa + biểu tượng + nội dung mẫu ngắn",
+    "color": "#0F766E",
+    "preview": "02-references/gallery/groups/G09B.png",
+    "parent": "G09"
+  }
+]

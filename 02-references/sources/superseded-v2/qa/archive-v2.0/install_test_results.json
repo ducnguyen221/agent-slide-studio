@@ -1,0 +1,86 @@
+{
+  "status": "PASS",
+  "scope": "Temporary filesystem installation and static-validator fault injection; not host runtime",
+  "tests": [
+    {
+      "id": "I01",
+      "status": "PASS",
+      "detail": "Dry-run không tạo thư mục đích."
+    },
+    {
+      "id": "I02",
+      "status": "PASS",
+      "detail": "Cài all/project tạo hai đích, Codex + Antigravity không bị cài trùng."
+    },
+    {
+      "id": "I03",
+      "status": "PASS",
+      "detail": "Hướng dẫn kho đích được giữ nguyên."
+    },
+    {
+      "id": "I04",
+      "status": "PASS",
+      "detail": "Từ chối ghi đè khi chưa có --overwrite."
+    },
+    {
+      "id": "I05",
+      "status": "PASS",
+      "detail": "Nâng cấp tạo backup ngoài vùng skill discovery, bảo toàn bản cũ."
+    },
+    {
+      "id": "I06",
+      "status": "PASS",
+      "detail": "Cài sáu adapter Claude tùy chọn."
+    },
+    {
+      "id": "I07",
+      "status": "PASS",
+      "detail": "All/user cài vào ba đường dẫn riêng trong home giả lập."
+    },
+    {
+      "id": "I08",
+      "status": "PASS",
+      "detail": "Từ chối đích nằm trong nguồn để tránh tự sao chép vòng lặp."
+    },
+    {
+      "id": "I09",
+      "status": "PASS",
+      "detail": "Từ chối ghi qua symlink."
+    },
+    {
+      "id": "I10",
+      "status": "PASS",
+      "detail": "Từ chối profile agents Claude khi host=codex."
+    },
+    {
+      "id": "V01",
+      "status": "PASS",
+      "detail": "Validator phát hiện khóa YAML trùng."
+    },
+    {
+      "id": "V02",
+      "status": "PASS",
+      "detail": "Validator phát hiện link tương đối hỏng."
+    },
+    {
+      "id": "V03",
+      "status": "PASS",
+      "detail": "Validator phát hiện mã bố cục trùng."
+    },
+    {
+      "id": "V04",
+      "status": "PASS",
+      "detail": "Validator phát hiện UTF-8 BOM và thay đổi byte tài liệu gốc."
+    },
+    {
+      "id": "V05",
+      "status": "PASS",
+      "detail": "Validator phát hiện kích thước preview không đúng tỷ lệ."
+    },
+    {
+      "id": "V06",
+      "status": "PASS",
+      "detail": "Fixture trở lại PASS sau khi phục hồi đầy đủ các thay đổi thử."
+    }
+  ]
+}

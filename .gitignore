@@ -1,33 +1,24 @@
-# Python
+# Python and test caches
 __pycache__/
 *.py[cod]
-*.egg-info/
 .pytest_cache/
 .coverage
 htmlcov/
-build/
-dist/
-.venv/
 
-# Node and browser output
+# Local dependencies and generated output
+.venv/
 node_modules/
 playwright-report/
 test-results/
-
-# Local presentation workspaces and generated output
-.presentation/
 output/
-exports/
-builds/
-state/
-profiles/distilled_demo_profile/
+outputs/
+build/
+dist/
 
-# Internal planning and scratch artifacts
-docs/plans/
+# Task-local scratch and environment files
 .tmp/
-.superpowers/
-
-# Environment and local settings
+tmp/
+temp/
 .env
 .env.*
 !.env.example

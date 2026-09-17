@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "package_version": "2.1.0",
+  "controlled_by": "AIA project convention, not host frontmatter",
+  "facets": {
+    "home_group": "Một nhóm chính; G09A/B là hai nhánh của G09.",
+    "intent": "Nhiều mục tiêu: giải thích, so sánh, hướng dẫn, quyết định, chứng minh, thực hành.",
+    "topology": "Hình học thể hiện quan hệ thật, không quyết định theo màu.",
+    "representation": [
+      "structural",
+      "illustrated"
+    ],
+    "density": {
+      "D0": "Không chữ trên hình.",
+      "D1": "Gọn: 35–70 đơn vị cách trắng; mặc định.",
+      "D2": "Mở rộng: 71–100; chỉ chọn khi thật sự cần, cân nhắc tách trang."
+    },
+    "style": [
+      "white-flat",
+      "white-illustrated",
+      "navy-visual"
+    ],
+    "deck_phase": [
+      "open",
+      "explain",
+      "evidence",
+      "apply",
+      "practice",
+      "close"
+    ],
+    "imagegen_policy": {
+      "direct_text": "NATIVE_IMAGEGEN_DIRECT_TEXT là mặc định cho slide có chữ; prompt và generation theo workflow canonical.",
+      "no_text": "NATIVE_IMAGEGEN_NO_TEXT chỉ dùng khi brief yêu cầu hình không chữ.",
+      "renderer": "Chỉ native ImageGen của host; không dùng overlay, Python, SVG, HTML hoặc screenshot làm renderer fallback."
+    }
+  }
+}

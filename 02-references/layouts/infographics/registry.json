@@ -1,0 +1,610 @@
+[
+  {
+    "id": "I01",
+    "pattern": "cycle_gate",
+    "name": "Vòng lặp có kiểm duyệt",
+    "base_layouts": [
+      "L12",
+      "L19"
+    ],
+    "reference_ids": [
+      "R01",
+      "R06"
+    ],
+    "purpose": "Bốn bước quanh tâm phê duyệt; mũi tên một chiều tạo chu trình kín.",
+    "headings": [
+      "Lập kế hoạch",
+      "Thực hiện",
+      "Quan sát",
+      "Đúc kết"
+    ],
+    "descriptions": [
+      "Xác định mục tiêu",
+      "Làm trong phạm vi",
+      "Đọc kết quả",
+      "Rút bài học"
+    ],
+    "hero": "Con người kiểm duyệt",
+    "footer": "Rà soát trước hành động quan trọng.",
+    "file": "I01_cycle_gate.md",
+    "family": "Infographic minh họa",
+    "home_group": "G09A",
+    "parent_group": "G09",
+    "representation": "illustrated",
+    "intent": [
+      "huong-dan",
+      "quan-tri"
+    ],
+    "topology": "vong-lap",
+    "density": "D1",
+    "style": "white-illustrated",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/infographics/I01.png",
+    "preview_svg": "02-references/gallery/infographics/I01.svg",
+    "spec_path": "02-references/layouts/infographics/I01_cycle_gate.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "I02",
+    "pattern": "illustrated_steps",
+    "name": "Bốn bước có hình minh họa",
+    "base_layouts": [
+      "L05"
+    ],
+    "reference_ids": [
+      "R05"
+    ],
+    "purpose": "Bốn thẻ ngang có số, biểu tượng lớn, một câu hành động và đầu ra ngắn.",
+    "headings": [
+      "Sắp xếp",
+      "Đặt quy tắc",
+      "Đóng gói",
+      "Kiểm thử"
+    ],
+    "descriptions": [
+      "Gom dữ liệu nguồn",
+      "Giới hạn phạm vi",
+      "Viết hướng dẫn",
+      "Đối chiếu kết quả"
+    ],
+    "hero": "Từ yêu cầu đến cách làm rõ ràng",
+    "footer": "Mỗi bước có một đầu ra cụ thể.",
+    "file": "I02_illustrated_steps.md",
+    "family": "Infographic minh họa",
+    "home_group": "G09A",
+    "parent_group": "G09",
+    "representation": "illustrated",
+    "intent": [
+      "huong-dan",
+      "quan-tri"
+    ],
+    "topology": "tuyen-tinh",
+    "density": "D1",
+    "style": "white-illustrated",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/infographics/I02.png",
+    "preview_svg": "02-references/gallery/infographics/I02.svg",
+    "spec_path": "02-references/layouts/infographics/I02_illustrated_steps.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "I03",
+    "pattern": "three_stages",
+    "name": "Lộ trình ba chặng",
+    "base_layouts": [
+      "L02",
+      "L16"
+    ],
+    "reference_ids": [
+      "R07"
+    ],
+    "purpose": "Ba chặng minh họa với bệ nền tăng nhẹ và đường nối hướng tiến.",
+    "headings": [
+      "Tập trung",
+      "Chuẩn hóa",
+      "Nhân rộng"
+    ],
+    "descriptions": [
+      "Gom tri thức",
+      "Thống nhất cách làm",
+      "Chia sẻ cho nhóm"
+    ],
+    "hero": "Từ tri thức đến năng lực dùng chung",
+    "footer": "Hoàn thiện nền tảng trước khi mở rộng.",
+    "file": "I03_three_stages.md",
+    "family": "Infographic minh họa",
+    "home_group": "G09A",
+    "parent_group": "G09",
+    "representation": "illustrated",
+    "intent": [
+      "huong-dan",
+      "quan-tri"
+    ],
+    "topology": "bac-thang",
+    "density": "D1",
+    "style": "white-illustrated",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/infographics/I03.png",
+    "preview_svg": "02-references/gallery/infographics/I03.svg",
+    "spec_path": "02-references/layouts/infographics/I03_three_stages.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "I04",
+    "pattern": "approval_steps",
+    "name": "Năm bước với điểm duyệt",
+    "base_layouts": [
+      "L05",
+      "L42"
+    ],
+    "reference_ids": [
+      "R05"
+    ],
+    "purpose": "Năm bước ngắn, bước duyệt cam nổi bật; chữ ít, đường nối không đi tắt.",
+    "headings": [
+      "Tìm hiểu",
+      "Lập kế hoạch",
+      "Phê duyệt",
+      "Thực thi",
+      "Xác minh"
+    ],
+    "descriptions": [
+      "Đọc nguồn",
+      "Nêu thay đổi",
+      "Chốt phạm vi",
+      "Sửa đúng chỗ",
+      "Kiểm tra đầu ra"
+    ],
+    "hero": "Kiểm soát trước khi thay đổi",
+    "footer": "Chưa được duyệt: dừng và làm rõ.",
+    "file": "I04_approval_steps.md",
+    "family": "Infographic minh họa",
+    "home_group": "G09A",
+    "parent_group": "G09",
+    "representation": "illustrated",
+    "intent": [
+      "huong-dan",
+      "quan-tri"
+    ],
+    "topology": "tuyen-tinh",
+    "density": "D1",
+    "style": "white-illustrated",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/infographics/I04.png",
+    "preview_svg": "02-references/gallery/infographics/I04.svg",
+    "spec_path": "02-references/layouts/infographics/I04_approval_steps.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "I05",
+    "pattern": "document_flow",
+    "name": "Từ hồ sơ đến sản phẩm",
+    "base_layouts": [
+      "L17"
+    ],
+    "reference_ids": [
+      "R03",
+      "R05"
+    ],
+    "purpose": "Hồ sơ bên trái, bộ xử lý ở tâm, sản phẩm bên phải; có biểu tượng thực tế.",
+    "headings": [
+      "Dữ liệu gốc",
+      "Xử lý",
+      "Báo cáo"
+    ],
+    "descriptions": [
+      "Tài liệu đã chọn",
+      "Tổng hợp có căn cứ",
+      "Bản nháp để duyệt"
+    ],
+    "hero": "Chuyển dữ liệu thành sản phẩm công việc",
+    "footer": "Giữ đường dẫn tới tài liệu nguồn.",
+    "file": "I05_document_flow.md",
+    "family": "Infographic minh họa",
+    "home_group": "G09A",
+    "parent_group": "G09",
+    "representation": "illustrated",
+    "intent": [
+      "huong-dan",
+      "quan-tri"
+    ],
+    "topology": "dau-vao-dau-ra",
+    "density": "D1",
+    "style": "white-illustrated",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/infographics/I05.png",
+    "preview_svg": "02-references/gallery/infographics/I05.svg",
+    "spec_path": "02-references/layouts/infographics/I05_document_flow.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "I06",
+    "pattern": "handoff",
+    "name": "Phối hợp con người và AI",
+    "base_layouts": [
+      "L22"
+    ],
+    "reference_ids": [
+      "R01",
+      "R03"
+    ],
+    "purpose": "Hai làn ít bước với hình người và lõi AI, thể hiện giao việc và kiểm duyệt.",
+    "headings": [
+      "Giao mục tiêu",
+      "Soạn phương án",
+      "Phê duyệt",
+      "Hoàn thiện"
+    ],
+    "descriptions": [
+      "Nêu yêu cầu",
+      "Tạo bản nháp",
+      "Rà soát phạm vi",
+      "Ghi nhận kết quả"
+    ],
+    "hero": "Phân vai rõ trong từng chặng",
+    "footer": "AI hỗ trợ; con người chốt quyết định.",
+    "file": "I06_handoff.md",
+    "family": "Infographic minh họa",
+    "home_group": "G09A",
+    "parent_group": "G09",
+    "representation": "illustrated",
+    "intent": [
+      "huong-dan",
+      "quan-tri"
+    ],
+    "topology": "lan-trach-nhiem",
+    "density": "D1",
+    "style": "white-illustrated",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/infographics/I06.png",
+    "preview_svg": "02-references/gallery/infographics/I06.svg",
+    "spec_path": "02-references/layouts/infographics/I06_handoff.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "I07",
+    "pattern": "pillars",
+    "name": "Ngôi nhà năm trụ cột",
+    "base_layouts": [
+      "L07",
+      "L10"
+    ],
+    "reference_ids": [
+      "R04"
+    ],
+    "purpose": "Mái thông điệp, năm trụ độc lập có icon và nền chung; không giả quan hệ tuần tự.",
+    "headings": [
+      "Ngữ cảnh",
+      "Quy tắc",
+      "Quy trình",
+      "Công cụ",
+      "Kiểm tra"
+    ],
+    "descriptions": [
+      "Đúng nguồn",
+      "Rõ phạm vi",
+      "Rõ các bước",
+      "Đúng quyền",
+      "Có bằng chứng"
+    ],
+    "hero": "Khung vận hành được kiểm soát",
+    "footer": "Các trụ bổ trợ, không phải thứ tự thực hiện.",
+    "file": "I07_pillars.md",
+    "family": "Infographic minh họa",
+    "home_group": "G09B",
+    "parent_group": "G09",
+    "representation": "illustrated",
+    "intent": [
+      "giai-thich",
+      "tong-hop",
+      "dinh-vi"
+    ],
+    "topology": "tru-cot",
+    "density": "D1",
+    "style": "white-illustrated",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/infographics/I07.png",
+    "preview_svg": "02-references/gallery/infographics/I07.svg",
+    "spec_path": "02-references/layouts/infographics/I07_pillars.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "I08",
+    "pattern": "illustrated_layers",
+    "name": "Kiến trúc ba tầng minh họa",
+    "base_layouts": [
+      "L07"
+    ],
+    "reference_ids": [
+      "R03"
+    ],
+    "purpose": "Ba tầng ngang, hình người/AI ở tầng đầu, khối năng lực ở giữa và tài nguyên ở đáy.",
+    "headings": [
+      "Con người",
+      "Nền tảng",
+      "Tài nguyên"
+    ],
+    "descriptions": [
+      "Đặt mục tiêu và duyệt",
+      "Điều phối công việc",
+      "Tệp, công cụ, dữ liệu"
+    ],
+    "hero": "Từ mục tiêu đến nguồn lực thực thi",
+    "footer": "Mỗi tầng có trách nhiệm riêng.",
+    "file": "I08_illustrated_layers.md",
+    "family": "Infographic minh họa",
+    "home_group": "G09B",
+    "parent_group": "G09",
+    "representation": "illustrated",
+    "intent": [
+      "giai-thich",
+      "tong-hop",
+      "dinh-vi"
+    ],
+    "topology": "phan-tang",
+    "density": "D1",
+    "style": "white-illustrated",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/infographics/I08.png",
+    "preview_svg": "02-references/gallery/infographics/I08.svg",
+    "spec_path": "02-references/layouts/infographics/I08_illustrated_layers.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "I09",
+    "pattern": "maturity",
+    "name": "Thang năng lực bốn mức",
+    "base_layouts": [
+      "L16"
+    ],
+    "reference_ids": [
+      "R02"
+    ],
+    "purpose": "Bốn thẻ bậc thang có biểu tượng lớn, không gắn phần trăm tự chủ giả định.",
+    "headings": [
+      "Gợi ý",
+      "Hỗ trợ",
+      "Có kiểm soát",
+      "Phối hợp"
+    ],
+    "descriptions": [
+      "Người dùng thực hiện",
+      "AI soạn bản nháp",
+      "Thực thi trong phạm vi",
+      "Nhiều bước có kiểm duyệt"
+    ],
+    "hero": "Tăng năng lực, giữ cơ chế giám sát",
+    "footer": "Khung minh họa, không phải chuẩn phân cấp.",
+    "file": "I09_maturity.md",
+    "family": "Infographic minh họa",
+    "home_group": "G09B",
+    "parent_group": "G09",
+    "representation": "illustrated",
+    "intent": [
+      "giai-thich",
+      "tong-hop",
+      "dinh-vi"
+    ],
+    "topology": "bac-thang",
+    "density": "D1",
+    "style": "white-illustrated",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/infographics/I09.png",
+    "preview_svg": "02-references/gallery/infographics/I09.svg",
+    "spec_path": "02-references/layouts/infographics/I09_maturity.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "I10",
+    "pattern": "illustrated_hub",
+    "name": "Lõi và ba hệ thống hỗ trợ",
+    "base_layouts": [
+      "L11"
+    ],
+    "reference_ids": [
+      "R03"
+    ],
+    "purpose": "Lõi hình minh họa ở tâm, ba khối lập kế hoạch, tri thức, công cụ nối có nhãn.",
+    "headings": [
+      "Lập kế hoạch",
+      "Tri thức",
+      "Công cụ"
+    ],
+    "descriptions": [
+      "Chia nhiệm vụ",
+      "Tra cứu nguồn",
+      "Thực hiện thao tác"
+    ],
+    "hero": "Lõi AI",
+    "footer": "Trao đổi theo nhiệm vụ và quyền đã cấp.",
+    "file": "I10_illustrated_hub.md",
+    "family": "Infographic minh họa",
+    "home_group": "G09B",
+    "parent_group": "G09",
+    "representation": "illustrated",
+    "intent": [
+      "giai-thich",
+      "tong-hop",
+      "dinh-vi"
+    ],
+    "topology": "tam-ve-tinh",
+    "density": "D1",
+    "style": "white-illustrated",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/infographics/I10.png",
+    "preview_svg": "02-references/gallery/infographics/I10.svg",
+    "spec_path": "02-references/layouts/infographics/I10_illustrated_hub.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "I11",
+    "pattern": "before_after",
+    "name": "Hai cách làm trước và sau",
+    "base_layouts": [
+      "L31",
+      "L06"
+    ],
+    "reference_ids": [
+      "R07"
+    ],
+    "purpose": "Hai cảnh minh họa trước–sau cân đối, giữa là mũi tên chuyển đổi có điều kiện.",
+    "headings": [
+      "Rời rạc",
+      "Có cấu trúc"
+    ],
+    "descriptions": [
+      "Trao đổi từng lần",
+      "Nguồn và cách làm dùng chung"
+    ],
+    "hero": "Từ xử lý riêng lẻ đến quy trình dùng lại",
+    "footer": "Chuyển đổi bắt đầu từ việc chuẩn hóa.",
+    "file": "I11_before_after.md",
+    "family": "Infographic minh họa",
+    "home_group": "G09B",
+    "parent_group": "G09",
+    "representation": "illustrated",
+    "intent": [
+      "giai-thich",
+      "tong-hop",
+      "dinh-vi"
+    ],
+    "topology": "truoc-sau",
+    "density": "D1",
+    "style": "white-illustrated",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/infographics/I11.png",
+    "preview_svg": "02-references/gallery/infographics/I11.svg",
+    "spec_path": "02-references/layouts/infographics/I11_before_after.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  },
+  {
+    "id": "I12",
+    "pattern": "four_cards",
+    "name": "Bốn năng lực có biểu tượng",
+    "base_layouts": [
+      "L10",
+      "L03"
+    ],
+    "reference_ids": [
+      "R04",
+      "R05"
+    ],
+    "purpose": "Lưới 2×2 thẻ có icon lớn, nhãn và một câu ngắn; không nối mũi tên giữa thẻ.",
+    "headings": [
+      "Đọc tài liệu",
+      "Lập kế hoạch",
+      "Thực hiện",
+      "Kiểm chứng"
+    ],
+    "descriptions": [
+      "Tìm đúng nguồn",
+      "Chia việc rõ ràng",
+      "Dùng công cụ phù hợp",
+      "So khớp tiêu chí"
+    ],
+    "hero": "Bộ năng lực hỗ trợ công việc",
+    "footer": "Tùy nhiệm vụ, chọn năng lực phù hợp.",
+    "file": "I12_four_cards.md",
+    "family": "Infographic minh họa",
+    "home_group": "G09B",
+    "parent_group": "G09",
+    "representation": "illustrated",
+    "intent": [
+      "giai-thich",
+      "tong-hop",
+      "dinh-vi"
+    ],
+    "topology": "luoi-mo-dun",
+    "density": "D1",
+    "style": "white-illustrated",
+    "data_requirement": "none",
+    "deck_phase": [
+      "explain",
+      "apply"
+    ],
+    "preview_png": "02-references/gallery/infographics/I12.png",
+    "preview_svg": "02-references/gallery/infographics/I12.svg",
+    "spec_path": "02-references/layouts/infographics/I12_four_cards.md",
+    "max_main_units": 5,
+    "imagegen_policy": [
+      "NATIVE_IMAGEGEN_DIRECT_TEXT"
+    ]
+  }
+]

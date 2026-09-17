@@ -1,0 +1,39 @@
+{
+  "tests": [
+    {
+      "name": "DOM có mười bảng nhóm",
+      "status": "PASS"
+    },
+    {
+      "name": "Nhóm infographic có hai bảng",
+      "status": "PASS"
+    },
+    {
+      "name": "Nhóm infographic có mười hai mẫu",
+      "status": "PASS"
+    },
+    {
+      "name": "Kết hợp G09 và vòng lặp ra I01",
+      "status": "PASS"
+    },
+    {
+      "name": "Tìm tiếng Việt không dấu",
+      "status": "PASS"
+    },
+    {
+      "name": "Lọc dữ liệu và bằng chứng",
+      "status": "PASS"
+    },
+    {
+      "name": "Loại mẫu minh họa",
+      "status": "PASS"
+    },
+    {
+      "name": "Không có lỗi JavaScript",
+      "status": "PASS"
+    }
+  ],
+  "status": "PASS",
+  "errors": [],
+  "scope": "JavaScript/DOM filtering tested with page.set_content; file:// navigation blocked by runtime policy. Not a full user-browser offline-image test."
+}

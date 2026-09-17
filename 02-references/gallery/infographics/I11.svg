@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs>
+  <linearGradient id="cardbg" x1="0" x2="1" y2="1"><stop stop-color="#FFFFFF"/><stop offset="1" stop-color="#F1F7FF"/></linearGradient>
+  <linearGradient id="hero" x1="0" x2="1" y2="1"><stop stop-color="#163E7A"/><stop offset="1" stop-color="#0A192F"/></linearGradient>
+  <linearGradient id="blue" x1="0" x2="1" y2="1"><stop stop-color="#60A5FA"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient>
+  <linearGradient id="teal" x1="0" x2="1" y2="1"><stop stop-color="#2DD4BF"/><stop offset="1" stop-color="#0F766E"/></linearGradient>
+  <linearGradient id="purple" x1="0" x2="1" y2="1"><stop stop-color="#C4B5FD"/><stop offset="1" stop-color="#6D28D9"/></linearGradient>
+  <linearGradient id="amber" x1="0" x2="1" y2="1"><stop stop-color="#FBBF24"/><stop offset="1" stop-color="#C2410C"/></linearGradient>
+  </defs>
+<rect x="0" y="0" width="1600" height="900" rx="0" fill="white" stroke="none" stroke-width="2"/>
+<text x="88" y="62.0" font-family="Noto Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#0F766E" text-anchor="start">I11   /   INFOGRAPHIC MINH HỌA</text>
+<text x="88" y="132.0" font-family="Noto Sans, Arial, sans-serif" font-size="46" font-weight="700" fill="#0A192F" text-anchor="start">Hai cách làm trước và sau</text>
+<line x1="90" y1="166" x2="1510" y2="166" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>
+<text x="800" y="227.0" font-family="Noto Sans, Arial, sans-serif" font-size="34" font-weight="700" fill="#0A192F" text-anchor="middle">Từ xử lý riêng lẻ đến quy trình dùng lại</text>
+<rect x="130" y="303" width="545" height="441" rx="26" fill="#D9E3F1" opacity="0.45"/>
+<rect x="130" y="296" width="545" height="441" rx="26" fill="url(#cardbg)" stroke="#475569" stroke-width="2"/>
+<text x="402" y="358.0" font-family="Noto Sans, Arial, sans-serif" font-size="39" font-weight="700" fill="#475569" text-anchor="middle">Rời rạc</text>
+<text x="402" y="661.0" font-family="Noto Sans, Arial, sans-serif" font-size="31" font-weight="400" fill="#0A192F" text-anchor="middle">Trao đổi từng lần</text>
+<rect x="922" y="303" width="545" height="441" rx="26" fill="#D9E3F1" opacity="0.45"/>
+<rect x="922" y="296" width="545" height="441" rx="26" fill="url(#cardbg)" stroke="#0F766E" stroke-width="2"/>
+<text x="1194" y="358.0" font-family="Noto Sans, Arial, sans-serif" font-size="39" font-weight="700" fill="#0F766E" text-anchor="middle">Có cấu trúc</text>
+<text x="1194" y="661.0" font-family="Noto Sans, Arial, sans-serif" font-size="31" font-weight="400" fill="#0A192F" text-anchor="middle">Nguồn và cách làm dùng</text>
+<text x="1194" y="701.92" font-family="Noto Sans, Arial, sans-serif" font-size="31" font-weight="400" fill="#0A192F" text-anchor="middle">chung</text>
+<g transform="translate(215,422) scale(0.73)" fill="none" stroke="#475569" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M22 8H65L84 29V93H22Z" fill="#EFF6FF" stroke="#475569" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+<path d="M65 8V29H84" fill="none" stroke="#475569" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+<line x1="34" y1="45" x2="69" y2="45" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+<line x1="34" y1="60" x2="72" y2="60" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+<line x1="34" y1="75" x2="61" y2="75" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+</g>
+<g transform="translate(413,456) scale(0.73)" fill="none" stroke="#475569" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M22 8H65L84 29V93H22Z" fill="#EFF6FF" stroke="#475569" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+<path d="M65 8V29H84" fill="none" stroke="#475569" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+<line x1="34" y1="45" x2="69" y2="45" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+<line x1="34" y1="60" x2="72" y2="60" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+<line x1="34" y1="75" x2="61" y2="75" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+</g>
+<g transform="translate(322,531) scale(0.73)" fill="none" stroke="#475569" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M22 8H65L84 29V93H22Z" fill="#EFF6FF" stroke="#475569" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+<path d="M65 8V29H84" fill="none" stroke="#475569" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+<line x1="34" y1="45" x2="69" y2="45" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+<line x1="34" y1="60" x2="72" y2="60" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+<line x1="34" y1="75" x2="61" y2="75" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+</g>
+<circle cx="1089.5" cy="505.5" r="73.60000000000001" fill="#EFF6FF" stroke="none" stroke-width="2"/>
+<g transform="translate(1032,448) scale(1.15)" fill="none" stroke="#2563EB" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M10 30V19H40L49 28H89V81H10Z" fill="#DCEBFF" stroke="#2563EB" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+<path d="M10 38H94L83 88H7Z" fill="url(#blue)" stroke="#2563EB" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+</g>
+<circle cx="1297.5" cy="505.5" r="73.60000000000001" fill="#EFF6FF" stroke="none" stroke-width="2"/>
+<g transform="translate(1240,448) scale(1.15)" fill="none" stroke="#0F766E" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M50 7L87 24V50C87 69 72 84 50 96C28 84 13 69 13 50V24Z" fill="url(#teal)" stroke="#0F766E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+<path d="M29 50L44 65L72 35" fill="none" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+</g>
+<line x1="703" y1="510" x2="893" y2="510" stroke="#2563EB" stroke-width="10" stroke-linecap="round"/>
+<polygon points="893,510 868.0,496.0 868.0,524.0" fill="#2563EB" stroke="#2563EB" stroke-width="1" stroke-linejoin="round"/>
+<text x="798" y="458.0" font-family="Noto Sans, Arial, sans-serif" font-size="31" font-weight="700" fill="#2563EB" text-anchor="middle">Chuẩn hóa</text>
+<line x1="90" y1="800" x2="1510" y2="800" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>
+<text x="90" y="848.0" font-family="Noto Sans, Arial, sans-serif" font-size="25" font-weight="400" fill="#475569" text-anchor="start">Chuyển đổi bắt đầu từ việc chuẩn hóa.</text>
+<text x="1510" y="848.0" font-family="Noto Sans, Arial, sans-serif" font-size="25" font-weight="700" fill="#2563EB" text-anchor="end">I11</text>
+</svg>

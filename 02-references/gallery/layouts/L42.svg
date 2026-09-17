@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs>
+  <linearGradient id="cardbg" x1="0" x2="1" y2="1"><stop stop-color="#FFFFFF"/><stop offset="1" stop-color="#F1F7FF"/></linearGradient>
+  <linearGradient id="hero" x1="0" x2="1" y2="1"><stop stop-color="#163E7A"/><stop offset="1" stop-color="#0A192F"/></linearGradient>
+  <linearGradient id="blue" x1="0" x2="1" y2="1"><stop stop-color="#60A5FA"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient>
+  <linearGradient id="teal" x1="0" x2="1" y2="1"><stop stop-color="#2DD4BF"/><stop offset="1" stop-color="#0F766E"/></linearGradient>
+  <linearGradient id="purple" x1="0" x2="1" y2="1"><stop stop-color="#C4B5FD"/><stop offset="1" stop-color="#6D28D9"/></linearGradient>
+  <linearGradient id="amber" x1="0" x2="1" y2="1"><stop stop-color="#FBBF24"/><stop offset="1" stop-color="#C2410C"/></linearGradient>
+  </defs>
+<rect x="0" y="0" width="1600" height="900" rx="0" fill="white" stroke="none" stroke-width="2"/>
+<text x="88" y="62.0" font-family="Noto Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#0F766E" text-anchor="start">L42   /   BỐ CỤC CẤU TRÚC</text>
+<text x="88" y="132.0" font-family="Noto Sans, Arial, sans-serif" font-size="46" font-weight="700" fill="#0A192F" text-anchor="start">Cổng kiểm soát theo giai đoạn</text>
+<line x1="90" y1="166" x2="1510" y2="166" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>
+<rect x="100" y="359" width="301" height="196" rx="18" fill="#F8FAFC" stroke="#2563EB" stroke-width="2"/>
+<text x="250.5" y="467.0" font-family="Noto Sans, Arial, sans-serif" font-size="30" font-weight="700" fill="#2563EB" text-anchor="middle">Chuẩn bị</text>
+<rect x="651" y="359" width="301" height="196" rx="18" fill="#F8FAFC" stroke="#2563EB" stroke-width="2"/>
+<text x="801.5" y="467.0" font-family="Noto Sans, Arial, sans-serif" font-size="30" font-weight="700" fill="#2563EB" text-anchor="middle">Phê duyệt</text>
+<rect x="1202" y="359" width="301" height="196" rx="18" fill="#F8FAFC" stroke="#2563EB" stroke-width="2"/>
+<text x="1352.5" y="467.0" font-family="Noto Sans, Arial, sans-serif" font-size="30" font-weight="700" fill="#2563EB" text-anchor="middle">Triển khai</text>
+<polygon points="512,392 581,460 512,528 443,460" fill="#FFF7ED" stroke="#C2410C" stroke-width="3" stroke-linejoin="round"/>
+<text x="512" y="470.0" font-family="Noto Sans, Arial, sans-serif" font-size="28" font-weight="700" fill="#C2410C" text-anchor="middle">Đủ?</text>
+<line x1="401" y1="460" x2="437" y2="460" stroke="#2563EB" stroke-width="4" stroke-linecap="round"/>
+<polygon points="437,460 418.0,449.0 418.0,471.0" fill="#2563EB" stroke="#2563EB" stroke-width="1" stroke-linejoin="round"/>
+<line x1="585" y1="460" x2="640" y2="460" stroke="#2563EB" stroke-width="4" stroke-linecap="round"/>
+<polygon points="640,460 621.0,449.0 621.0,471.0" fill="#2563EB" stroke="#2563EB" stroke-width="1" stroke-linejoin="round"/>
+<line x1="512" y1="534" x2="512" y2="630" stroke="#C2410C" stroke-width="3" stroke-linecap="round"/>
+<polygon points="512,630 522.5,612.0 501.5,612.0" fill="#C2410C" stroke="#C2410C" stroke-width="1" stroke-linejoin="round"/>
+<text x="512" y="677.0" font-family="Noto Sans, Arial, sans-serif" font-size="28" font-weight="700" fill="#C2410C" text-anchor="middle">Bổ sung</text>
+<polygon points="1063,392 1132,460 1063,528 994,460" fill="#FFF7ED" stroke="#C2410C" stroke-width="3" stroke-linejoin="round"/>
+<text x="1063" y="470.0" font-family="Noto Sans, Arial, sans-serif" font-size="28" font-weight="700" fill="#C2410C" text-anchor="middle">Duyệt?</text>
+<line x1="952" y1="460" x2="988" y2="460" stroke="#2563EB" stroke-width="4" stroke-linecap="round"/>
+<polygon points="988,460 969.0,449.0 969.0,471.0" fill="#2563EB" stroke="#2563EB" stroke-width="1" stroke-linejoin="round"/>
+<line x1="1136" y1="460" x2="1191" y2="460" stroke="#2563EB" stroke-width="4" stroke-linecap="round"/>
+<polygon points="1191,460 1172.0,449.0 1172.0,471.0" fill="#2563EB" stroke="#2563EB" stroke-width="1" stroke-linejoin="round"/>
+<line x1="1063" y1="534" x2="1063" y2="630" stroke="#C2410C" stroke-width="3" stroke-linecap="round"/>
+<polygon points="1063,630 1073.5,612.0 1052.5,612.0" fill="#C2410C" stroke="#C2410C" stroke-width="1" stroke-linejoin="round"/>
+<text x="1063" y="677.0" font-family="Noto Sans, Arial, sans-serif" font-size="28" font-weight="700" fill="#C2410C" text-anchor="middle">Bổ sung</text>
+<text x="800" y="257.0" font-family="Noto Sans, Arial, sans-serif" font-size="37" font-weight="700" fill="#0A192F" text-anchor="middle">Điểm dừng có điều kiện</text>
+<line x1="90" y1="800" x2="1510" y2="800" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>
+<text x="90" y="848.0" font-family="Noto Sans, Arial, sans-serif" font-size="25" font-weight="400" fill="#475569" text-anchor="start">Mẫu cấu trúc • Thay bằng nội dung đã duyệt</text>
+<text x="1510" y="848.0" font-family="Noto Sans, Arial, sans-serif" font-size="25" font-weight="700" fill="#2563EB" text-anchor="end">L42</text>
+</svg>

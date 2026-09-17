@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/></marker></defs>
+<rect x="0" y="0" width="1600" height="900" rx="0" fill="#F8FAFC" stroke="none" stroke-width="2"/>
+<text x="90" y="86" font-family="Noto Sans, Arial, sans-serif" font-size="21" font-weight="700" fill="#0F766E" text-anchor="start">L25   /   THƯ VIỆN BỐ CỤC AIA</text>
+<text x="90" y="150" font-family="Noto Sans, Arial, sans-serif" font-size="43" font-weight="800" fill="#0A192F" text-anchor="start">Các vòng phạm vi</text>
+<line x1="90" y1="184" x2="1510" y2="184" stroke="#CBD5E1" stroke-width="2"/>
+<circle cx="760" cy="478" r="245" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+<circle cx="760" cy="478" r="167" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<circle cx="760" cy="478" r="83" fill="#BFDBFE" stroke="#2563EB" stroke-width="2"/>
+<text x="760" y="490" font-family="Noto Sans, Arial, sans-serif" font-size="31" font-weight="700" fill="#2563EB" text-anchor="middle">Lõi</text>
+<text x="760" y="352" font-family="Noto Sans, Arial, sans-serif" font-size="26" font-weight="500" fill="#2563EB" text-anchor="middle">Lớp gần</text>
+<text x="760" y="268" font-family="Noto Sans, Arial, sans-serif" font-size="25" font-weight="500" fill="#2563EB" text-anchor="middle">Phạm vi ngoài</text>
+<line x1="1010" y1="475" x2="1170" y2="475" stroke="#0F766E" stroke-width="4"/>
+<text x="1190" y="484" font-family="Noto Sans, Arial, sans-serif" font-size="28" font-weight="500" fill="#0F766E" text-anchor="start">Chú giải</text>
+<line x1="90" y1="802" x2="1510" y2="802" stroke="#CBD5E1" stroke-width="2"/>
+<text x="90" y="847" font-family="Noto Sans, Arial, sans-serif" font-size="21" font-weight="500" fill="#475569" text-anchor="start">Sơ đồ khung gốc • Không phải đối tượng SmartArt hoặc mẫu PPTX dựng sẵn</text>
+<text x="1510" y="847" font-family="Noto Sans, Arial, sans-serif" font-size="22" font-weight="700" fill="#2563EB" text-anchor="end">L25</text>
+</svg>
