@@ -7,6 +7,10 @@ status: active
 
 # Nhật ký thay đổi
 
+## 2.2.1 — 2026-09-18
+
+- Thêm gói `05-chatgpt-project/` gồm instructions định tuyến, ba tài liệu hợp nhất, chỉ mục ảnh và 23 PNG tham chiếu để upload trực tiếp vào ChatGPT Project.
+
 ## 2.2.0 — 2026-09-18
 
 - Đổi tên skill và package thành `agent-slide-studio`.

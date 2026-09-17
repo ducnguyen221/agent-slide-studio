@@ -28,6 +28,7 @@ SKILL.md                    entrypoint/router duy nhất
 02-references/INDEX.md      chỉ mục L01-L48, I01-I12, preview và ảnh mẫu
 03-workflow/                bốn bước từ đọc nguồn đến QA/handoff
 04-templates/               deck plan, slide prompt, review/handoff
+05-chatgpt-project/         gói Markdown và ảnh để upload vào ChatGPT Project
 plugin/                     tích hợp Codex, Claude và Antigravity
 scripts/                    công cụ hỗ trợ tùy chọn
 ```
