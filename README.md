@@ -46,3 +46,7 @@ Không cần Python để đọc skill hoặc tạo ảnh qua host. Các script 
 ## Giới hạn trung thực
 
 Ảnh ImageGen là raster. Nó không chứng minh font family, point size hoặc editability thật. Một slide chỉ được đánh dấu đạt khi ảnh đúng revision đã được mở đầy đủ và đối chiếu với content lock, topology, safe margins và style lock.
+
+## 🤝 ACD Ecosystem Integration
+
+Khai báo vai của repo trong hệ thống nhiều repo ACD (Role, Upstream, Downstream, Bundles, Handoff) tại `ECOSYSTEM.md` ở gốc repo (tệp quản trị của repo, không thuộc gói cài).
