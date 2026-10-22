@@ -55,3 +55,14 @@ python scripts/test_package.py
 `test_package.py` tự tạo project/home tạm, chạy dry-run và apply, xác minh installed package rồi xóa vùng tạm. Không cần và không được thử apply vào project/home thật chỉ để test.
 
 Sau khi cài thật theo yêu cầu: Codex chọn trong `/skills` hoặc gọi `$agent-slide-studio` khi giao diện hỗ trợ; Claude Code thử `/agent-slide-studio`; Antigravity yêu cầu đọc skill `agent-slide-studio`. Những bước đó là runtime check riêng và không được suy ra từ static validator.
+
+## 6. Cài riêng như plugin Claude Code
+
+Thư mục `.claude-plugin/` khai báo gói là một plugin độc lập (`plugin.json` + `marketplace.json`, `source` là `./`, `skills` trỏ vào gốc nơi có `SKILL.md`). Chỉ áp cho Claude Code; Codex và Antigravity vẫn cài theo mục 1-2.
+
+```bash
+claude plugin marketplace add <đường-dẫn-tới-checkout-này>
+claude plugin install agent-slide-studio@agent-slide-studio
+```
+
+Claude Code sao chép cả cây vào cache của plugin (khoảng 76 MB), không chỉ phần trong allowlist ở mục 3. Cài một phần skill chưa hỗ trợ trên Claude: chọn nguyên plugin. Gỡ bằng `claude plugin uninstall agent-slide-studio@agent-slide-studio` rồi `claude plugin marketplace remove agent-slide-studio`. Số phiên bản trong `.claude-plugin/*.json` phải khớp `PACKAGE_VERSION` và tag.

@@ -13,7 +13,7 @@ from pathlib import Path
 
 
 PACKAGE_NAME = "agent-slide-studio"
-PACKAGE_VERSION = "2.1.0"
+PACKAGE_VERSION = "2.2.1"
 INTEGRITY_FILES = ("manifest.json",)
 
 # This allowlist is the package contract. Repository governance, plans, v1,

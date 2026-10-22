@@ -1,0 +1,20 @@
+{
+  "name": "agent-slide-studio",
+  "version": "2.2.1",
+  "description": "Design and verify Vietnamese 16:9 slide decks with layouts L01-L48, infographics I01-I12 and the host's native ImageGen. Works with Claude Code, Codex and Antigravity.",
+  "author": {
+    "name": "Nguyễn Quang Đức",
+    "email": "ducnguyen.ams@gmail.com",
+    "url": "https://ducnguyen.vn"
+  },
+  "homepage": "https://github.com/ducnguyen221/agent-slide-studio",
+  "repository": "https://github.com/ducnguyen221/agent-slide-studio",
+  "keywords": [
+    "slides",
+    "presentation",
+    "imagegen",
+    "infographic",
+    "vietnamese"
+  ],
+  "skills": "./"
+}
