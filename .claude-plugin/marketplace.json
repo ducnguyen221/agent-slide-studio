@@ -10,7 +10,7 @@
     {
       "name": "agent-slide-studio",
       "description": "Design and verify Vietnamese 16:9 slide decks with layouts L01-L48, infographics I01-I12 and native ImageGen.",
-      "version": "2.2.1",
+      "version": "2.2.2",
       "source": "./",
       "author": {
         "name": "Nguyễn Quang Đức",

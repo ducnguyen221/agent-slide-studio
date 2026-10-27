@@ -7,6 +7,10 @@ status: active
 
 # Nhật ký thay đổi
 
+## 2.2.2 — 2026-10-27
+
+- Thêm tiêu chí QA không phụ thuộc renderer vào `03-workflow/04-review-and-handoff.md` (bước 8–10 và khối dấu hiệu dừng khi soát ảnh), gồm cả cách xử lý slide trống có chủ ý và điều kiện dùng subagent (đợt P5 SPR-42).
+
 ## 2.2.1 — 2026-09-18
 
 - Thêm gói `05-chatgpt-project/` gồm instructions định tuyến, ba tài liệu hợp nhất, chỉ mục ảnh và 23 PNG tham chiếu để upload trực tiếp vào ChatGPT Project.
