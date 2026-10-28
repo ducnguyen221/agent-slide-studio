@@ -1,0 +1,14 @@
+# manifest.json hashes the committed bytes (LF). Keep every checkout LF so the
+# installer and OpcOS see the same payload regardless of core.autocrlf.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.pptx binary
+*.docx binary
+*.xlsx binary
+*.zip binary

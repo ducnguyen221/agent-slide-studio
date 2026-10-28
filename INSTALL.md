@@ -32,6 +32,15 @@ python scripts/install.py --host all --scope user --apply
 
 Ba đích user là `~/.agents/skills`, `~/.claude/skills` và `~/.gemini/config/skills`. Không dùng `--target` với `scope=user`; `--home` chỉ đặt home thay thế cho kiểm thử. Installer không sửa governance hay cấu hình ở home.
 
+### Máy đã cài OpcOS: cài qua plugin
+
+Trên máy có OpcOS, **không** chạy installer user-scope cho Claude hay Codex. OpcOS cài repo này như plugin `agent-slide-studio@agent-slide-studio` bằng `system/bootstrap/sync-skills.ps1`:
+
+- **Claude và Codex:** qua plugin cache. Nếu còn bản installer trong `~/.claude/skills` hoặc `~/.agents/skills`, mỗi harness sẽ thấy skill hai lần (`verify-parity` báo `DOUBLE-LISTING`).
+- **Antigravity:** plugin native dựng từ chính explicit payload trong `manifest.json`. Gói installer ở `~/.gemini/config/skills` chỉ còn phục vụ các gốc skill của Antigravity, và `sync-skills` tự làm mới nó bằng `--host antigravity`.
+
+Repo giữ dòng LF qua `.gitattributes`, vì `manifest.json` băm byte đã commit. Checkout CRLF (ví dụ do `core.autocrlf=true`) làm installer báo `Hash payload sai`.
+
 ## 3. Explicit payload và xác minh destination
 
 Installer dùng allowlist trong `scripts/build_manifest.py`, không copy cả repository. Gói cài loại `v1/`, `.git/`, `.superpowers/`, `docs/plans/`, nguồn superseded, cache/output/temp và governance repository. Python renderer nguồn cũng không được cài.
