@@ -7,6 +7,11 @@ status: active
 
 # Nhật ký thay đổi
 
+## 2.2.3 — 2026-10-28
+
+- Thêm `.gitattributes` ép LF: `manifest.json` băm byte đã commit, checkout CRLF (do `core.autocrlf=true`) làm installer báo `Hash payload sai`.
+- `INSTALL.md` thêm mục «Máy đã cài OpcOS»: Claude/Codex cài qua plugin, không chạy installer user-scope; Antigravity là plugin native dựng từ explicit payload.
+
 ## 2.2.2 — 2026-10-27
 
 - Thêm tiêu chí QA không phụ thuộc renderer vào `03-workflow/04-review-and-handoff.md` (bước 8–10 và khối dấu hiệu dừng khi soát ảnh), gồm cả cách xử lý slide trống có chủ ý và điều kiện dùng subagent (đợt P5 SPR-42).
