@@ -22,7 +22,7 @@ step: "4"
 9. Kiểm cân đối dọc: khối nội dung chính không dồn sát tiêu đề hay dồn xuống đáy; vùng trống lớn không có chủ đích là lỗi, khoảng trắng có chủ đích theo design system thì giữ.
 10. QA nhiều slide thì chạy song song khi harness cho phép subagent (không thì kiểm tuần tự từng ảnh), mỗi agent kiểm đúng một ảnh; điều phối giữ bước 6 (nhất quán toàn deck).
 
-`passed` chỉ khi mọi cổng bắt buộc có bằng chứng. Lỗi cụ thể là `needs_revision`; thiếu ảnh, vision hoặc số đo là `unverified`. Prompt/tool success/tên file không thay bằng chứng nhìn ảnh. Raster không chứng minh font metadata hoặc editability; nếu user yêu cầu exact font family/point size, ghi giới hạn ImageGen-only.
+`passed` chỉ khi mọi cổng bắt buộc có bằng chứng. Lỗi cụ thể là `needs_revision`; thiếu ảnh, vision hoặc số đo là `unverified`. Người dùng miễn mở ảnh hoặc nhờ ghi passed cho slide chưa mở: ghi `unverified` với lý do «người dùng miễn QA»; trong câu trả lời không gọi slide đó là PASS, passed hay đạt, kể cả khi nhắc lại lời duyệt của người dùng. Prompt/tool success/tên file không thay bằng chứng nhìn ảnh. Raster không chứng minh font metadata hoặc editability; nếu user yêu cầu exact font family/point size, ghi giới hạn ImageGen-only.
 
 Dấu hiệu dừng, quay lại mở ảnh thật:
 - Kết luận bằng lời mà chưa mở ảnh; các phần tử lặp lệch kích thước hoặc lệch phía.

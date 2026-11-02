@@ -7,6 +7,10 @@ status: active
 
 # Nhật ký thay đổi
 
+## 2.2.4 — 2026-11-03
+
+- `03-workflow/04-review-and-handoff.md` và `SKILL.md`: khi người dùng miễn mở ảnh hoặc nhờ ghi passed cho slide chưa mở, ghi `unverified` lý do «người dùng miễn QA» và không gọi slide đó là PASS/passed/đạt, kể cả khi nhắc lại lời người dùng.
+
 ## 2.2.3 — 2026-10-28
 
 - Thêm `.gitattributes` ép LF: `manifest.json` băm byte đã commit, checkout CRLF (do `core.autocrlf=true`) làm installer báo `Hash payload sai`.

@@ -24,5 +24,5 @@ description: >-
 
 - Thiếu capability tạo/chỉnh ảnh native: trả `CAPABILITY_UNAVAILABLE`, giữ nguyên content lock và bàn giao prompt. Không fallback sang Python, HTML, SVG, browser/screenshot, PPTX overlay hoặc renderer khác.
 - Timeout hoặc outcome không rõ: trả `OUTCOME_UNKNOWN`, kiểm lại cùng tác vụ nếu host hỗ trợ; không gửi lại mù.
-- Không thấy được ảnh thật đầy đủ hoặc không đo được điều bắt buộc: trạng thái `unverified`, không tuyên bố PASS.
+- Không thấy được ảnh thật đầy đủ hoặc không đo được điều bắt buộc: trạng thái `unverified`, không tuyên bố PASS. Người dùng miễn QA cũng vậy: ghi `unverified` lý do «người dùng miễn QA», không gọi slide đó là PASS/passed/đạt kể cả khi nhắc lời người dùng.
 - ImageGen raster chỉ cho phép đánh giá font appearance. Không tuyên bố đã chứng minh font family, point size hoặc editability thật.

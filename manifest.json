@@ -1,6 +1,6 @@
 {
   "package": "agent-slide-studio",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "algorithm": "SHA-256",
   "payload_policy": "scripts/build_manifest.py allowlist",
   "files": [
@@ -1281,8 +1281,8 @@
     },
     {
       "path": "03-workflow/04-review-and-handoff.md",
-      "bytes": 2941,
-      "sha256": "68b97add0d57c6cafedf1241e45dd84cb65f55df1344ffac9b892fb05760f168"
+      "bytes": 3219,
+      "sha256": "4e087ed8d6e7c5b8c4937cf6896db204dba2a8f4fcb4986865692e7f0ffeba13"
     },
     {
       "path": "04-templates/deck-plan.md",
@@ -1301,8 +1301,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 2911,
-      "sha256": "14b7432ab80cecf19c18238e7fc5768fa7093cffd009e905a6736e662e41cbf5"
+      "bytes": 3231,
+      "sha256": "f3052ab49e6d9608c79057fb81b2e17221b703a709a59174cd9ab680ac68a45b"
     },
     {
       "path": "INSTALL.md",
@@ -1321,8 +1321,8 @@
     },
     {
       "path": "SKILL.md",
-      "bytes": 3329,
-      "sha256": "655c1c5e26c1ecc38e91c0727dc0d37a7819b4732d0a3b2ee010cb759f96f5ae"
+      "bytes": 3511,
+      "sha256": "707bfd3631501d6e1d87c93f8f06b41c471c23ad7412926661491c923ba7353e"
     },
     {
       "path": "plugin/README.md",
@@ -1357,7 +1357,7 @@
     {
       "path": "scripts/build_manifest.py",
       "bytes": 7998,
-      "sha256": "053e568fec4f84f630fa082b74e8dbf7b76847edac982e4764698d4ab504332f"
+      "sha256": "5350579a7dd7894196799a3d4f5ed44fb48f2cd01d8b8a7f608063cbde316953"
     },
     {
       "path": "scripts/install.py",
