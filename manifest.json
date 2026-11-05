@@ -1,6 +1,6 @@
 {
   "package": "agent-slide-studio",
-  "version": "2.2.4",
+  "version": "2.2.5",
   "algorithm": "SHA-256",
   "payload_policy": "scripts/build_manifest.py allowlist",
   "files": [
@@ -1301,8 +1301,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 3520,
-      "sha256": "d460a2057cb288da6cf0e903080bbca06ac15fde83b1d461852be4781bb158df"
+      "bytes": 3523,
+      "sha256": "81a2c6cbb95c12ef7a6857a38f8521dd73673ae051855c52584b1e90f2d210fa"
     },
     {
       "path": "INSTALL.md",
@@ -1362,7 +1362,7 @@
     {
       "path": "scripts/build_manifest.py",
       "bytes": 8013,
-      "sha256": "f517e262f56b79ca95ebd05005ccd513346f0006d970b3436bb2caf032090912"
+      "sha256": "20e26de89c9b15593c51ceb165f028a90170b28a4e9cc5f40d6fcb05807f5926"
     },
     {
       "path": "scripts/install.py",

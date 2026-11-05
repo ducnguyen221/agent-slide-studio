@@ -7,7 +7,7 @@ status: active
 
 # Nhật ký thay đổi
 
-## Chưa phát hành
+## 2.2.5 — 2026-11-05
 
 - Phát hành theo giấy phép MIT: thêm `LICENSE` (vào gói cài qua `scripts/build_manifest.py`), khoá `license` trong `.claude-plugin/plugin.json`, mục «Giấy phép» trong `README.md`; `NOTICE.md` ghi phạm vi giấy phép và nội dung bên thứ ba.
 
