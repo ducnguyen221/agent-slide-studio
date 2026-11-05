@@ -1,0 +1,45 @@
+{
+  "name": "Tên sản phẩm",
+  "tagline": "Một câu nói lợi ích chính cho người đọc.",
+  "repo": "https://github.com/ducnguyen221/<repo>",
+  "site": "https://ducnguyen.vn/<repo>/",
+  "logo": "assets/logo-128.png",
+  "license": "MIT",
+  "year": 2026,
+  "resources": [
+    {
+      "href": "https://github.com/ducnguyen221/<repo>",
+      "label": "GitHub"
+    },
+    {
+      "href": "https://github.com/ducnguyen221/<repo>/blob/main/CHANGELOG.md",
+      "label": "Changelog"
+    }
+  ],
+  "menu": [
+    {
+      "href": "index.html",
+      "label": "Trang chủ"
+    },
+    {
+      "href": "install/index.html",
+      "label": "Cài đặt"
+    },
+    {
+      "href": "guide/index.html",
+      "label": "Cách dùng"
+    },
+    {
+      "href": "flow/index.html",
+      "label": "Luồng & quy trình"
+    },
+    {
+      "href": "principles/index.html",
+      "label": "Nguyên tắc"
+    },
+    {
+      "href": "docs/index.html",
+      "label": "Docs"
+    }
+  ]
+}
