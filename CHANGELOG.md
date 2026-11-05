@@ -7,6 +7,10 @@ status: active
 
 # Nhật ký thay đổi
 
+## Chưa phát hành
+
+- Phát hành theo giấy phép MIT: thêm `LICENSE` (vào gói cài qua `scripts/build_manifest.py`), khoá `license` trong `.claude-plugin/plugin.json`, mục «Giấy phép» trong `README.md`; `NOTICE.md` ghi phạm vi giấy phép và nội dung bên thứ ba.
+
 ## 2.2.4 — 2026-11-03
 
 - `03-workflow/04-review-and-handoff.md` và `SKILL.md`: khi người dùng miễn mở ảnh hoặc nhờ ghi passed cho slide chưa mở, ghi `unverified` lý do «người dùng miễn QA» và không gọi slide đó là PASS/passed/đạt, kể cả khi nhắc lại lời người dùng.

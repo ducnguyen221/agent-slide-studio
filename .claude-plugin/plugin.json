@@ -9,6 +9,7 @@
   },
   "homepage": "https://github.com/ducnguyen221/agent-slide-studio",
   "repository": "https://github.com/ducnguyen221/agent-slide-studio",
+  "license": "MIT",
   "keywords": [
     "slides",
     "presentation",

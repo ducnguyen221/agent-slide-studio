@@ -1301,8 +1301,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 3231,
-      "sha256": "f3052ab49e6d9608c79057fb81b2e17221b703a709a59174cd9ab680ac68a45b"
+      "bytes": 3520,
+      "sha256": "d460a2057cb288da6cf0e903080bbca06ac15fde83b1d461852be4781bb158df"
     },
     {
       "path": "INSTALL.md",
@@ -1310,14 +1310,19 @@
       "sha256": "d2f9d9a577d1bd9b2157597ea15340625f4c8ec17ef3dbd513a8f56baee34467"
     },
     {
+      "path": "LICENSE",
+      "bytes": 1078,
+      "sha256": "d1ed9cb4e9c0979d5a723aff96286703c7545f9c378f48b4cc0afe19e00eb4fa"
+    },
+    {
       "path": "NOTICE.md",
-      "bytes": 757,
-      "sha256": "39f5f22940b9482893d0ef8c75ff7eb88aee73cb46aeefa5888f09d7ad2d0ee8"
+      "bytes": 838,
+      "sha256": "d1f4d25dc87fa067ede82917d823c5d5e1aaa5503b96f0dc58bb3cf4cc9e5a09"
     },
     {
       "path": "README.md",
-      "bytes": 3496,
-      "sha256": "c19e08089c20367124d8d951836e84b204eec4a57f361c77264a8841bc5ba75f"
+      "bytes": 3632,
+      "sha256": "e2cd072d01d8f25b441d2e0e0d5f41fbf6dffddd59d26a03d95ddc97da449f5d"
     },
     {
       "path": "SKILL.md",
@@ -1356,8 +1361,8 @@
     },
     {
       "path": "scripts/build_manifest.py",
-      "bytes": 7998,
-      "sha256": "5350579a7dd7894196799a3d4f5ed44fb48f2cd01d8b8a7f608063cbde316953"
+      "bytes": 8013,
+      "sha256": "f517e262f56b79ca95ebd05005ccd513346f0006d970b3436bb2caf032090912"
     },
     {
       "path": "scripts/install.py",

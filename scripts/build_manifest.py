@@ -25,6 +25,7 @@ PAYLOAD_FILES = (
     "INSTALL.md",
     "CHANGELOG.md",
     "NOTICE.md",
+    "LICENSE",
     "02-references/INDEX.md",
     "plugin/openai.yaml",
     "02-references/tooling/host-compatibility.md",
