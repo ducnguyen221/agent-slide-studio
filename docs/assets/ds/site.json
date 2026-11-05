@@ -1,18 +1,22 @@
 {
-  "name": "Tên sản phẩm",
-  "tagline": "Một câu nói lợi ích chính cho người đọc.",
-  "repo": "https://github.com/ducnguyen221/<repo>",
-  "site": "https://ducnguyen.vn/<repo>/",
-  "logo": "assets/logo-128.png",
+  "name": "Agent Slide Studio",
+  "tagline": "Deck 16:9 tiếng Việt đúng từng chữ, thiết kế bằng ImageGen của agent.",
+  "repo": "https://github.com/ducnguyen221/agent-slide-studio",
+  "site": "https://ducnguyen.vn/agent-slide-studio/docs/",
+  "logo": "assets/logo.svg",
   "license": "MIT",
   "year": 2026,
   "resources": [
     {
-      "href": "https://github.com/ducnguyen221/<repo>",
+      "href": "https://github.com/ducnguyen221/agent-slide-studio",
       "label": "GitHub"
     },
     {
-      "href": "https://github.com/ducnguyen221/<repo>/blob/main/CHANGELOG.md",
+      "href": "https://ducnguyen.vn/agent-slide-studio/02-references/gallery/index.html",
+      "label": "Thư viện bố cục"
+    },
+    {
+      "href": "https://github.com/ducnguyen221/agent-slide-studio/blob/main/CHANGELOG.md",
       "label": "Changelog"
     }
   ],
@@ -41,5 +45,8 @@
       "href": "docs/index.html",
       "label": "Docs"
     }
+  ],
+  "docsExclude": [
+    "plans/"
   ]
 }

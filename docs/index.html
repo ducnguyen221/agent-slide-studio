@@ -3,15 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tên sản phẩm · Trang chủ</title>
-<meta name="description" content="Khung trang Trang chủ của OpcOS Design System — thay chữ mẫu bằng nội dung thật theo design-system/surfaces/web/screens/.">
-<link rel="canonical" href="https://ducnguyen.vn/&lt;repo&gt;/">
+<title>Agent Slide Studio · Trang chủ</title>
+<meta name="description" content="Deck 16:9 tiếng Việt đúng từng chữ, thiết kế bằng ImageGen của agent.">
+<link rel="canonical" href="https://ducnguyen.vn/agent-slide-studio/docs/">
 <link rel="icon" href="assets/logo.svg">
 <link rel="stylesheet" href="assets/ds/site.css?v=1.1.0">
 </head>
 <body>
 <canvas id="netbg" aria-hidden="true"></canvas>
-<!-- biểu tượng cho infographic (.ig-*): <svg class="ig-ico"><use href="#i-..."/></svg> -->
 <svg class="ig-sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
   <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-11.7 7.1L4 20l1.1-4A8 8 0 1 1 20 11.5Z"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01"/></symbol>
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h7M9 11h5"/></symbol>
@@ -25,7 +24,7 @@
 <a class="skip" href="#main">Bỏ qua điều hướng</a>
 <header class="site" id="siteHeader">
   <div class="wrap nav">
-    <a class="brand" href="index.html"><img src="assets/logo.svg" alt="">Tên sản phẩm</a>
+    <a class="brand" href="index.html"><img src="assets/logo.svg" alt="">Agent Slide Studio</a>
     <nav class="nav-links" aria-label="Điều hướng chính">
       <a href="index.html" class="active" aria-current="page">Trang chủ</a>
       <a href="install/index.html">Cài đặt</a>
@@ -34,52 +33,77 @@
       <a href="principles/index.html">Nguyên tắc</a>
       <a href="docs/index.html">Docs</a>
     </nav>
-    <a class="btn btn-ghost btn-sm gh" href="https://github.com/ducnguyen221/&lt;repo&gt;" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.3 4.6 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5Z"/></svg><span>GitHub</span></a>
+    <a class="btn btn-ghost btn-sm gh" href="https://github.com/ducnguyen221/agent-slide-studio" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.3 4.6 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5Z"/></svg><span>GitHub</span></a>
     <button class="theme-btn" type="button" data-ds-theme-toggle aria-label="Giao diện"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
   </div>
 </header>
 <main id="main">
 <section class="page-hero split"><div class="wrap">
   <div>
-    <span class="eyebrow"><span class="dot"></span>Cụm định vị ngắn</span>
-    <h1>Một câu nói sản phẩm làm gì cho người đọc</h1>
-    <p class="lead">Là gì và cho ai, tối đa hai câu. Không ghi số phiên bản, ngày hay con số đếm.</p>
+    <span class="eyebrow"><span class="dot"></span>Skill thiết kế slide cho agent</span>
+    <h1>Deck 16:9 tiếng Việt đúng từng chữ, gọn từng trang</h1>
+    <p class="lead">Agent Slide Studio hướng dẫn agent AI lập cấu trúc deck, chọn bố cục theo mục đích và tạo ảnh slide bằng ImageGen sẵn có của host — cho người cần slide đào tạo, báo cáo hay đề xuất.</p>
     <div class="hero-cta"><a class="btn btn-primary" href="install/index.html">Cài đặt</a><a class="btn btn-ghost" href="guide/index.html">Xem cách dùng</a></div>
-    <div class="tech-badges"><span class="tb local"><span class="g"></span>Chạy trên máy bạn</span><span class="tb"><span class="g"></span>Không cần cài thêm</span><span class="tb gold"><span class="g"></span>Mã nguồn mở</span></div>
+    <div class="tech-badges"><span class="tb local"><span class="g"></span>Codex · Claude · Antigravity</span><span class="tb"><span class="g"></span>Dùng ImageGen của host</span><span class="tb gold"><span class="g"></span>Mã nguồn mở MIT</span></div>
   </div>
-  <figure class="hero-media"><img src="assets/hero.svg" width="1200" height="800" alt="Chỗ đặt ảnh minh hoạ 3:2 — thay bằng assets/hero.webp của sản phẩm"></figure>
+  <figure class="hero-media"><img src="assets/hero.svg" width="1200" height="800" alt="Minh hoạ các slide 16:9 xếp lớp với bố cục khối, đường nối và biểu đồ"></figure>
 </div></section>
 <section id="why"><div class="wrap">
-  <div class="sec-head"><span class="eyebrow">Vì sao</span><h2>Ba điều người dùng nhận được</h2><p>Mỗi thẻ một lợi ích, nói bằng kết quả.</p></div>
+  <div class="sec-head"><span class="eyebrow">Vì sao</span><h2>Ba lỗi hay gặp khi nhờ AI làm slide</h2><p>Skill chặn từng lỗi bằng một bước làm việc cụ thể.</p></div>
   <div class="grid-3">
-    <div class="card reveal"><div class="ficon"><svg class="ig-ico"><use href="#i-shield"/></svg></div><h3>Lợi ích thứ nhất</h3><p>Một đến hai câu, cụ thể, có thể kiểm.</p></div>
-    <div class="card reveal"><div class="ficon gold"><svg class="ig-ico"><use href="#i-book"/></svg></div><h3>Lợi ích thứ hai</h3><p>Một đến hai câu, cụ thể, có thể kiểm.</p></div>
-    <div class="card reveal"><div class="ficon ok"><svg class="ig-ico"><use href="#i-check"/></svg></div><h3>Lợi ích thứ ba</h3><p>Một đến hai câu, cụ thể, có thể kiểm.</p></div>
+    <div class="card reveal"><div class="ficon"><svg class="ig-ico"><use href="#i-chat"/></svg></div><h3>Ảnh sai chữ tiếng Việt</h3><p>Mọi chữ hiển thị được khóa trước; ảnh chỉ được in đúng danh sách đó, sai một dấu là sửa.</p></div>
+    <div class="card reveal"><div class="ficon gold"><svg class="ig-ico"><use href="#i-book"/></svg></div><h3>Slide dày chữ, khó đọc</h3><p>Mỗi slide một thông điệp và một quan hệ chính; thừa ý thì tách trang thay vì thu nhỏ chữ.</p></div>
+    <div class="card reveal"><div class="ficon ok"><svg class="ig-ico"><use href="#i-check"/></svg></div><h3>Mỗi trang một kiểu</h3><p>Một bộ phong cách khóa chung và một slide neo giữ cả deck cùng lề, màu, font và nhịp.</p></div>
+  </div>
+</div></section>
+<section id="noi-bat"><div class="wrap">
+  <div class="sec-head"><span class="eyebrow">Điểm nổi bật</span><h2>Thiết kế theo quan hệ của nội dung</h2></div>
+  <div class="grid-2">
+    <div class="card reveal"><h3>Chọn bố cục theo mục đích</h3><p>Thư viện bố cục cấu trúc và infographic có ảnh mẫu, lọc theo mục đích, quan hệ và vị trí trong bài. <a href="https://ducnguyen.vn/agent-slide-studio/02-references/gallery/index.html">Xem thư viện</a>.</p></div>
+    <div class="card reveal"><h3>Kết luận có bằng chứng</h3><p>Slide chỉ được gọi là đạt khi ảnh thật đã được mở và đối chiếu; chưa mở thì ghi chưa kiểm.</p></div>
+    <div class="card reveal"><h3>Không đổi công cụ âm thầm</h3><p>Host không tạo được ảnh thì dừng và bàn giao prompt, không chuyển sang HTML hay ảnh chụp màn hình.</p></div>
+    <div class="card reveal"><h3>Một gói cho ba agent</h3><p>Cùng một bộ hướng dẫn chạy trên Codex, Claude Code và Antigravity.</p></div>
+  </div>
+</div></section>
+<section id="ai-dung"><div class="wrap">
+  <div class="sec-head"><span class="eyebrow">Ai dùng</span><h2>Dành cho người phải trình bày thường xuyên</h2></div>
+  <div class="grid-2">
+    <div class="card reveal"><h3>Giảng viên và đào tạo nội bộ</h3><p>Biến giáo trình thành bài giảng có nhịp mở – giải thích – ví dụ – thực hành.</p></div>
+    <div class="card reveal"><h3>Tư vấn và quản lý</h3><p>Đề xuất, báo cáo dữ liệu, kiến trúc giải pháp với tiêu đề nói thẳng kết luận.</p></div>
+    <div class="card reveal"><h3>Người làm nội dung</h3><p>Infographic minh hoạ quy trình, so sánh, khung năng lực cho bài đăng và hội thảo.</p></div>
+    <div class="card reveal"><h3>Đội làm việc cùng agent AI</h3><p>Một quy trình chung để ai giao việc cũng nhận về deck cùng chuẩn.</p></div>
   </div>
 </div></section>
 <section id="flow"><div class="wrap">
   <div class="sec-head"><span class="eyebrow">Cách làm</span><h2>Quy trình trong một hình</h2></div>
   <div class="ig c-acc reveal">
-    <p class="ig-title">Một việc đi qua bốn bước</p>
+    <p class="ig-title">Từ tài liệu thô tới deck đã kiểm</p>
     <ol class="ig-track ig-h">
-      <li class="ig-step" style="--i:0"><div class="ig-node"><svg class="ig-ico"><use href="#i-chat"/></svg><span class="ig-num">1</span></div><div class="ig-body"><h3>Tiếp nhận</h3><p>Bạn nói mục tiêu; agent hỏi lại một lượt.</p></div></li>
-      <li class="ig-step" style="--i:1"><div class="ig-node"><svg class="ig-ico"><use href="#i-book"/></svg><span class="ig-num">2</span></div><div class="ig-body"><h3>Kế hoạch</h3><p>Viết kế hoạch có tiêu chí đạt.</p><p class="ig-gate"><svg class="ig-ico"><use href="#i-shield"/></svg><span><b>Cổng 1</b> · bạn duyệt</span></p></div></li>
-      <li class="ig-step" style="--i:2"><div class="ig-node"><svg class="ig-ico"><use href="#i-tool"/></svg><span class="ig-num">3</span></div><div class="ig-body"><h3>Thực thi</h3><p>Làm theo kế hoạch, ghi bằng chứng.</p><p class="ig-exit"><svg class="ig-ico"><use href="#i-lock"/></svg><span><b>Dừng</b> · khi chạm việc không hoàn tác</span></p></div></li>
-      <li class="ig-step" style="--i:3"><div class="ig-node"><svg class="ig-ico"><use href="#i-evidence"/></svg><span class="ig-num">4</span></div><div class="ig-body"><h3>Báo cáo</h3><p>Người khác kiểm, bạn chốt.</p><p class="ig-gate"><svg class="ig-ico"><use href="#i-shield"/></svg><span><b>Cổng 2</b> · Đạt / Không đạt</span></p></div></li>
+      <li class="ig-step" style="--i:0"><div class="ig-node"><svg class="ig-ico"><use href="#i-book"/></svg><span class="ig-num">1</span></div><div class="ig-body"><h3>Đọc và lập bản đồ</h3><p>Đọc hết nguồn, gán vai trò và thông điệp cho từng slide, chọn bố cục.</p></div></li>
+      <li class="ig-step" style="--i:1"><div class="ig-node"><svg class="ig-ico"><use href="#i-lock"/></svg><span class="ig-num">2</span></div><div class="ig-body"><h3>Khóa nội dung và phong cách</h3><p>Chốt từng chữ sẽ hiện trên slide và một bộ phong cách chung.</p><p class="ig-gate"><svg class="ig-ico"><use href="#i-shield"/></svg><span><b>Bạn chốt</b> · nhận diện, font, màu</span></p></div></li>
+      <li class="ig-step" style="--i:2"><div class="ig-node"><svg class="ig-ico"><use href="#i-tool"/></svg><span class="ig-num">3</span></div><div class="ig-body"><h3>Prompt và tạo ảnh</h3><p>Prompt bảy phần, tạo slide neo trước rồi mới tạo các slide còn lại.</p><p class="ig-exit"><svg class="ig-ico"><use href="#i-lock"/></svg><span><b>Dừng</b> · host không có ImageGen</span></p></div></li>
+      <li class="ig-step" style="--i:3"><div class="ig-node"><svg class="ig-ico"><use href="#i-evidence"/></svg><span class="ig-num">4</span></div><div class="ig-body"><h3>Soát ảnh thật và bàn giao</h3><p>Mở từng ảnh, so từng chữ, sửa rồi soát lại toàn ảnh.</p><p class="ig-gate"><svg class="ig-ico"><use href="#i-check"/></svg><span><b>Kết luận</b> · đạt · cần sửa · chưa kiểm</span></p></div></li>
     </ol>
   </div>
+</div></section>
+<section id="bat-dau"><div class="wrap">
+  <div class="sec-head"><span class="eyebrow">Bắt đầu</span><h2>Bốn bước đầu tiên</h2></div>
+  <div class="step"><div class="num">1</div><div class="body"><h3>Cài skill</h3><p>Cài như plugin Claude Code hoặc bằng installer cho Codex và Antigravity — xem <a href="install/index.html">Cài đặt</a>.</p></div></div>
+  <div class="step"><div class="num">2</div><div class="body"><h3>Đưa tài liệu</h3><p>Giao cho agent bản nháp, giáo trình hoặc báo cáo cần làm slide, kèm người xem và mục tiêu.</p></div></div>
+  <div class="step"><div class="num">3</div><div class="body"><h3>Chốt phong cách</h3><p>Trả lời một lượt câu hỏi về nhận diện, font và màu, hoặc cho agent tự chọn.</p></div></div>
+  <div class="step"><div class="num">4</div><div class="body"><h3>Duyệt slide neo</h3><p>Xem slide neo trước; ưng thì agent làm tiếp phần còn lại cùng phong cách.</p></div></div>
 </div></section>
 <section id="tac-gia"><div class="wrap">
   <div class="sec-head"><h2>Tác giả và giấy phép</h2></div>
   <div class="grid-2">
-    <div class="card author"><div class="avatar" aria-hidden="true">QĐ</div><div><h3>Nguyễn Quang Đức</h3><p>Vai trò một câu. <a href="https://ducnguyen.vn" target="_blank" rel="noopener">ducnguyen.vn</a> · GitHub <a href="https://github.com/ducnguyen221" target="_blank" rel="noopener">@ducnguyen221</a>.</p></div></div>
-    <div class="card"><h3>Giấy phép MIT</h3><p>Người dùng được làm gì, phải giữ gì.</p></div>
+    <div class="card author"><div class="avatar" aria-hidden="true">QĐ</div><div><h3>Nguyễn Quang Đức</h3><p>Chuyên gia Data & AI, giảng viên công nghệ. <a href="https://ducnguyen.vn" target="_blank" rel="noopener">ducnguyen.vn</a> · GitHub <a href="https://github.com/ducnguyen221" target="_blank" rel="noopener">@ducnguyen221</a>.</p></div></div>
+    <div class="card"><h3>Giấy phép MIT</h3><p>Bạn được dùng, sửa và phân phối lại, kể cả cho mục đích thương mại; giữ thông báo bản quyền và ghi công tác giả.</p></div>
   </div>
-  <p class="note"><b>Nguồn tham khảo:</b> repo đã tham khảo và giấy phép của chúng (nếu có).</p>
+  <p class="note"><b>Nội dung bên thứ ba:</b> nguồn ngoài chỉ được liên kết và tóm tắt; không kèm font, tài nguyên trả phí hay template của nền tảng khác — xem <a href="https://github.com/ducnguyen221/agent-slide-studio/blob/main/NOTICE.md" target="_blank" rel="noopener">NOTICE.md</a>.</p>
 </div></section>
 <section class="final"><div class="wrap">
-  <h2>Bắt đầu trong vài phút</h2>
-  <p>Một câu nói người đọc nhận được gì sau khi cài.</p>
+  <h2>Bắt đầu với deck tiếp theo</h2>
+  <p>Cài skill, đưa tài liệu, và để agent lo phần bố cục lẫn kiểm chữ.</p>
   <div class="hero-cta"><a class="btn btn-primary" href="install/index.html">Cài đặt</a><a class="btn btn-ghost" href="guide/index.html">Xem cách dùng</a></div>
 </div></section>
 </main>
@@ -87,8 +111,8 @@
   <div class="wrap">
     <div class="foot">
       <div>
-        <a class="brand" href="index.html"><img src="assets/logo.svg" alt="" width="26" height="26">Tên sản phẩm</a>
-        <p class="foot-tag">Một câu nói lợi ích chính cho người đọc.</p>
+        <a class="brand" href="index.html"><img src="assets/logo.svg" alt="" width="26" height="26">Agent Slide Studio</a>
+        <p class="foot-tag">Deck 16:9 tiếng Việt đúng từng chữ, thiết kế bằng ImageGen của agent.</p>
       </div>
       <div class="foot-links">
         <div class="foot-col">
@@ -102,8 +126,9 @@
         </div>
         <div class="foot-col">
           <b>Tài nguyên</b>
-          <a href="https://github.com/ducnguyen221/&lt;repo&gt;" target="_blank" rel="noopener">GitHub</a>
-          <a href="https://github.com/ducnguyen221/&lt;repo&gt;/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a>
+          <a href="https://github.com/ducnguyen221/agent-slide-studio" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://ducnguyen.vn/agent-slide-studio/02-references/gallery/index.html" target="_blank" rel="noopener">Thư viện bố cục</a>
+          <a href="https://github.com/ducnguyen221/agent-slide-studio/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a>
         </div>
       </div>
     </div>

@@ -3,15 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Luồng &amp; quy trình · Tên sản phẩm</title>
-<meta name="description" content="Khung trang Luồng &amp; quy trình của OpcOS Design System — thay chữ mẫu bằng nội dung thật theo design-system/surfaces/web/screens/.">
-<link rel="canonical" href="https://ducnguyen.vn/&lt;repo&gt;/flow/">
+<title>Agent Slide Studio · Luồng &amp; quy trình</title>
+<meta name="description" content="Các bước Agent Slide Studio đi qua, chỗ có cổng kiểm và chỗ dừng.">
+<link rel="canonical" href="https://ducnguyen.vn/agent-slide-studio/docs/flow/">
 <link rel="icon" href="../assets/logo.svg">
 <link rel="stylesheet" href="../assets/ds/site.css?v=1.1.0">
 </head>
 <body>
 <canvas id="netbg" aria-hidden="true"></canvas>
-<!-- biểu tượng cho infographic (.ig-*): <svg class="ig-ico"><use href="#i-..."/></svg> -->
 <svg class="ig-sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
   <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-11.7 7.1L4 20l1.1-4A8 8 0 1 1 20 11.5Z"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01"/></symbol>
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M9 7h7M9 11h5"/></symbol>
@@ -25,7 +24,7 @@
 <a class="skip" href="#main">Bỏ qua điều hướng</a>
 <header class="site" id="siteHeader">
   <div class="wrap nav">
-    <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="">Tên sản phẩm</a>
+    <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="">Agent Slide Studio</a>
     <nav class="nav-links" aria-label="Điều hướng chính">
       <a href="../index.html">Trang chủ</a>
       <a href="../install/index.html">Cài đặt</a>
@@ -34,43 +33,54 @@
       <a href="../principles/index.html">Nguyên tắc</a>
       <a href="../docs/index.html">Docs</a>
     </nav>
-    <a class="btn btn-ghost btn-sm gh" href="https://github.com/ducnguyen221/&lt;repo&gt;" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.3 4.6 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5Z"/></svg><span>GitHub</span></a>
+    <a class="btn btn-ghost btn-sm gh" href="https://github.com/ducnguyen221/agent-slide-studio" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.3 4.6 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5Z"/></svg><span>GitHub</span></a>
     <button class="theme-btn" type="button" data-ds-theme-toggle aria-label="Giao diện"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
   </div>
 </header>
 <main id="main">
 <section class="page-hero"><div class="wrap">
   <span class="eyebrow"><span class="dot"></span>Luồng & quy trình</span>
-  <h1>Việc chạy qua những bước nào</h1>
-  <p class="lead">Mỗi bước có đầu vào, đầu ra và cổng kiểm.</p>
+  <h1>Hai luồng: làm deck và sửa ảnh</h1>
+  <p class="lead">Luồng làm deck đi bốn bước có cổng chốt; luồng sửa ảnh lặp tới khi đạt hoặc dừng có lý do.</p>
 </div></section>
 <section><div class="wrap">
+  <div class="sec-head"><h2>Luồng làm deck</h2><p>Chưa xong bước trước thì không sang bước sau.</p></div>
   <div class="ig c-acc reveal">
-    <p class="ig-title">Một việc đi qua bốn bước</p>
-    <ol class="ig-track ig-h">
-      <li class="ig-step" style="--i:0"><div class="ig-node"><svg class="ig-ico"><use href="#i-chat"/></svg><span class="ig-num">1</span></div><div class="ig-body"><h3>Tiếp nhận</h3><p>Bạn nói mục tiêu; agent hỏi lại một lượt.</p></div></li>
-      <li class="ig-step" style="--i:1"><div class="ig-node"><svg class="ig-ico"><use href="#i-book"/></svg><span class="ig-num">2</span></div><div class="ig-body"><h3>Kế hoạch</h3><p>Viết kế hoạch có tiêu chí đạt.</p><p class="ig-gate"><svg class="ig-ico"><use href="#i-shield"/></svg><span><b>Cổng 1</b> · bạn duyệt</span></p></div></li>
-      <li class="ig-step" style="--i:2"><div class="ig-node"><svg class="ig-ico"><use href="#i-tool"/></svg><span class="ig-num">3</span></div><div class="ig-body"><h3>Thực thi</h3><p>Làm theo kế hoạch, ghi bằng chứng.</p><p class="ig-exit"><svg class="ig-ico"><use href="#i-lock"/></svg><span><b>Dừng</b> · khi chạm việc không hoàn tác</span></p></div></li>
-      <li class="ig-step" style="--i:3"><div class="ig-node"><svg class="ig-ico"><use href="#i-evidence"/></svg><span class="ig-num">4</span></div><div class="ig-body"><h3>Báo cáo</h3><p>Người khác kiểm, bạn chốt.</p><p class="ig-gate"><svg class="ig-ico"><use href="#i-shield"/></svg><span><b>Cổng 2</b> · Đạt / Không đạt</span></p></div></li>
+    <p class="ig-title">Từ tài liệu thô tới deck đã kiểm</p>
+    <ol class="ig-track">
+      <li class="ig-step" style="--i:0"><div class="ig-node"><svg class="ig-ico"><use href="#i-book"/></svg><span class="ig-num">1</span></div><div class="ig-body"><h3>Đọc và lập bản đồ</h3><p>Đọc hết nguồn, gán vai trò và thông điệp cho từng slide, chọn bố cục.</p></div></li>
+      <li class="ig-step" style="--i:1"><div class="ig-node"><svg class="ig-ico"><use href="#i-lock"/></svg><span class="ig-num">2</span></div><div class="ig-body"><h3>Khóa nội dung và phong cách</h3><p>Chốt từng chữ sẽ hiện trên slide và một bộ phong cách chung.</p><p class="ig-gate"><svg class="ig-ico"><use href="#i-shield"/></svg><span><b>Bạn chốt</b> · nhận diện, font, màu</span></p></div></li>
+      <li class="ig-step" style="--i:2"><div class="ig-node"><svg class="ig-ico"><use href="#i-tool"/></svg><span class="ig-num">3</span></div><div class="ig-body"><h3>Prompt và tạo ảnh</h3><p>Prompt bảy phần, tạo slide neo trước rồi mới tạo các slide còn lại.</p><p class="ig-exit"><svg class="ig-ico"><use href="#i-lock"/></svg><span><b>Dừng</b> · host không có ImageGen</span></p></div></li>
+      <li class="ig-step" style="--i:3"><div class="ig-node"><svg class="ig-ico"><use href="#i-evidence"/></svg><span class="ig-num">4</span></div><div class="ig-body"><h3>Soát ảnh thật và bàn giao</h3><p>Mở từng ảnh, so từng chữ, sửa rồi soát lại toàn ảnh.</p><p class="ig-gate"><svg class="ig-ico"><use href="#i-check"/></svg><span><b>Kết luận</b> · đạt · cần sửa · chưa kiểm</span></p></div></li>
     </ol>
   </div>
-  <div class="ig-notes">
-    <p class="ig-note"><svg class="ig-ico"><use href="#i-shield"/></svg><span><b>Cổng kiểm</b> luôn màu xanh: chỗ phải có bằng chứng.</span></p>
-    <p class="ig-note"><svg class="ig-ico"><use href="#i-lock"/></svg><span><b>Lối ra bị chặn</b> màu đỏ: chỗ yêu cầu dừng lại.</span></p>
-    <p class="ig-note"><svg class="ig-ico"><use href="#i-archive"/></svg><span><b>Sổ ghi</b> giữ mọi bằng chứng của các bước.</span></p>
+</div></section>
+<section><div class="wrap">
+  <div class="sec-head"><h2>Luồng sửa ảnh</h2></div>
+  <div class="ig c-acc reveal">
+    <p class="ig-title">Mỗi lần sửa là một bản mới, soát lại toàn ảnh</p>
+    <ol class="ig-track ig-h">
+      <li class="ig-step" style="--i:0"><div class="ig-node"><svg class="ig-ico"><use href="#i-evidence"/></svg><span class="ig-num">1</span></div><div class="ig-body"><h3>Soát</h3><p>Mở ảnh ở kích thước đầy đủ, so từng chữ.</p></div></li>
+      <li class="ig-step" style="--i:1"><div class="ig-node"><svg class="ig-ico"><use href="#i-book"/></svg><span class="ig-num">2</span></div><div class="ig-body"><h3>Ghi lỗi</h3><p>Nghĩa, chữ, sơ đồ, lề, phong cách — theo thứ tự đó.</p></div></li>
+      <li class="ig-step" style="--i:2"><div class="ig-node"><svg class="ig-ico"><use href="#i-tool"/></svg><span class="ig-num">3</span></div><div class="ig-body"><h3>Sửa</h3><p>Chỉnh hoặc tạo lại bằng ImageGen, lưu bản mới.</p><p class="ig-exit"><svg class="ig-ico"><use href="#i-lock"/></svg><span><b>Dừng</b> · quá số vòng sửa, ghi cần sửa</span></p></div></li>
+      <li class="ig-step" style="--i:3"><div class="ig-node"><svg class="ig-ico"><use href="#i-check"/></svg><span class="ig-num">4</span></div><div class="ig-body"><h3>Soát lại</h3><p>Soát toàn ảnh, không chỉ vùng vừa sửa.</p><p class="ig-gate"><svg class="ig-ico"><use href="#i-shield"/></svg><span><b>Đạt</b> · khi mọi điểm có bằng chứng</span></p></div></li>
+    </ol>
   </div>
 </div></section>
 <section><div class="wrap">
-  <div class="sec-head"><h2>Các chặng</h2></div>
-  <ol class="timeline"><li><span class="tnum">01</span><h3>Chặng một</h3><p>Mô tả.</p></li><li><span class="tnum">02</span><h3>Chặng hai</h3><p>Mô tả.</p></li><li><span class="tnum">03</span><h3>Chặng ba</h3><p>Mô tả.</p></li><li><span class="tnum">04</span><h3>Chặng bốn</h3><p>Mô tả.</p></li><li><span class="tnum">05</span><h3>Chặng năm</h3><p>Mô tả.</p></li></ol>
+  <div class="sec-head"><h2>Trạng thái của một slide</h2></div>
+  <ol class="timeline"><li><span class="tnum">01</span><h3>Đã lập bản đồ</h3><p>Có vai trò, thông điệp, mã bố cục.</p></li><li><span class="tnum">02</span><h3>Đã khóa</h3><p>Chữ và phong cách đã chốt, không còn chỗ trống.</p></li><li><span class="tnum">03</span><h3>Đã tạo ảnh</h3><p>Có ảnh và bản ghi prompt.</p></li><li><span class="tnum">04</span><h3>Đã soát</h3><p>Kết luận đạt, cần sửa hoặc chưa kiểm.</p></li></ol>
+</div></section>
+<section><div class="wrap">
+  <ul class="ig-notes"><li><b>Cổng</b> là chỗ cần quyết định hoặc bằng chứng trước khi đi tiếp.</li><li><b>Dừng</b> là lối ra có chủ đích: agent báo lý do và bàn giao phần đã có, không thử cách khác âm thầm.</li></ul>
 </div></section>
 </main>
 <footer class="site">
   <div class="wrap">
     <div class="foot">
       <div>
-        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="26" height="26">Tên sản phẩm</a>
-        <p class="foot-tag">Một câu nói lợi ích chính cho người đọc.</p>
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="26" height="26">Agent Slide Studio</a>
+        <p class="foot-tag">Deck 16:9 tiếng Việt đúng từng chữ, thiết kế bằng ImageGen của agent.</p>
       </div>
       <div class="foot-links">
         <div class="foot-col">
@@ -84,8 +94,9 @@
         </div>
         <div class="foot-col">
           <b>Tài nguyên</b>
-          <a href="https://github.com/ducnguyen221/&lt;repo&gt;" target="_blank" rel="noopener">GitHub</a>
-          <a href="https://github.com/ducnguyen221/&lt;repo&gt;/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a>
+          <a href="https://github.com/ducnguyen221/agent-slide-studio" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://ducnguyen.vn/agent-slide-studio/02-references/gallery/index.html" target="_blank" rel="noopener">Thư viện bố cục</a>
+          <a href="https://github.com/ducnguyen221/agent-slide-studio/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a>
         </div>
       </div>
     </div>

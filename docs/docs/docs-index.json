@@ -1,0 +1,12 @@
+{
+  "generator": "opcos-site-kit/build-docs",
+  "version": 1,
+  "docs": [
+    {
+      "src": "README.md",
+      "out": "docs/README/index.html",
+      "title": "Tài liệu Agent Slide Studio",
+      "sha256": "65e40eb74c4be09c9f40df5a511af35b953d13f0a86a9440340c272e46d4c3d7"
+    }
+  ]
+}
