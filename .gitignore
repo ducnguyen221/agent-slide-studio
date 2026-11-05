@@ -24,3 +24,7 @@ temp/
 !.env.example
 .DS_Store
 Thumbs.db
+
+# hồ sơ sprint nằm ở OpcOS system/workshop-records/agent-slide-studio/plans/
+docs/plans/
+docs/evidence/
