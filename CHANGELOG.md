@@ -7,6 +7,10 @@ status: active
 
 # Nhật ký thay đổi
 
+## Chưa phát hành
+
+- Gỡ gói `05-chatgpt-project/` (instructions, tài liệu hợp nhất và 23 PNG cho ChatGPT Project): không còn dùng; đường dùng chính là `SKILL.md` qua plugin.
+
 ## 2.2.5 — 2026-11-05
 
 - Phát hành theo giấy phép MIT: thêm `LICENSE` (vào gói cài qua `scripts/build_manifest.py`), khoá `license` trong `.claude-plugin/plugin.json`, mục «Giấy phép» trong `README.md`; `NOTICE.md` ghi phạm vi giấy phép và nội dung bên thứ ba.
